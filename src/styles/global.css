@@ -1,0 +1,25 @@
+/* src/styles/global.css */
+
+/* Pretendard Variable Font 설정 */
+@font-face {
+  font-family: 'Pretendard';
+  src: url('../assets/font/PretendardVariable.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* 기본 초기화 + 앱 정렬 */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Pretendard', sans-serif;
+  background-color: #dcdcdc; /* 앱 바깥 배경 */
+  display: flex;
+  justify-content: center;
+}
+
+/* 앱 전체 컨테이너 (#root) */
+#root {
+  width: 100%;
+}

@@ -1,0 +1,16 @@
+# API 요청 관련 파일
+
+api는 일단 도메인별로 폴더 구분했음.
+
+/artist
+    /index.js         ← artist API 모듈의 진입점
+    /getArtistList.js
+    /getArtistDetail.js
+    /toggleLike.js
+    /toggleNotify.js
+    /getArtistPerformances.js
+
+필요한 api는 아직 모르지만 .. 
+일단 이런 식으로 api마다 파일 구분하고 export 하면
+index.js에서 import ..
+

@@ -1,0 +1,9 @@
+# 샘플 데이터
+
+데이터베이스 연동 전까지 임시 데이터로...
+
+artistList.js
+performanceList.js
+venueList.js
+postList.js
+commentList.js

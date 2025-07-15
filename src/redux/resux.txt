@@ -1,0 +1,30 @@
+# React 앱에서 상태(state)를 전역으로 관리하기 위한 라이브러리
+# 여러 컴포넌트에서 공유되는 데이터 -> 한 곳에서 관리
+
+e.g. 아티스트 상세 페이지에서 하트 누르면 -> 찜 목록에 반영되어야 함
+
+Store - 앱 전체 상태를 저장하는 공간
+Action - 상태를 어떻게 바꿔야 하는지 설명하는 객체
+Reducer - 액션에 따라 상태를 실제로 변경하는 함수
+Dispatch - 액션을 보낼 때 사용하는 함수
+
+컴포넌트 → dispatch(action) → reducer → store 상태 업데이트 → 컴포넌트 구독
+
+
+***일단 나중에...***
+
+
+Redus Toolkit
+store.js	모든 slice 리듀서를 통합하여 store 생성
+xxxSlice.js	도메인별 상태 정의 (state + actions + reducers 한 번에)
+Provider	store를 앱에 연결 (<App /> 감쌈)
+useSelector	상태 조회
+useDispatch	액션 발생
+
+/src
+  /redux
+    store.js               # store 설정
+    /slices
+      userSlice.js         # 사용자 관련 상태 (로그인, 알림 설정 등)
+      artistSlice.js       # 아티스트 관련 (찜, 알림 등)
+      performanceSlice.js  # 공연 관련 (필터, 찜 등)

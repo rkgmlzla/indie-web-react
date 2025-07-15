@@ -1,0 +1,12 @@
+안드로이드에서 했던 것처럼 PerformanceCard들마다 컴포넌트로 구성하면 될듯
+
+파일명 변경하긴 했는데, 
+item_performance_horizontal.xml 
+item_performance_title_date.xml
+item_performance_title_venue.xml
+item_performance_title_venue_date.xml
+item_performance_venue_date.xml
+
+
+* 아티스트 상세 페이지의 공연 카드 == 공연장 상세 페이지의 공연 카드
+* -> /components/performce/ooo.js  파일 하나로 공유 ㄱㄴ

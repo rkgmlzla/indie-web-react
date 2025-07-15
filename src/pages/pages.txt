@@ -1,0 +1,37 @@
+실제 라우트(주소)와 대응되는 화면 단위 컴포넌트를 담는 곳
+
+화면별로 폴더를 만들고,
+단일 페이지 -> index.js
+여러 페이지/기능 -> Page.js
+
+이런 식으로 ..
+
+/src
+  /pages
+    /home
+      index.jsx
+        /components    ← /src/components/와는 다르게 이 페이지에서만 구성하는 요소가 있다면 /pages/xxx/components/ 각 페이지 전용으로 UI 관리
+    /calendar
+      index.jsx
+    /performance
+      ListPage.jsx
+      DetailPage.jsx
+    /artist
+      ListPage.jsx
+      DetailPage.jsx
+    /venue
+      ListPage.jsx
+    /favorite
+      index.jsx
+    /community
+      ListPage.jsx
+      DetailPage.jsx
+      WritePage.jsx
+    /search
+      index.jsx
+    /login
+      index.jsx
+    /mypage
+      index.jsx
+    /map
+      index.jsx
