@@ -1,10 +1,11 @@
 // src/routes.js
 import HomePage from './pages/home';
+import PerformanceListPage from './pages/performance/PerformanceListPage';
 
 // ...
 
 const routes = [
-  { path: '/', element: <HomePage /> },
+  { path: '/', element: <PerformanceListPage /> },
 
   // ...
 ];

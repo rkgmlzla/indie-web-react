@@ -1,0 +1,36 @@
+/* .card {
+  display: flex;
+  gap: 12px;
+  background-color: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.poster {
+  width: 100px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 8px 0 0 8px;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 8px 12px;
+}
+
+.title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.venue,
+.date,
+.price {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 2px;
+} */
