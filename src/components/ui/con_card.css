@@ -1,0 +1,40 @@
+.concert-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.05);
+  .concert-thumb {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 6px;
+    flex-shrink: 0;
+  }
+
+  .concert-info {
+    flex: 1;
+    .concert-title {
+      font-weight: 600;
+      font-size: 16px;
+      margin: 0;
+    }
+
+    .concert-subtitle,
+    .concert-date {
+      font-size: 14px;
+      color: #666;
+      margin: 2px 0;
+    }
+  }
+  .concert-heart {
+    color: #ccc;
+    cursor: pointer;
+  }
+
+  .concert-heart.on {
+    color: red;
+  }
+}

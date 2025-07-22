@@ -1,0 +1,93 @@
+.freeboard__write {
+  padding: 16px;
+  margin: 0 auto;
+  header {
+    font-weight: bold;
+    font-size: 20px;
+    text-align: center;
+    margin-bottom: 16px;
+  }
+
+  input {
+    width: 100%;
+    margin-bottom: 12px;
+    padding: 12px;
+
+    outline: none;
+    border: none;
+    border-bottom: 1px solid #ccc;
+    font-size: 14px;
+    display: block;
+    box-sizing: border-box;
+  }
+  textarea {
+    width: 100%;
+    min-height: 200px;
+    padding: 12px;
+    outline: none;
+    border: none;
+    border-bottom: 1px solid #ccc;
+    font-size: 14px;
+    box-sizing: border-box;
+    resize: none;
+  }
+  .image-preview {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+    .thumb {
+      position: relative;
+
+      img {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 6px;
+      }
+
+      button {
+        position: absolute;
+        top: -4px;
+        right: -4px;
+        background: white;
+        border: none;
+        font-size: 12px;
+        cursor: pointer;
+      }
+    }
+
+    .upload-btn {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 80px;
+      height: 80px;
+      border: 1px dashed #ccc;
+      border-radius: 6px;
+      font-size: 24px;
+      cursor: pointer;
+      input[type='file'] {
+        display: none;
+      }
+
+      &::after {
+        content: '📷';
+      }
+    }
+  }
+
+  .submit {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    background-color: #ccc;
+    color: white;
+
+    &.active {
+      background-color: #9a1f24;
+    }
+  }
+}
