@@ -1,11 +1,20 @@
 import React from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
+import HeartButton from '../common/HeartButton';
 
 const Card = styled.div`
   display: flex;
+  justify-content: space-between;
+  align-items: center;
   padding: 1rem 1.25rem;
   background-color: ${({ theme }) => theme.colors.bgWhite};
   border-bottom: 1px solid ${({ theme }) => theme.colors.outlineGray};
+  cursor: pointer;
+`;
+
+const LeftSection = styled.div`
+  display: flex;
 `;
 
 const Poster = styled.img`
@@ -13,7 +22,7 @@ const Poster = styled.img`
   max-width: 5rem;
   height: auto;
   aspect-ratio: 0.8;
-  border-radius: 5px;
+  border-radius: 0.5rem;
   border: 1px solid ${({ theme }) => theme.colors.outlineGray};
   object-fit: cover;
 `;
@@ -21,7 +30,7 @@ const Poster = styled.img`
 const Info = styled.div`
   display: flex;
   flex-direction: column;
-  margin-left: 1rem; /* 12px */
+  margin: 0.5rem 1rem;
   flex: 1;
 `;
 
@@ -30,7 +39,7 @@ const Title = styled.div`
   font-weight: ${({ theme }) => theme.fontWeights.semibold};
   color: ${({ theme }) => theme.colors.black};
   display: -webkit-box;
-  -webkit-line-clamp: 2;      /* 최대 줄 수 */
+  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -51,19 +60,37 @@ const Date = styled.div`
   color: ${({ theme }) => theme.colors.darkGray};
 `;
 
-export default function PerformanceCardHorizontal({ performance }) {
-  const { posterUrl, title, venue, date } = performance;
+const RightSectionWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+`;
 
-  console.log("포스터 URL:", posterUrl);
+export default function PerformanceListCard({ performance, onToggleLike }) {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const { posterUrl, title, venue, date, isLiked } = performance;
+
+  const handleClick = () => {
+    navigate(`/performance/${performance.id}`);
+  };
 
   return (
-    <Card>
-      <Poster src={posterUrl} alt={title} referrerPolicy="no-referrer" />
-      <Info>
-        <Title>{title}</Title>
-        <Venue>{venue}</Venue>
-        <Date>{date}</Date>
-      </Info>
+    <Card onClick={handleClick}>
+      <LeftSection>
+        <Poster src={posterUrl} alt={title} referrerPolicy="no-referrer" />
+        <Info>
+          <Title>{title}</Title>
+          <Venue>{venue}</Venue>
+          <Date>{date}</Date>
+        </Info>
+      </LeftSection>
+      {location.pathname === '/favorite' && (
+        <RightSectionWrapper onClick={(e) => e.stopPropagation()}>
+          <HeartButton isLiked={isLiked} onClick={() => onToggleLike(performance.id)} />
+        </RightSectionWrapper>
+      )}
     </Card>
   );
 }

@@ -8,7 +8,7 @@ const Button = styled.button`
     height: 2rem;
     padding: 0 0.75rem;
     font-size: ${({ theme }) => theme.fontSizes.sm};
-    font-weight: 400;
+    font-weight: ${({ theme }) => theme.fontWeights.regular};
     color: ${({ theme }) => theme.colors.black};
     border: 1.5px solid ${({ theme }) => theme.colors.outlineGray};
     border-radius: 1.5rem;
@@ -23,7 +23,7 @@ const Button = styled.button`
         width: 1rem;
         height: 1rem;
         margin-left: 6px;
-  }
+    }
 `;
 
 const FilterButton = ({ children, onClick }) => {
