@@ -1,0 +1,17 @@
+/* src/components/performance/RecommendedConcertList.module.css */
+.sectionContainer {
+  margin-top: 24px;
+}
+
+.sectionTitle {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1C1C1E;
+  margin-bottom: 8px;
+}
+
+.listContainer {
+  display: flex;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}

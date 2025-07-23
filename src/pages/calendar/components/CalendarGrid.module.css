@@ -1,0 +1,63 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+}
+
+.dayLabel {
+  text-align: center;
+  font-weight: bold;
+}
+
+.day {
+  width: 36px;
+  height: 36px;
+  line-height: 36px;
+  text-align: center;
+  border-radius: 50%;
+  cursor: pointer;
+  margin: auto;
+  position: relative;
+}
+
+.blank {
+  width: 36px;
+  height: 36px;
+  margin: auto;
+}
+
+.concert {
+  border: 2px solid orange;
+}
+
+.selectedOnly {
+  border: 2px solid orange;
+  color: orange;
+}
+
+.selectedAndHasConcert {
+  background: orange;
+  color: white;
+  border-radius: 50%;
+}
+
+.today {
+  font-size: 14px;
+  color: black;
+}
+
+.redDot {
+  width: 6px;
+  height: 6px;
+  background: red;
+  border-radius: 50%;
+  position: absolute;
+  top: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.dayNumber {
+  display: block;
+  z-index: 2;
+}
