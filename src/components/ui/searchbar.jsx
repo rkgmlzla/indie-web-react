@@ -2,23 +2,22 @@ import React, { useState } from 'react';
 import { Search } from 'lucide-react';
 import './searchbar.css';
 
-function SearchBar({ onSearch, defaultValue = '' }) {
-  const [keyword, setKeyword] = useState(defaultValue);
+function SearchBar({ value, onChange, onSearch }) {
   const handleSearch = () => {
-    const trimmed = keyword.trim();
+    const trimmed = value.trim();
     if (!trimmed) return;
 
-    onSearch(trimmed); // 상위로 검색어 전달
-    // setKeyword('');
+    onSearch(trimmed);
   };
+
   return (
     <div className="search-bar">
       <div className="search-bar__input">
         <input
           type="text"
           placeholder="검색어를 입력하세요"
-          value={keyword}
-          onChange={(e) => setKeyword(e.target.value)}
+          value={value} // ⬅️ 부모로부터 전달된 상태
+          onChange={onChange} // ⬅️ 부모에서 setKeyword
           onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
         />
         <Search className="search" onClick={handleSearch} />

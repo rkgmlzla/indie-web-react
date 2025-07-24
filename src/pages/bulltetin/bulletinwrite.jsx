@@ -1,20 +1,27 @@
 import React, { useRef, useState } from 'react';
-import './bulletin.css';
-function Bulletin() {
+import { ChevronLeft } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import './bulletinwrite.css';
+
+function BulletinWrite() {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [images, setImages] = useState([]);
   const isValid = title.trim().length > 0 && content.trim().length > 0;
+
   const textareaRef = useRef(null);
+  const navigate = useNavigate();
+
   const handleChange = (e) => {
     setContent(e.target.value);
 
     const textarea = textareaRef.current;
     if (textarea) {
-      textarea.style.height = 'auto'; // 초기화
-      textarea.style.height = textarea.scrollHeight + 'px'; // 실제 높이만큼 확장
+      textarea.style.height = 'auto';
+      textarea.style.height = textarea.scrollHeight + 'px';
     }
   };
+
   const handleImageUpload = (e) => {
     const selected = Array.from(e.target.files);
     const filtered = selected.filter((file) => file.type.startsWith('image/'));
@@ -23,6 +30,7 @@ function Bulletin() {
       alert('사진은 최대 5장까지 업로드 가능합니다.');
       return;
     }
+
     setImages((prev) => [...prev, ...filtered]);
   };
 
@@ -32,9 +40,13 @@ function Bulletin() {
 
   return (
     <div className="freeboard__write">
-      <header>자유게시판</header>
+      <header className="write__header">
+        <ChevronLeft className="back" onClick={() => navigate(-1)} />
+        <h2>자유게시판</h2>
+      </header>
 
       <input
+        className="title-input"
         placeholder="제목을 입력해주세요."
         value={title}
         onChange={(e) => setTitle(e.target.value)}
@@ -57,6 +69,7 @@ function Bulletin() {
         ))}
         {images.length < 5 && (
           <label className="upload-btn">
+            + 이미지 업로드
             <input
               type="file"
               accept="image/*"
@@ -77,4 +90,4 @@ function Bulletin() {
   );
 }
 
-export default Bulletin;
+export default BulletinWrite;
