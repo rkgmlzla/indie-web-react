@@ -1,0 +1,54 @@
+.artist-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 24px;
+  .artist-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    .artist-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .artist-buttons {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      .notify {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 12px;
+        padding: 4px 10px;
+        border: 1px solid #ccc;
+        border-radius: 999px;
+        background-color: white;
+        color: #333;
+        cursor: pointer;
+
+        svg {
+          stroke-width: 2;
+        }
+
+        &.on {
+          color: #9a1f24;
+          border-color: #9a1f24;
+        }
+      }
+
+      .heart {
+        cursor: pointer;
+        color: #9a1f24;
+        stroke-width: 2;
+        transition: fill 0.2s;
+
+        &.on {
+          fill: #9a1f24;
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,35 @@
+/* src/components/performance/ConcertCard.module.css */
+.cardContainer {
+  display: flex;
+  flex-direction: column;
+  width: 90px;
+  margin-right: 12px;
+}
+
+.poster {
+  width: 90px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 6px;
+  margin-bottom: 4px;
+}
+
+.title {
+  font-size: 10px;
+  font-weight: 700;
+  color: #1C1C1E;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.place {
+  font-size: 8px;
+  color: #FF4B4B4B;
+  margin-top: 2px;
+}
+
+.date {
+  font-size: 8px;
+  color: #FF4B4B4B;
+  margin-top: 1px;
+}

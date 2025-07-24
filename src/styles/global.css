@@ -22,4 +22,49 @@ body {
 /* 앱 전체 컨테이너 (#root) */
 #root {
   width: 100%;
+  padding: 20px;
+}
+
+/* 추가된 캘린더 페이지 기본 스타일 */
+.calendar-page {
+  padding: 24px;
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.day {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f1f1f1;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.concert-day {
+  background-color: #ff9800;
+}
+
+.empty-day {
+  visibility: hidden;
+}
+
+.concert-list {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
