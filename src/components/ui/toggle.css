@@ -1,0 +1,19 @@
+.toggle-btn {
+  width: 48px;
+  height: 28px;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.toggle-btn.on {
+  background-color: white;
+  color: #b00020;
+  border: 2px solid #b00020;
+}
+
+.toggle-btn.off {
+  background-color: white;
+  color: gray;
+  border: 2px solid gray;
+}

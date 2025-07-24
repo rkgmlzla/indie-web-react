@@ -1,3 +1,4 @@
+
 // src/App.js
 import React, { useEffect } from 'react';
 import Header from './components/layout/Header';
@@ -14,12 +15,16 @@ import MapWideCard from './pages/map/components/MapWideCard';
 import samplePosterItem1 from './assets/samplePosterItem1.png';
 import samplePosterItem2 from './assets/samplePosterItem2.png';
 import samplePosterItem3 from './assets/samplePosterItem3.png';
+import { Routes, Route } from 'react-router-dom';
+import routes from './routes';
 
 function App() {
   return (
-    <div>
-      <MapPage />
-    </div>
+    <Routes>
+      {routes.map(({ path, element }, idx) => (
+        <Route key={idx} path={path} element={element} />
+      ))}
+    </Routes>
   );
 }
 

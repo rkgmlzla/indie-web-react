@@ -1,0 +1,107 @@
+.freeboard__write {
+  padding: 16px;
+  font-family: 'Pretendard', sans-serif;
+  min-height: 100vh;
+}
+
+.write__header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.write__header h2 {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.back {
+  width: 28px;
+  height: 28px;
+  color: black;
+  cursor: pointer;
+}
+
+/* 제목 input */
+.title-input {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  border: none;
+  border-bottom: 1px solid #ccc;
+  margin-bottom: 12px;
+  background: transparent;
+}
+
+/* 내용 textarea */
+textarea {
+  width: 100%;
+  padding: 12px;
+  font-size: 14px;
+  border: none;
+  border-bottom: 1px solid #ccc;
+  resize: none;
+  min-height: 120px;
+  background: transparent;
+}
+
+/* 이미지 미리보기 */
+.image-preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 16px 0;
+}
+
+.thumb {
+  position: relative;
+}
+
+.thumb img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.thumb button {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #ff4444;
+  border: none;
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+
+/* 업로드 버튼 */
+.upload-btn {
+  padding: 8px 12px;
+  background: #f1f1f1;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+/* 완료 버튼 */
+.submit {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  background: #ddd;
+  color: #777;
+  font-weight: bold;
+  font-size: 15px;
+  cursor: not-allowed;
+}
+
+.submit.active {
+  background: #f4511e;
+  color: white;
+  cursor: pointer;
+}
