@@ -5,6 +5,7 @@ import Header from './components/layout/Header';
 import Header_main from './components/layout/Header_main';
 import Header_back from './components/layout/Header_back';
 import ListVenue from './pages/venue/ListVenue';
+import DetailVenue from './pages/venue/DetailVenue';
 import RegionSelectButton from './pages/venue/components/RegionSelectButton';
 import RegionSelectSheet from './pages/venue/components/RegionSelectSheet';
 import MapPage from './pages/map/MapPage';
@@ -29,3 +30,10 @@ function App() {
 }
 
 export default App;
+
+const profileData = { 
+  profileImg: sampleVenueItem4,
+  title: '언드',
+  instagram: '@und_space',
+  address: '경남 거제시 거제대로 3734 지하1층 eeeeeeed  eeeeeddddddddeeeeeee',
+};
