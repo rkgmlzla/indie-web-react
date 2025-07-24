@@ -1,0 +1,18 @@
+.sectionContainer {
+  margin-top: 24px;
+}
+
+.sectionTitle {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1C1C1E;
+  margin-bottom: 8px;
+}
+
+.listContainer {
+  display: flex;
+  overflow-x: auto;
+  flex-wrap: nowrap;           /* 한 줄로 고정 */
+  padding-bottom: 8px;
+  gap: 12px;                   /* 카드 사이 간격 */
+}
