@@ -15,7 +15,7 @@ export const theme = {
 
     // 테마 색상
     themeOrange: '#F14F21',
-    themeOrangeAlpha: '#4DF14F21', // alpha 포함
+    themeOrangeAlpha: '#F14F214D', // alpha 포함
 
     // 텍스트 계열
     textPrimary: '#FF1C1C1E',
@@ -25,6 +25,7 @@ export const theme = {
 
   // 폰트 크기/굵기, 여백 등
   fontSizes: {
+    xxs: '0.625rem',  // 10px
     xs: '0.75rem',    // 12px
     sm: '0.875rem',   // 14px
     base: '1rem',     // 16px
