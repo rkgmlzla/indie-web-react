@@ -3,10 +3,10 @@ import styled from 'styled-components';
 
 const CardWrapper = styled.div`
   display: flex;
-  align-items: center; 
-  padding: 12px 4px 0 4px; 
+  align-items: center;
+  padding: 12px 4px 0 4px;
   gap: 12px;
-  height: 56px; 
+  height: 56px;
 `;
 
 const ProfileImage = styled.img`
@@ -27,9 +27,9 @@ const ArtistName = styled.div`
   flex: 1;
 `;
 
-function VenueItem({ image, name }) {
+function VenueItem({ image, name, onClick }) {
   return (
-    <CardWrapper>
+    <CardWrapper onClick={onClick}>
       <ProfileImage src={image} alt={name} />
       <ArtistName>{name}</ArtistName>
     </CardWrapper>

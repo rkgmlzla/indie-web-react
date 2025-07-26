@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react';
 import { ChevronLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import './bulletinwrite.css';
+import Header from '../../components/layout/Header';
 
 function BulletinWrite() {
   const [title, setTitle] = useState('');
@@ -37,14 +38,19 @@ function BulletinWrite() {
   const removeImage = (index) => {
     setImages(images.filter((_, i) => i !== index));
   };
+  const handleSubmit = () => {
+    // 🔸 여기에 게시글 저장 로직을 넣을 수 있음 (예: Supabase insert 등)
+    console.log('제목:', title);
+    console.log('내용:', content);
+    console.log('업로드된 이미지:', images);
 
+    // 게시 후 자유게시판으로 이동
+    navigate('/bulletinboard');
+  };
   return (
     <div className="freeboard__write">
-      <header className="write__header">
-        <ChevronLeft className="back" onClick={() => navigate(-1)} />
-        <h2>자유게시판</h2>
-      </header>
-
+      <Header title="자유게시판" showBack showSearch={false} showMenu={false} />
+      <div style={{ height: '30px' }} />
       <input
         className="title-input"
         placeholder="제목을 입력해주세요."
@@ -83,7 +89,8 @@ function BulletinWrite() {
 
       <button
         disabled={!isValid}
-        className={isValid ? 'submit active' : 'submit'}>
+        className={isValid ? 'submit active' : 'submit'}
+        onClick={handleSubmit}>
         완료
       </button>
     </div>

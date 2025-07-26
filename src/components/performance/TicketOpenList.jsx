@@ -1,11 +1,17 @@
 // src/components/performance/TicketOpenList.jsx
-import React from "react";
-import styles from "./TicketOpenList.module.css";
-import TicketOpenCard from "./TicketOpenCard";
-import { performances } from "../../data/performanceList_home";
+import React from 'react';
+import styles from './TicketOpenList.module.css';
+import TicketOpenCard from './TicketOpenCard';
+import { performanceSampleData } from '../../data/performanceSampleData';
+import { useNavigate } from 'react-router-dom';
 
 const TicketOpenList = () => {
-  const ticketOpenData = performances.filter(p => p.ticketOpenDate);
+  const navigate = useNavigate();
+
+  const handleClick = (id) => {
+    navigate(`/performance/${id}`);
+  };
+  const ticketOpenData = performanceSampleData.filter((p) => p.ticketOpenDate);
 
   return (
     <div className={styles.sectionContainer}>
@@ -18,6 +24,7 @@ const TicketOpenList = () => {
             posterUrl={item.posterUrl}
             place={item.place}
             ticketOpenDate={item.ticketOpenDate}
+            onClick={() => handleClick(item.id)}
           />
         ))}
       </div>

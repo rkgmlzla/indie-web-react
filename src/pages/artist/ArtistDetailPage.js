@@ -7,105 +7,120 @@ import HeartButton from '../../components/common/HeartButton';
 import NotifyButton from '../../components/common/NotifyButton';
 import PerformanceTitleDateCard from '../../components/performance/PerformanceTitleDateCard';
 import Divider from '../../components/common/Divider';
+import Header from '../../components/layout/Header';
 
 export default function ArtistDetailPage() {
-    const navigate = useNavigate();
-    const now = new Date();
+  const navigate = useNavigate();
+  const now = new Date();
 
-    const { id } = useParams();
-    const artist = artistSampleData.find((a) => String(a.id) === id);
+  const { id } = useParams();
+  const artist = artistSampleData.find((a) => String(a.id) === id);
 
-    const [isLiked, setIsLiked] = useState(artist?.isLiked || false);
-    const [isNotified, setIsNotified] = useState(artist?.isNotified || false);
+  const [isLiked, setIsLiked] = useState(artist?.isLiked || false);
+  const [isNotified, setIsNotified] = useState(artist?.isNotified || false);
 
-    const toggleLike = () => setIsLiked((prev) => !prev);
-    const toggleNotify = () => setIsNotified((prev) => !prev);
+  const toggleLike = () => setIsLiked((prev) => !prev);
+  const toggleNotify = () => setIsNotified((prev) => !prev);
 
-    const scheduledPerformances = performanceSampleData.filter((p) =>
-        p.artistIds?.includes(artist.id) && new Date(p.date) >= new Date()
-    );
-    const pastPerformances = performanceSampleData.filter((p) =>
-        p.artistIds?.includes(artist.id) && new Date(p.date) < new Date()
-    );
+  const scheduledPerformances = performanceSampleData.filter(
+    (p) => p.artistIds?.includes(artist.id) && new Date(p.date) >= new Date()
+  );
+  const pastPerformances = performanceSampleData.filter(
+    (p) => p.artistIds?.includes(artist.id) && new Date(p.date) < new Date()
+  );
 
+  if (!artist) return <div>아티스트 정보를 찾을 수 없습니다.</div>;
 
-    if (!artist) return <div>아티스트 정보를 찾을 수 없습니다.</div>;
+  return (
+    <>
+      <Header title="아티스트" initialSearchTab="아티스트" />
+      <div style={{ height: '56px' }} />
+      <Container>
+        <ProfileSection>
+          <ProfileWrapper>
+            <ProfileImage src={artist.profileImageUrl} alt={artist.name} />
+            <StyledHeartButton isLiked={isLiked} onClick={toggleLike} />
+          </ProfileWrapper>
+          <ProfileInfo>
+            <Name>{artist.name}</Name>
+            <NotifyButton
+              isNotified={isNotified}
+              onClick={toggleNotify}
+              label="공연알림"
+            />
+          </ProfileInfo>
+        </ProfileSection>
 
+        <Divider />
 
-    return (
-        <Container>
-            <ProfileSection>
-                <ProfileWrapper>
-                    <ProfileImage src={artist.profileImageUrl} alt={artist.name} />
-                    <StyledHeartButton isLiked={isLiked} onClick={toggleLike} />
-                </ProfileWrapper>
-                <ProfileInfo>
-                    <Name>{artist.name}</Name>
-                    <NotifyButton isNotified={isNotified} onClick={toggleNotify} label="공연알림" />
-                </ProfileInfo>
-            </ProfileSection>
+        <InfoSection>
+          <LabelRow>
+            <Label>스포티파이</Label>
+            <Value>
+              <a
+                href={`https:///open.spotify.com/artist/${artist.spotify}`}
+                target="_blank"
+                rel="noreferrer">
+                바로가기
+              </a>
+            </Value>
+          </LabelRow>
 
-            <Divider />
+          <LabelRow>
+            <Label>인스타그램</Label>
+            <Value>
+              <a
+                href={`https://instagram.com/${artist.instagram}`}
+                target="_blank"
+                rel="noreferrer">
+                @{artist.instagram}
+              </a>
+            </Value>
+          </LabelRow>
 
-            <InfoSection>
-                <LabelRow>
-                    <Label>스포티파이</Label>
-                    <Value>
-                        <a href={`https:///open.spotify.com/artist/${artist.spotify}`} target="_blank" rel="noreferrer">바로가기</a>
-                    </Value>
-                </LabelRow>
+          <PerformanceSection>
+            <Label>예정 공연</Label>
+            <HorizontalScroll>
+              {scheduledPerformances.map((performance) => (
+                <PerformanceTitleDateCard
+                  key={performance.id}
+                  performance={performance}
+                  onClick={() => navigate(`/performance/${performance.id}`)}
+                />
+              ))}
+            </HorizontalScroll>
+          </PerformanceSection>
 
-                <LabelRow>
-                    <Label>인스타그램</Label>
-                    <Value>
-                        <a href={`https://instagram.com/${artist.instagram}`} target="_blank" rel="noreferrer">
-                            @{artist.instagram}
-                        </a>
-                    </Value>
-                </LabelRow>
-
-                <PerformanceSection>
-                    <Label>예정 공연</Label>
-                    <HorizontalScroll>
-                        {scheduledPerformances.map((performance) => (
-                            <PerformanceTitleDateCard
-                                key={performance.id}
-                                performance={performance}
-                                onClick={() => navigate(`/performance/${performance.id}`)}
-                            />
-                        ))}
-                    </HorizontalScroll>
-                </PerformanceSection>
-
-                <PerformanceSection>
-                    <Label>지난 공연</Label>
-                    <HorizontalScroll>
-                        {pastPerformances.map((performance) => (
-                            <PerformanceTitleDateCard
-                                key={performance.id}
-                                performance={performance}
-                                onClick={() => navigate(`/performance/${performance.id}`)}
-                            />
-                    ))}
-                    </HorizontalScroll>
-                </PerformanceSection>
-            </InfoSection>
-        </Container>
-    );
+          <PerformanceSection>
+            <Label>지난 공연</Label>
+            <HorizontalScroll>
+              {pastPerformances.map((performance) => (
+                <PerformanceTitleDateCard
+                  key={performance.id}
+                  performance={performance}
+                  onClick={() => navigate(`/performance/${performance.id}`)}
+                />
+              ))}
+            </HorizontalScroll>
+          </PerformanceSection>
+        </InfoSection>
+      </Container>
+    </>
+  );
 }
 
 const Container = styled.div`
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 `;
 
 const ProfileSection = styled.div`
-    display: flex;
-    align-items: center;
-    gap: 1.25rem;
-    padding: 0.5rem 0;
-    padding: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 0.5rem 0;
+  padding: 1.25rem;
 `;
 
 const ProfileWrapper = styled.div`
@@ -116,11 +131,11 @@ const ProfileWrapper = styled.div`
 `;
 
 const ProfileImage = styled.img`
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 1px solid ${({ theme }) => theme.colors.outlineGray};
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid ${({ theme }) => theme.colors.outlineGray};
 `;
 
 const StyledHeartButton = styled(HeartButton)`
@@ -131,21 +146,21 @@ const StyledHeartButton = styled(HeartButton)`
 `;
 
 const ProfileInfo = styled.div`
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 0.75rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.75rem;
 `;
 
 const Name = styled.div`
-    font-size: ${({ theme }) => theme.fontSizes.lg};
-    font-weight: ${({ theme }) => theme.fontWeights.semibold};
-    color: ${({ theme }) => theme.colors.black};
+  font-size: ${({ theme }) => theme.fontSizes.lg};
+  font-weight: ${({ theme }) => theme.fontWeights.semibold};
+  color: ${({ theme }) => theme.colors.black};
 `;
 
 const InfoSection = styled.div`
-    padding: 1.25rem;
+  padding: 1.25rem;
 `;
 
 const LabelRow = styled.div`
@@ -157,10 +172,10 @@ const LabelRow = styled.div`
 `;
 
 const Label = styled.div`
-    font-size: ${({ theme }) => theme.fontSizes.md};
-    font-weight: ${({ theme }) => theme.fontWeights.semibold};
-    color: ${({ theme }) => theme.colors.darkGray};
-    margin: 0.5rem 0;
+  font-size: ${({ theme }) => theme.fontSizes.md};
+  font-weight: ${({ theme }) => theme.fontWeights.semibold};
+  color: ${({ theme }) => theme.colors.darkGray};
+  margin: 0.5rem 0;
 `;
 
 const Value = styled.div`
@@ -174,10 +189,10 @@ const PerformanceSection = styled.div`
 `;
 
 const HorizontalScroll = styled.div`
-    display: flex;
-    overflow-x: auto;
-    gap: 1rem;
-    &::-webkit-scrollbar {
-        display: none;
-    }
+  display: flex;
+  overflow-x: auto;
+  gap: 1rem;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;

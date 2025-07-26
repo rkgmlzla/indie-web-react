@@ -4,7 +4,7 @@ import styled from 'styled-components';
 export default function PerformanceTitleDateCard({ performance, onClick }) {
   return (
     <Card onClick={onClick}>
-      <Poster src={performance.imageUrl} alt={performance.title} />
+      <Poster src={performance.posterUrl} alt={performance.title} />
       <Title>{performance.title}</Title>
       <Date>{performance.date}</Date>
     </Card>
@@ -17,7 +17,7 @@ const Card = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-    flex-shrink: 0;
+  flex-shrink: 0;
 `;
 
 const Poster = styled.img`

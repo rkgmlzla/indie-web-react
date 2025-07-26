@@ -3,6 +3,7 @@ import { Settings, Pencil, User } from 'lucide-react';
 import './Mypage.css';
 import Toggle from '../../components/ui/toggle';
 import { supabase } from '../../lib/supabase';
+import Header from '../../components/layout/Header';
 
 function MyPage() {
   const [userName, setUserName] = useState('');
@@ -31,6 +32,8 @@ function MyPage() {
   // 프로필
   return (
     <div className="page">
+      <Header title="마이페이지" showBack showSearch={false} showMenu={false} />
+      <div style={{ height: '30px' }} />
       <div className="profile">
         <div className="profile__container">
           {/* 프로필 사진 */}
