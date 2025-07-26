@@ -8,11 +8,10 @@
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^13.5.0",
-
-    "framer-motion": "^12.23.7",
-    "dayjs": "^1.11.13",
     "date-fns": "^4.1.0",
->>>>>>> main
+    "dayjs": "^1.11.13",
+    "framer-motion": "^12.23.7",
+    "lucide-react": "^0.525.0",
     "react": "^19.1.0",
     "react-calendar": "^6.0.0",
     "react-dom": "^19.1.0",
