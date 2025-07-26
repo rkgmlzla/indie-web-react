@@ -6,17 +6,19 @@ import styled from 'styled-components';
 import { performanceSampleData } from '../../data/performanceSampleData';
 import { artistSampleData } from '../../data/artistSampleData';
 import getDday from '../../utils/getDday';
-import Divider from '../../components/common/Divider'
+import Divider from '../../components/common/Divider';
 import NotifyButton from '../../components/common/NotifyButton';
 import ArtistProfileCard from '../../components/artist/ArtistProfileCard';
-
+import Header from '../../components/layout/Header';
 import HeartOutlineIconIcon from '../../assets/icons/icon_heart_outline.svg';
 import HeartFilledIcon from '../../assets/icons/icon_heart_filled.svg';
 import ChevronRightIcon from '../../assets/icons/icon_go.svg';
+import { venueSampleData } from '../../data/venueSampleData';
 
 export default function PerformanceDetailPage() {
   const { id } = useParams();
   const performance = performanceSampleData.find((p) => String(p.id) === id);
+  const venue = venueSampleData.find((v) => v.id === performance.venueIds?.[0]);
 
   const navigate = useNavigate();
 
@@ -33,88 +35,103 @@ export default function PerformanceDetailPage() {
     setIsNotified((prev) => !prev);
   };
 
-  if (!performance) return <div>공연 정보를 찾을 수 없습니다.</div>;
-
   return (
-    <Container>
-      <PosterSection>
-        <PosterWrapper>
-          <Poster src={performance.imageUrl} alt="poster" />
-          <LikeButton onClick={toggleLike} liked={isLiked}>
-            <HeartIcon isLiked={isLiked} />
-            <LikeCount>{likeCount}</LikeCount>
-          </LikeButton>
-        </PosterWrapper>
-        <InfoWrapper>
-          <Dday>{getDday(performance.date)}</Dday>
-          <Title>{performance.title}</Title>
-          <NotifyButton isNotified={isNotified} onClick={toggleNotify} label="예매알림" />
-        </InfoWrapper>
-      </PosterSection>
+    <>
+      <Header title="공연" />
+      <div style={{ height: '56px' }} />
+      <Container>
+        <PosterSection>
+          <PosterWrapper>
+            <Poster src={performance.posterUrl} alt="poster" />
+            <LikeButton onClick={toggleLike} liked={isLiked}>
+              <HeartIcon isLiked={isLiked} />
+              <LikeCount>{likeCount}</LikeCount>
+            </LikeButton>
+          </PosterWrapper>
+          <InfoWrapper>
+            <Dday>{getDday(performance.date)}</Dday>
+            <Title>{performance.title}</Title>
+            <NotifyButton
+              isNotified={isNotified}
+              onClick={toggleNotify}
+              label="예매알림"
+            />
+          </InfoWrapper>
+        </PosterSection>
 
-      <Divider />
+        <Divider />
 
-      <InfoSection>
-        <LabelRow>
-          <Label>공연일시</Label>
-          <Value>{performance.date} {performance.time}</Value>
-        </LabelRow>
+        <InfoSection>
+          <LabelRow>
+            <Label>공연일시</Label>
+            <Value>
+              {performance.date} {performance.time}
+            </Value>
+          </LabelRow>
 
-        <LabelRow>
-          <Label>공연장</Label>
-          <VenueValue onClick={() => navigate(`/venue/${performance.venueId || 1}`)}>
-            {performance.venue}
-            <ChevronIcon src={ChevronRightIcon} alt="자세히 보기" />
-          </VenueValue>
-        </LabelRow>
+          <LabelRow>
+            <Label>공연장</Label>
+            <VenueValue
+              onClick={() =>
+                navigate(`/venue/${performance.venueIds?.[0] || 1}`)
+              }>
+              {venue?.title || '공연장 정보 없음'}
+              <ChevronIcon src={ChevronRightIcon} alt="자세히 보기" />
+            </VenueValue>
+          </LabelRow>
 
-        <LabelRow style={{ display: 'block' }}>
-          <Label>출연진</Label>
-          <ScrollContainer>
-            {artistSampleData.map((artist) => (
-              <ArtistProfileCard
-                key={artist.id}
-                artist={artist}
-                onClick={() => navigate(`/artist/${artist.id}`)}
-              />
-            ))}
-          </ScrollContainer>
-        </LabelRow>
+          <LabelRow style={{ display: 'block' }}>
+            <Label>출연진</Label>
+            <ScrollContainer>
+              {artistSampleData
+                .filter((artist) => performance.artistIds.includes(artist.id))
+                .map((artist) => (
+                  <ArtistProfileCard
+                    key={artist.id}
+                    artist={artist}
+                    onClick={() => navigate(`/artist/${artist.id}`)}
+                  />
+                ))}
+            </ScrollContainer>
+          </LabelRow>
 
-        <LabelRow>
-          <Label>티켓 가격</Label>
-          <Value>
-            {performance.price?.toLocaleString()}원
-            {performance.priceOnsite && (
-              <>(현장 가격: {performance.priceOnsite.toLocaleString()}원)</>
-            )}
-          </Value>
-        </LabelRow>
+          <LabelRow>
+            <Label>티켓 가격</Label>
+            <Value>
+              {performance.price?.toLocaleString()}원
+              {performance.priceOnsite && (
+                <>(현장 가격: {performance.priceOnsite.toLocaleString()}원)</>
+              )}
+            </Value>
+          </LabelRow>
 
-        <LabelRow>
-          <Label>티켓 오픈</Label>
-          <Value>{performance.ticketOpenDate} {performance.ticketOpenTime}</Value>
-        </LabelRow>
+          <LabelRow>
+            <Label>티켓 오픈</Label>
+            <Value>
+              {performance.ticketOpenDate} {performance.ticketOpenTime}
+            </Value>
+          </LabelRow>
 
-        <LabelRow>
-          <Label>상세 정보</Label>
-          <Value>
-            <a href={performance.detailLink} target="_blank" rel="noreferrer">
-              {performance.detailLink}
-            </a>
-          </Value>
-        </LabelRow>
-      </InfoSection>
-    </Container>
+          <LabelRow>
+            <Label>상세 정보</Label>
+            <Value>
+              <a href={performance.detailLink} target="_blank" rel="noreferrer">
+                {performance.detailLink}
+              </a>
+            </Value>
+          </LabelRow>
+        </InfoSection>
+      </Container>
+    </>
   );
 }
 
 const Container = styled.div`
-    display: flex;
-    flex-direction: column;
-    max-width: ${({ theme }) => theme.layout.maxWidth};
-    margin: 0 auto;
-    background-color: ${({ theme }) => theme.colors.bgWhite};
+  display: flex;
+  flex-direction: column;
+  max-width: ${({ theme }) => theme.layout.maxWidth};
+  margin: 0 auto;
+  background-color: ${({ theme }) => theme.colors.bgWhite};
 `;
 
 const PosterSection = styled.div`
@@ -130,7 +147,6 @@ const PosterWrapper = styled.div`
   align-items: center;
   gap: 0.5rem;
 `;
-
 
 const Poster = styled.img`
   width: 20vw;
@@ -188,7 +204,7 @@ const Title = styled.h1`
   font-weight: ${({ theme }) => theme.fontWeights.semibold};
   margin: 0.5rem 0;
   display: -webkit-box;
-  -webkit-line-clamp: 2;      /* 최대 줄 수 */
+  -webkit-line-clamp: 2; /* 최대 줄 수 */
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;

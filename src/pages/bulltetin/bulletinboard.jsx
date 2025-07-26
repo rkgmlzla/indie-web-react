@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { dummyPosts } from '../../data/post';
 import PostItem from '../../components/ui/postitem';
-import { Pencil, Search, ChevronLeft } from 'lucide-react';
+import Header from '../../components/layout/Header';
+import { Pencil } from 'lucide-react';
 import './bulletinboard.css';
 
 function BulletinBoard() {
@@ -12,24 +13,16 @@ function BulletinBoard() {
   // 필터에 따라 게시글 선택
   const filteredPosts =
     filter === 'myPosts'
-      ? dummyPosts.slice(0, 3) // 예시: 앞 3개를 '내가 쓴 글'
+      ? dummyPosts.slice(0, 3)
       : filter === 'myComments'
       ? dummyPosts.filter((post) => post.comments > 0)
-      : dummyPosts; // 전체 보기
+      : dummyPosts;
 
   return (
     <div className="board">
-      <header className="board__header">
-        <ChevronLeft className="back" onClick={() => navigate(-1)} />
-        <h2>자유게시판</h2>
-        <Search
-          className="search"
-          onClick={() =>
-            navigate('/search', { state: { initialTab: '자유게시판' } })
-          }
-        />
-      </header>
-
+      {/* ✅ 공통 헤더 삽입 */}
+      <Header title="자유게시판" initialSearchTab="자유게시판" />
+      <div style={{ height: '30px' }} />
       <div className="board__tabs">
         <button
           className={filter === 'all' ? 'active' : ''}
@@ -47,7 +40,6 @@ function BulletinBoard() {
           내가 댓글 단 글
         </button>
       </div>
-
       <ul className="board__list">
         {filteredPosts.map((post) => (
           <PostItem
@@ -57,7 +49,6 @@ function BulletinBoard() {
           />
         ))}
       </ul>
-
       <button className="write-btn" onClick={() => navigate('/bulletinwrite')}>
         <Pencil size={16} strokeWidth={2} />
         글쓰기

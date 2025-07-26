@@ -4,7 +4,10 @@ import Header from '../../components/layout/Header';
 import Divider from '../../components/common/Divider';
 import IconCopy from '../../assets/icons/icon_y_copy.svg';
 import MapView from '../map/components/MapView';
-import samplePosterItem1 from '../../assets/samplePosterItem1.png';
+import { useParams } from 'react-router-dom';
+import { venueSampleData } from '../../data/venueSampleData';
+import { performanceSampleData } from '../../data/performanceSampleData';
+import { useNavigate } from 'react-router-dom';
 
 const Container = styled.div`
   width: 100%;
@@ -75,7 +78,7 @@ const AddressContentWrapper = styled.div`
 
 const AddressLabelWrapper = styled.div`
   display: flex;
-  align-items: center; 
+  align-items: center;
   flex: 1;
   gap: 8px;
 `;
@@ -132,7 +135,7 @@ const UpcomingCardRow = styled.div`
 const UpcomingCardWrapper = styled.div`
   width: 81px;
   flex-shrink: 0;
-  margin-right: 24px;  
+  margin-right: 24px;
 `;
 
 const Poster = styled.img`
@@ -149,8 +152,8 @@ const Title = styled.div`
   color: ${({ theme }) => theme.colors.darkGray};
   line-height: 18px;
 
-  display: -webkit-box;              
-  -webkit-line-clamp: 2;             
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -168,8 +171,21 @@ const Date = styled.div`
   overflow: hidden;
   text-overflow: ellipsis;
 `;
+const UpcomingCard = ({ data, onClick }) => {
+  return (
+    <div onClick={onClick}>
+      <Poster src={data.posterUrl} alt={data.title} />
+      <Title>{data.title}</Title>
+      <Date>{data.date}</Date>
+    </div>
+  );
+};
+const DetailVenue = () => {
+  const { id } = useParams();
+  const data = venueSampleData.find((v) => String(v.id) === String(id));
 
-const DetailVenue = ({ data }) => {
+  const navigate = useNavigate();
+
   const handleInstagramClick = () => {
     // 추후 Instagram 링크 연결 예정
     console.log('Instagram Clicked');
@@ -183,10 +199,13 @@ const DetailVenue = ({ data }) => {
   const handleCopyClick = () => {
     navigator.clipboard.writeText(data.address);
   };
-
+  const upcomingData = performanceSampleData.filter((p) =>
+    p.venueIds?.includes(Number(id))
+  );
   return (
     <>
       <Header title="공연장 정보" />
+      <div style={{ height: '28px' }} />
       <Container>
         <InnerWrapper>
           <Row>
@@ -208,21 +227,28 @@ const DetailVenue = ({ data }) => {
             <AddressContentWrapper>
               <AddressLabelWrapper>
                 <AddressLabel onClick={handleAddressClick}>
-                    {data.address}
+                  {data.address}
                 </AddressLabel>
-                <CopyIcon src={IconCopy} alt="복사 아이콘" onClick={handleCopyClick} />
+                <CopyIcon
+                  src={IconCopy}
+                  alt="복사 아이콘"
+                  onClick={handleCopyClick}
+                />
               </AddressLabelWrapper>
             </AddressContentWrapper>
           </Row>
           <MapView />
           <UpcomingTag>예정 공연</UpcomingTag>
-            <UpcomingScrollWrapper>
+          <UpcomingScrollWrapper>
             <UpcomingCardRow>
-                {upcomingData.map((item, index) => (
-                <UpcomingCardWrapper key={index}>
-                    <UpcomingCard data={item} />
+              {upcomingData.map((item) => (
+                <UpcomingCardWrapper key={item.id}>
+                  <UpcomingCard
+                    data={item}
+                    onClick={() => navigate(`/performance/${item.id}`)}
+                  />
                 </UpcomingCardWrapper>
-                ))}
+              ))}
             </UpcomingCardRow>
           </UpcomingScrollWrapper>
         </InnerWrapper>
@@ -231,23 +257,4 @@ const DetailVenue = ({ data }) => {
   );
 };
 
-const UpcomingCard = ({ data }) => {
-  return (
-    <div>
-      <Poster src={data.poster} />
-      <Title>{data.title}</Title>
-      <Date>{data.date}</Date>
-    </div>
-  );
-};
-
 export default DetailVenue;
-
-const upcomingData = [
-    { poster: samplePosterItem1, title: '몰라라라ㅏㅏㅏㅏ라랄요', date: '2025.10.05'},
-    { poster: samplePosterItem1, title: '진짜루우우우우우 몰라요', date: '2025.10.05'},
-    { poster: samplePosterItem1, title: '몰라요오오오오오오오오오오오오오오옹', date: '2025.10.05'},
-    { poster: samplePosterItem1, title: '몰라요', date: '2025.10.05'},
-    { poster: samplePosterItem1, title: '몰라요', date: '2025.10.05'},
-    { poster: samplePosterItem1, title: '몰라요', date: '2025.10.05'},
-];

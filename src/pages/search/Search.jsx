@@ -6,6 +6,7 @@ import Tab from '../../components/ui/tab';
 import './Search.css';
 import { dummyPosts } from '../../data/post';
 import PostItem from '../../components/ui/postitem';
+import Header from '../../components/layout/Header';
 
 const dummyConcerts = [
   { title: '공연1', artist: '아티스트1' },
@@ -24,15 +25,24 @@ const dummyArtists = ['김삼문', '김사문', '김오문'];
 function Search() {
   const location = useLocation();
   const navigate = useNavigate();
+
   const searchParams = new URLSearchParams(location.search);
   const keywordFromURL = searchParams.get('keyword') || '';
-  const initialTabFromNav = location.state?.initialTab || '공연/공연장';
 
   const [keyword, setKeyword] = useState(keywordFromURL);
   const [recent, setRecent] = useState([]);
   const [alarmState, setAlarmState] = useState({});
   const [likedState, setLikedState] = useState({});
-  const [tab, setTab] = useState(initialTabFromNav);
+  const [tab, setTab] = useState('공연/공연장');
+
+  // ⬇️ location 변경 시 tab 상태 초기화 (헤더에서 온 경우)
+  useEffect(() => {
+    if (location.state?.initialTab) {
+      setTab(location.state.initialTab);
+    }
+  }, [location.state]);
+
+  // ⬇️ URL이 바뀌었을 때 keyword 반영
   useEffect(() => {
     setKeyword(keywordFromURL);
   }, [keywordFromURL]);
@@ -41,7 +51,11 @@ function Search() {
     setKeyword(newKeyword);
     const updated = [newKeyword, ...recent.filter((w) => w !== newKeyword)];
     setRecent(updated.slice(0, 10));
-    navigate(`/search?keyword=${newKeyword}`);
+
+    // ✅ 현재 탭 정보도 함께 전달
+    navigate(`/search?keyword=${newKeyword}`, {
+      state: { initialTab: tab },
+    });
   };
 
   const handleTabChange = (newTab) => {
@@ -59,27 +73,34 @@ function Search() {
   const matchedConcerts = dummyConcerts.filter(
     (item) => item.title.includes(keyword) || item.artist.includes(keyword)
   );
+
   const matchedVenues = dummyVenues.filter((item) =>
     item.name.includes(keyword)
   );
+
   const matchedArtists = dummyArtists.filter((name) => name.includes(keyword));
+
   const matchedPosts = dummyPosts.filter(
     (post) => post.title.includes(keyword) || post.content.includes(keyword)
   );
+
   return (
     <div className="search-page">
+      <Header title="검색" showBack initialSearchTab={tab} showSearch={false} />
+      <div style={{ height: '30px' }} />
       <Searchbar
-        value={keyword} // ✅ defaultValue ➡ value로 바꾸기
-        onChange={(e) => setKeyword(e.target.value)} // ✅ 입력값 업데이트
+        value={keyword}
+        onChange={(e) => setKeyword(e.target.value)}
         onSearch={handleSearch}
       />
+
       <Tab
         options={['공연/공연장', '아티스트', '자유게시판']}
         activeTab={tab}
         onChange={handleTabChange}
       />
 
-      {/* 최근 검색어 */}
+      {/* 🔍 최근 검색어 */}
       <div className="recent">
         <h4>최근 검색어</h4>
         <div className="recent-list">
@@ -87,12 +108,11 @@ function Search() {
             <div
               key={idx}
               className="recent-chip"
-              onClick={() => handleSearch(word)} // ✅ 클릭 시 검색 실행
-            >
+              onClick={() => handleSearch(word)}>
               {word}
               <button
                 onClick={(e) => {
-                  e.stopPropagation(); // ✅ 삭제버튼 클릭 시 검색 막기
+                  e.stopPropagation();
                   setRecent((prev) => prev.filter((w) => w !== word));
                 }}
                 className="close-btn">
@@ -103,7 +123,7 @@ function Search() {
         </div>
       </div>
 
-      {/* 탭별 결과 */}
+      {/* 🎤 공연/공연장 */}
       {keyword && tab === '공연/공연장' && (
         <div className="search-section">
           <div className="section">
@@ -141,6 +161,7 @@ function Search() {
         </div>
       )}
 
+      {/* 🎤 아티스트 */}
       {keyword && tab === '아티스트' && (
         <div className="artist-list">
           {matchedArtists.length === 0 ? (
@@ -182,6 +203,7 @@ function Search() {
         </div>
       )}
 
+      {/* 📝 자유게시판 */}
       {keyword && tab === '자유게시판' && (
         <div className="freeboard-section">
           {matchedPosts.length === 0 ? (

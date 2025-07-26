@@ -1,50 +1,80 @@
 .pageContainer {
-  padding: 16px;
+  position: relative;
+  padding: 20px 16px 16px 16px;
   background: #ffffff;
-}
 
-.todaySection {
-  margin-bottom: 24px;
-}
+  .header {
+    position: fixed;
+    top: 0;
+    height: 56px;
+    padding: 0 16px;
+    box-sizing: border-box;
+    background-color: #fff;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 100;
 
-.todayHeader {
-  margin-bottom: 8px;
-}
+    .iconButton {
+      background: none;
+      border: none;
+      padding: 4px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+    }
 
-.todayTitle {
-  font-size: 16px;
-  font-weight: 700;
-  color: #1C1C1E;
-}
+    .title {
+      font-size: 18px;
+      font-weight: bold;
+      color: #1c1c1e;
+    }
+  }
 
-.calendarSection {
-  margin-bottom: 24px;
-}
+  .todaySection {
+    margin-bottom: 24px;
 
-.calendarBox {
-  display: flex;
-  align-items: center;
-  background: #ffffff;
-  border: 1px solid #cccccc;
-  border-radius: 8px;
-  padding: 12px;
-  cursor: pointer;
-}
+    .todayHeader {
+      margin-bottom: 8px;
 
-.calendarIcon {
-  width: 20px;
-  height: 20px;
-  margin-right: 12px;
-}
+      .todayTitle {
+        font-size: 16px;
+        font-weight: 700;
+        color: #1c1c1e;
+      }
+    }
+  }
 
-.calendarText {
-  font-size: 14px;
-  color: #1C1C1E;
-  flex: 1;
-}
+  .calendarSection {
+    margin-bottom: 24px;
 
-.calendarGoIcon {
-  width: 12px;
-  height: 12px;
-  margin-left: 8px; /* 아이콘과 텍스트 간격 */
+    .calendarBox {
+      display: flex;
+      align-items: center;
+      background: #ffffff;
+      border: 1px solid #cccccc;
+      border-radius: 8px;
+      padding: 12px;
+      cursor: pointer;
+
+      .calendarIcon {
+        width: 20px;
+        height: 20px;
+        margin-right: 12px;
+      }
+
+      .calendarText {
+        font-size: 14px;
+        color: #1c1c1e;
+        flex: 1;
+      }
+
+      .calendarGoIcon {
+        width: 12px;
+        height: 12px;
+        margin-left: 8px;
+      }
+    }
+  }
 }

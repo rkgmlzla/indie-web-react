@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { ChevronLeft, Search } from 'lucide-react';
 import { dummyPosts } from '../../data/post';
 import './bulletindetail.css';
+import Header from '../../components/layout/Header';
 
 function Bulletindetail() {
   const { id } = useParams();
@@ -36,17 +37,8 @@ function Bulletindetail() {
 
   return (
     <div className="post-detail">
-      {/* 헤더 */}
-      <header className="post-detail__header">
-        <ChevronLeft className="back" onClick={() => navigate(-1)} />
-        <h2>자유게시판</h2>
-        <Search
-          className="search"
-          onClick={() =>
-            navigate('/search', { state: { initialTab: '자유게시판' } })
-          }
-        />
-      </header>
+      <Header title="자유게시판" initialSearchTab="자유게시판" />
+      <div style={{ height: '30px' }} />
 
       {/* 게시글 내용 */}
       {post && (

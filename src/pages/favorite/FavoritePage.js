@@ -6,38 +6,41 @@ import PerformanceListCard from '../../components/performance/PerformanceListCar
 import ArtistListCard from '../../components/artist/ArtistListCard';
 import HeartButton from '../../components/common/HeartButton';
 import NotifyButton from '../../components/common/NotifyButton';
+import Header from '../../components/layout/Header';
 
 export default function FavoritePage() {
-    const [selectedTab, setSelectedTab] = useState('performance');
+  const [selectedTab, setSelectedTab] = useState('performance');
 
-    const [likedPerformances, setLikedPerformances] = useState(
-        performanceSampleData.filter((p) => p.isLiked)
-    );
-    const [likedArtists, setLikedArtists] = useState(
-        artistSampleData.filter((a) => a.isLiked)
-    );
+  const [likedPerformances, setLikedPerformances] = useState(
+    performanceSampleData.filter((p) => p.isLiked)
+  );
+  const [likedArtists, setLikedArtists] = useState(
+    artistSampleData.filter((a) => a.isLiked)
+  );
 
-    const togglePerformanceLike = (id) => {
-        setLikedPerformances((prev) => prev.filter((p) => p.id !== id));
-    };
+  const togglePerformanceLike = (id) => {
+    setLikedPerformances((prev) => prev.filter((p) => p.id !== id));
+  };
 
-    const toggleArtistLike = (id) => {
-        setLikedArtists((prev) => prev.filter((a) => a.id !== id));
-    };
+  const toggleArtistLike = (id) => {
+    setLikedArtists((prev) => prev.filter((a) => a.id !== id));
+  };
 
   return (
     <Container>
+      <Header title="찜 목록" />
+
+      {/* ✅ 헤더 영역 높이 확보 */}
+      <div style={{ height: '30px' }} />
       <TabRow>
         <TabButton
           active={selectedTab === 'performance'}
-          onClick={() => setSelectedTab('performance')}
-        >
+          onClick={() => setSelectedTab('performance')}>
           공연
         </TabButton>
         <TabButton
           active={selectedTab === 'artist'}
-          onClick={() => setSelectedTab('artist')}
-        >
+          onClick={() => setSelectedTab('artist')}>
           아티스트
         </TabButton>
       </TabRow>
@@ -82,13 +85,15 @@ const TabButton = styled.button`
   padding: 0.75rem 1rem;
   font-size: ${({ theme }) => theme.fontSizes.base};
   font-weight: ${({ theme }) => theme.fontWeights.medium};
-  color: ${({ active, theme }) => (active ? theme.colors.textRed : theme.colors.darkGray)};
+  color: ${({ active, theme }) =>
+    active ? theme.colors.textRed : theme.colors.darkGray};
   border: none;
-  border-bottom: ${({ active, theme }) => (active ? `1.5px solid ${theme.colors.textRed}` : 'none')};
+  border-bottom: ${({ active, theme }) =>
+    active ? `1.5px solid ${theme.colors.textRed}` : 'none'};
   background-color: transparent;
 `;
 
 const List = styled.div`
   display: flex;
   flex-direction: column;
-`
+`;
