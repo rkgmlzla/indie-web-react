@@ -45,15 +45,25 @@ function ListVenue() {
     }
   };
 
+  // ✅ 지역 필터링 적용
+  const filteredVenues = venueSampleData.filter((venue) => {
+    return (
+      selectedRegions.includes('전체') || selectedRegions.includes(venue.region)
+    );
+  });
+
   return (
     <PageWrapper>
       <Header title="공연장" initialSearchTab="공연/공연장" />
       <div style={{ height: '30px' }} />
-      <RegionSelectButton onClick={toggleSheet} />
+      <RegionSelectButton
+        onClick={toggleSheet}
+        selectedRegions={selectedRegions}
+      />
       <Divider mt="16px" />
 
       <ScrollableList>
-        {venueSampleData.map((venue) => (
+        {filteredVenues.map((venue) => (
           <VenueItem
             key={venue.id}
             image={venue.profileImg}
