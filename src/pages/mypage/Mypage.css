@@ -46,7 +46,22 @@
         font-size: 16px;
         font-weight: 600;
         color: #1c1c1e;
+        .edit-nickname input {
+          font-size: 14px;
+          padding: 4px 8px;
+          border: 1px solid #ccc;
+          border-radius: 6px;
+          margin-right: 6px;
+        }
 
+        .edit-nickname button {
+          background-color: #f4511e;
+          color: #fff;
+          border: none;
+          border-radius: 4px;
+          padding: 4px 8px;
+          cursor: pointer;
+        }
         .profile__name__edit {
           width: 14px;
           height: 14px;

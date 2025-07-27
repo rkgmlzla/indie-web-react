@@ -7,25 +7,48 @@ import ArtistListCard from '../../components/artist/ArtistListCard';
 import HeartButton from '../../components/common/HeartButton';
 import NotifyButton from '../../components/common/NotifyButton';
 import Header from '../../components/layout/Header';
+import { userartistfavSampleData } from '../../data/userartistfavSampleData';
+import { userperformancefavSampleData } from '../../data/userperformancefavSampleData';
 
 export default function FavoritePage() {
+  const userId = 1;
   const [selectedTab, setSelectedTab] = useState('performance');
 
-  const [likedPerformances, setLikedPerformances] = useState(
-    performanceSampleData.filter((p) => p.isLiked)
+  const likedPerformances = performanceSampleData
+    .filter((p) =>
+      userperformancefavSampleData.some(
+        (f) => f.user_id === userId && f.performance_id === p.id
+      )
+    )
+    .map((p) => ({ ...p, isLiked: true }));
+
+  const likedArtists = artistSampleData
+    .filter((a) =>
+      userartistfavSampleData.some(
+        (f) => f.user_id === userId && f.artist_id === a.id
+      )
+    )
+    .map((a) => ({ ...a, isLiked: true }));
+
+  const [likedPerformanceIds, setLikedPerformanceIds] = useState(
+    likedPerformances.map((p) => p.id)
   );
-  const [likedArtists, setLikedArtists] = useState(
-    artistSampleData.filter((a) => a.isLiked)
+
+  const [likedArtistIds, setLikedArtistIds] = useState(
+    likedArtists.map((a) => a.id)
   );
 
   const togglePerformanceLike = (id) => {
-    setLikedPerformances((prev) => prev.filter((p) => p.id !== id));
+    setLikedPerformanceIds((prev) =>
+      prev.includes(id) ? prev.filter((pid) => pid !== id) : [...prev, id]
+    );
   };
 
   const toggleArtistLike = (id) => {
-    setLikedArtists((prev) => prev.filter((a) => a.id !== id));
+    setLikedArtistIds((prev) =>
+      prev.includes(id) ? prev.filter((aid) => aid !== id) : [...prev, id]
+    );
   };
-
   return (
     <Container>
       <Header title="찜 목록" />
@@ -47,22 +70,26 @@ export default function FavoritePage() {
 
       <List>
         {selectedTab === 'performance' &&
-          likedPerformances.map((performance) => (
-            <PerformanceListCard
-              key={performance.id}
-              performance={performance}
-              onToggleLike={togglePerformanceLike}
-            />
-          ))}
+          likedPerformances
+            .filter((p) => likedPerformanceIds.includes(p.id))
+            .map((performance) => (
+              <PerformanceListCard
+                key={performance.id}
+                performance={performance}
+                onToggleLike={togglePerformanceLike}
+              />
+            ))}
 
         {selectedTab === 'artist' &&
-          likedArtists.map((artist) => (
-            <ArtistListCard
-              key={artist.id}
-              artist={artist}
-              onToggleLike={toggleArtistLike}
-            />
-          ))}
+          likedArtists
+            .filter((a) => likedArtistIds.includes(a.id))
+            .map((artist) => (
+              <ArtistListCard
+                key={artist.id}
+                artist={artist}
+                onToggleLike={toggleArtistLike}
+              />
+            ))}
       </List>
     </Container>
   );

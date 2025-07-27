@@ -4,24 +4,13 @@ import { Bell, BellOff, Heart } from 'lucide-react';
 import Searchbar from '../../components/ui/searchbar';
 import Tab from '../../components/ui/tab';
 import './Search.css';
-import { dummyPosts } from '../../data/post';
 import PostItem from '../../components/ui/postitem';
 import Header from '../../components/layout/Header';
-
-const dummyConcerts = [
-  { title: '공연1', artist: '아티스트1' },
-  { title: '공연2', artist: '아티스트2' },
-  { title: '공연3', artist: '아티스트3' },
-];
-
-const dummyVenues = [
-  { name: '공연장1', address: '주소1' },
-  { name: '공연장2', address: '주소2' },
-  { name: '공연장3', address: '주소3' },
-];
-
-const dummyArtists = ['김삼문', '김사문', '김오문'];
-
+import { performanceSampleData } from '../../data/performanceSampleData';
+import { venueSampleData } from '../../data/venueSampleData';
+import { artistSampleData } from '../../data/artistSampleData';
+import { postSampleData } from '../../data/postSampleData';
+import { userSampleData } from '../../data/userSampleData';
 function Search() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -70,17 +59,21 @@ function Search() {
     setLikedState((prev) => ({ ...prev, [name]: !prev[name] }));
   };
 
-  const matchedConcerts = dummyConcerts.filter(
-    (item) => item.title.includes(keyword) || item.artist.includes(keyword)
+  const matchedConcerts = performanceSampleData.filter((item) =>
+    item.title.includes(keyword)
   );
 
-  const matchedVenues = dummyVenues.filter((item) =>
-    item.name.includes(keyword)
+  const matchedVenues = venueSampleData.filter((venue) =>
+    venue.title.includes(keyword)
   );
 
-  const matchedArtists = dummyArtists.filter((name) => name.includes(keyword));
-
-  const matchedPosts = dummyPosts.filter(
+  const matchedArtists = artistSampleData.filter((artist) =>
+    artist.name.includes(keyword)
+  );
+  const getNicknameById = (uid) => {
+    return userSampleData.find((u) => u.id === uid)?.nickname || '알 수 없음';
+  };
+  const matchedPosts = postSampleData.filter(
     (post) => post.title.includes(keyword) || post.content.includes(keyword)
   );
 
@@ -134,9 +127,31 @@ function Search() {
               </p>
             ) : (
               matchedConcerts.map((item, i) => (
-                <p key={i}>
-                  🎤 {item.title} - {item.artist}
-                </p>
+                <div
+                  key={i}
+                  className="concert-item"
+                  onClick={() => navigate(`/performance/${item.id}`)}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                    cursor: 'pointer',
+                    marginBottom: '12px',
+                  }}>
+                  <img
+                    src={item.posterUrl || 'https://via.placeholder.com/60x80'}
+                    alt={item.title}
+                    style={{
+                      width: '60px',
+                      height: '80px',
+                      objectFit: 'cover',
+                      borderRadius: '6px',
+                    }}
+                  />
+                  <span style={{ fontWeight: 'bold', fontSize: '16px' }}>
+                    {item.title}
+                  </span>
+                </div>
               ))
             )}
           </div>
@@ -149,10 +164,17 @@ function Search() {
               </p>
             ) : (
               matchedVenues.map((item, i) => (
-                <div key={i} className="venue-item">
-                  <img src="https://via.placeholder.com/40" alt="공연장" />
+                <div
+                  key={i}
+                  className="venue-item"
+                  onClick={() => navigate(`/venue/${item.id}`)}
+                  style={{ cursor: 'pointer' }}>
+                  <img
+                    src={item.profileImg || 'https://via.placeholder.com/40'}
+                    alt={item.title}
+                  />
                   <span>
-                    <strong>{item.name}</strong>
+                    <strong>{item.title}</strong>
                   </span>
                 </div>
               ))
@@ -169,32 +191,32 @@ function Search() {
               <strong>{keyword}</strong>와(과) 일치하는 아티스트가 없습니다.
             </p>
           ) : (
-            matchedArtists.map((name, i) => (
+            matchedArtists.map((artist, i) => (
               <div className="artist-item" key={i}>
                 <div className="artist-info">
                   <img
                     className="artist-img"
-                    src="https://via.placeholder.com/40"
-                    alt={name}
+                    src={artist.profileImageUrl}
+                    alt={artist.name}
                   />
-                  <span className="artist-name">{name}</span>
+                  <span className="artist-name">{artist.name}</span>
                 </div>
 
                 <div className="artist-buttons">
                   <div
-                    className={`notify ${alarmState[name] ? 'on' : ''}`}
-                    onClick={() => toggleAlarm(name)}>
+                    className={`notify ${alarmState[artist.id] ? 'on' : ''}`}
+                    onClick={() => toggleAlarm(artist.id)}>
                     공연알림
-                    {alarmState[name] ? (
+                    {alarmState[artist.id] ? (
                       <Bell size={16} />
                     ) : (
                       <BellOff size={16} />
                     )}
                   </div>
                   <Heart
-                    className={`heart ${likedState[name] ? 'on' : ''}`}
+                    className={`heart ${likedState[artist.id] ? 'on' : ''}`}
                     size={20}
-                    onClick={() => toggleLike(name)}
+                    onClick={() => toggleLike(artist.id)}
                   />
                 </div>
               </div>
@@ -215,7 +237,13 @@ function Search() {
               {matchedPosts.map((post) => (
                 <PostItem
                   key={post.id}
-                  post={post}
+                  post={{
+                    ...post,
+                    author: getNicknameById(post.user_id), // ✅ 닉네임 전달
+                    comments: postSampleData.filter(
+                      (c) => c.post_id === post.id
+                    ).length,
+                  }}
                   onClick={() => navigate(`/freeboard/${post.id}`)}
                 />
               ))}

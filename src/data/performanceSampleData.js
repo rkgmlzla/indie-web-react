@@ -17,7 +17,6 @@ export const performanceSampleData = [
     isNotified: true,
     artistIds: [1, 2],
     posterUrl: image1,
-    likes: 1,
   },
   {
     id: 2,
@@ -34,7 +33,6 @@ export const performanceSampleData = [
     isNotified: false,
     artistIds: [3],
     posterUrl: image2,
-    likes: 4,
   },
 
   {
@@ -52,7 +50,6 @@ export const performanceSampleData = [
     isNotified: false,
     artistIds: [3, 4, 6],
     posterUrl: 'https://i.imgur.com/ZLUspKR.jpg',
-    likes: 100,
   },
   {
     id: 9,
@@ -69,7 +66,6 @@ export const performanceSampleData = [
     isNotified: false,
     artistIds: [4, 5],
     posterUrl: 'https://i.imgur.com/mAGPZ1X.jpg',
-    likes: 20,
   },
   {
     id: 10,
@@ -86,7 +82,6 @@ export const performanceSampleData = [
     isNotified: false,
     artistIds: [2, 3, 4, 6],
     posterUrl: 'https://i.imgur.com/kKxY0sN.jpg',
-    likes: 50,
   },
   {
     id: 11,
@@ -103,7 +98,6 @@ export const performanceSampleData = [
     isNotified: false,
     artistIds: [1, 5],
     posterUrl: 'https://i.imgur.com/ATbFH0Z.jpg',
-    likes: 1,
   },
   {
     id: 12,
@@ -120,7 +114,6 @@ export const performanceSampleData = [
     isNotified: false,
     artistIds: [1, 2, 3, 4, 5],
     posterUrl: 'https://i.imgur.com/kuDxcWv.jpg',
-    likes: 60,
   },
   {
     id: 13,
@@ -137,6 +130,5 @@ export const performanceSampleData = [
     isNotified: false,
     artistIds: [1, 2, 5, 6],
     posterUrl: 'https://i.imgur.com/FeDsUqY.jpg',
-    likes: 20,
   },
 ];

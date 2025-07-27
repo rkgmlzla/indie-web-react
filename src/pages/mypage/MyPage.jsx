@@ -1,54 +1,91 @@
-import { useEffect, useState } from 'react';
-import { Settings, Pencil, User } from 'lucide-react';
+import { useRef, useState } from 'react';
+import { Settings, Pencil } from 'lucide-react';
 import './Mypage.css';
 import Toggle from '../../components/ui/toggle';
-import { supabase } from '../../lib/supabase';
 import Header from '../../components/layout/Header';
+import { userSampleData } from '../../data/userSampleData';
 
 function MyPage() {
-  const [userName, setUserName] = useState('');
-  useEffect(() => {
-    const fetchUserInfo = async () => {
-      const {
-        data: { user },
-        error,
-      } = await supabase.auth.getUser();
+  const currentUserId = 1;
+  const currentUser = userSampleData.find((u) => u.id === currentUserId);
 
-      if (user) {
-        // 카카오의 경우 user.user_metadata.full_name이나 nickname 등에 정보가 담김
-        const name =
-          user.user_metadata.full_name ||
-          user.user_metadata.name ||
-          user.user_metadata.nickname ||
-          '사용자';
-        setUserName(name);
-      } else if (error) {
-        console.error('사용자 정보를 가져오는 중 오류 발생:', error.message);
-      }
-    };
+  const [profileImage, setProfileImage] = useState(currentUser.profile);
+  const [nickname, setNickname] = useState(currentUser.nickname);
+  const [editingNickname, setEditingNickname] = useState(false);
 
-    fetchUserInfo();
-  }, []);
-  // 프로필
+  const fileInputRef = useRef(null);
+
+  const handleProfileClick = () => {
+    fileInputRef.current.click(); // 숨겨진 파일 선택창 열기
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const imageUrl = URL.createObjectURL(file);
+      setProfileImage(imageUrl); // 미리보기
+      // 실제 저장하려면 서버 업로드 필요
+    }
+  };
+
+  const handleNicknameSave = () => {
+    setEditingNickname(false);
+    // 서버에 저장하는 로직 추가 가능
+  };
+
   return (
     <div className="page">
       <Header title="마이페이지" showBack showSearch={false} showMenu={false} />
       <div style={{ height: '30px' }} />
+
       <div className="profile">
         <div className="profile__container">
-          {/* 프로필 사진 */}
+          {/* ✅ 프로필 사진 */}
           <div className="profile__left">
-            <User className="profile__left__img" />
-            <Settings className="profile__left__settings" />
+            <img
+              src={profileImage}
+              alt="프로필"
+              className="profile__left__img"
+            />
+            <Settings
+              className="profile__left__settings"
+              onClick={handleProfileClick}
+            />
+            <input
+              type="file"
+              accept="image/*"
+              ref={fileInputRef}
+              onChange={handleImageChange}
+              style={{ display: 'none' }}
+            />
           </div>
-          {/* 이름 */}
+
+          {/* ✅ 닉네임 */}
           <div className="profile__name">
-            <p>{userName}</p>
-            <Pencil className="profile__name__edit" />
+            {editingNickname ? (
+              <div className="edit-nickname">
+                <input
+                  type="text"
+                  value={nickname}
+                  onChange={(e) => setNickname(e.target.value)}
+                />
+                <button onClick={handleNicknameSave}>저장</button>
+              </div>
+            ) : (
+              <>
+                <p>{nickname}</p>
+                <Pencil
+                  className="profile__name__edit"
+                  onClick={() => setEditingNickname(true)}
+                />
+              </>
+            )}
           </div>
         </div>
       </div>
+
       <hr className="divider" />
+
       <div className="settings">
         <div className="settings__toggle">
           <p>알림 설정</p>
@@ -62,4 +99,5 @@ function MyPage() {
     </div>
   );
 }
+
 export default MyPage;

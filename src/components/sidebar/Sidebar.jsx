@@ -2,9 +2,11 @@ import React from 'react';
 import styles from './Sidebar.module.css';
 import { ChevronLeft, Bell, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { userSampleData } from '../../data/userSampleData';
 
 function Sidebar({ onClose }) {
   const navigate = useNavigate();
+  const currentUser = userSampleData.find((u) => u.id === 1);
 
   const menuItems = [
     { label: '공연', path: '/performance' },
@@ -48,7 +50,7 @@ function Sidebar({ onClose }) {
             {/* 프로필 */}
             <div className={styles.profileSection}>
               <img
-                src="https://via.placeholder.com/68"
+                src={currentUser?.profile}
                 alt="프로필 이미지"
                 className={styles.profileImage}
               />
@@ -59,11 +61,13 @@ function Sidebar({ onClose }) {
                     navigate('/mypage');
                     onClose();
                   }}>
-                  <span className={styles.nickname}>예빈스클럽</span>
+                  <span className={styles.nickname}>
+                    {currentUser?.nickname}
+                  </span>
                   <ChevronRight
-                    size={20}
-                    color="#000000"
                     className={styles.nicknameArrow}
+                    color="#000000"
+                    size={20}
                   />
                 </div>
                 <div

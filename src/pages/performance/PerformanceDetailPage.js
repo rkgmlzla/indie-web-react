@@ -14,21 +14,40 @@ import HeartOutlineIconIcon from '../../assets/icons/icon_heart_outline.svg';
 import HeartFilledIcon from '../../assets/icons/icon_heart_filled.svg';
 import ChevronRightIcon from '../../assets/icons/icon_go.svg';
 import { venueSampleData } from '../../data/venueSampleData';
+import { userperformancefavSampleData } from '../../data/userperformancefavSampleData';
 
 export default function PerformanceDetailPage() {
+  const currentUserId = 1;
+
   const { id } = useParams();
   const performance = performanceSampleData.find((p) => String(p.id) === id);
   const venue = venueSampleData.find((v) => v.id === performance.venueIds?.[0]);
 
   const navigate = useNavigate();
 
-  const [isLiked, setIsLiked] = useState(false);
-  const [likeCount, setLikeCount] = useState(performance.likes || 0);
+  const [isLiked, setIsLiked] = useState(() =>
+    userperformancefavSampleData.some(
+      (fav) =>
+        fav.user_id === currentUserId && fav.performance_id === performance.id
+    )
+  );
+  const [likeCount, setLikeCount] = useState(
+    () =>
+      userperformancefavSampleData.filter(
+        (fav) => fav.performance_id === performance.id
+      ).length
+  );
+
   const [isNotified, setIsNotified] = useState(false);
 
   const toggleLike = () => {
+    if (isLiked) {
+      setLikeCount((prev) => prev - 1);
+    } else {
+      setLikeCount((prev) => prev + 1);
+    }
     setIsLiked((prev) => !prev);
-    setLikeCount((prev) => (isLiked ? prev - 1 : prev + 1));
+    // 실제 구현에서는 서버에 좋아요 추가/삭제 요청 필요
   };
 
   const toggleNotify = () => {

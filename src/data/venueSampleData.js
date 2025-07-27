@@ -7,6 +7,7 @@ export const venueSampleData = [
     profileImg: samplePosterItem1,
     instagram: '@hongdae_unplugged',
     address: '서울 마포구 홍익로 5안길 5',
+    region: '서울',
   },
   {
     id: 2,
@@ -14,6 +15,7 @@ export const venueSampleData = [
     profileImg: samplePosterItem1,
     instagram: '@long_venue_name',
     address: '서울 마포구 어쩌구 저쩌구',
+    region: '서울',
   },
   {
     id: 3,
@@ -21,6 +23,7 @@ export const venueSampleData = [
     profileImg: samplePosterItem1,
     instagram: '@jebidabang',
     address: '서울 마포구 와우산로 29바길',
+    region: '서울',
   },
   {
     id: 4,
@@ -28,6 +31,7 @@ export const venueSampleData = [
     profileImg: samplePosterItem1,
     instagram: '@unplugged_official',
     address: '서울 마포구 와우산로 33',
+    region: '서울',
   },
   {
     id: 5,
@@ -35,6 +39,7 @@ export const venueSampleData = [
     profileImg: samplePosterItem1,
     instagram: '@mudayook',
     address: '서울 종로구 대학로 12길 7',
+    region: '서울',
   },
   {
     id: 6,
@@ -42,6 +47,7 @@ export const venueSampleData = [
     profileImg: samplePosterItem1,
     instagram: '@organic_space',
     address: '서울 서대문구 연희로 11길 45',
+    region: '서울',
   },
   {
     id: 7,
@@ -49,6 +55,7 @@ export const venueSampleData = [
     profileImg: samplePosterItem1,
     instagram: '@saenggi_studio',
     address: '서울 성동구 성수이로 26길 15',
+    region: '서울',
   },
   {
     id: 8,
@@ -56,6 +63,7 @@ export const venueSampleData = [
     profileImg: samplePosterItem1,
     instagram: '@roomofsilence',
     address: '대구 중구 동성로 2길 13',
+    region: '대구',
   },
   {
     id: 9,
@@ -63,6 +71,7 @@ export const venueSampleData = [
     profileImg: samplePosterItem1,
     instagram: '@strange_fruit',
     address: '경기 고양시 덕양구 행신동 222-1',
+    region: '경기',
   },
   {
     id: 10,
@@ -70,5 +79,6 @@ export const venueSampleData = [
     profileImg: samplePosterItem1,
     instagram: '@salonmoonbow',
     address: '서울 은평구 통일로 923',
+    region: '서울',
   },
 ];
