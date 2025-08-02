@@ -22,7 +22,6 @@
   height: 25px;
 }
 
-
 .monthTitle {
   font-size: 24px;
   font-weight: bold;
@@ -34,4 +33,36 @@
   font-size: 18px;
   margin-top: 16px;
   margin-bottom: 8px;
+}
+
+.calendarGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.week {
+  display: contents;
+}
+
+.day {
+  width: 40px;
+  height: 40px;
+  text-align: center;
+  line-height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.circleBorder {
+  border: 2px solid red; /* ○ 공연 있는 날짜 */
+}
+
+.circleFilled {
+  background: red; /* ● 선택된 날짜 */
+  color: white;
+}
+
+.disabled {
+  opacity: 0.3;
 }

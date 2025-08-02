@@ -1,5 +1,5 @@
-// src/pages/venue/ListVenue.jsx
-import React, { useState } from 'react';
+// ✅ src/pages/venue/ListVenue.jsx
+import React, { useState, useEffect } from 'react';
 import Header from '../../components/layout/Header';
 import Divider from '../../components/common/Divider';
 import VenueItem from './components/VenueItem';
@@ -7,7 +7,10 @@ import RegionSelectButton from './components/RegionSelectButton';
 import RegionSelectSheet from './components/RegionSelectSheet';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { venueSampleData } from '../../data/venueSampleData';
+
+// ✅ 공연장 목록 API import
+import { fetchVenueList } from '../../api/venueApi';
+
 const PageWrapper = styled.div`
   height: 100vh;
   display: flex;
@@ -21,58 +24,68 @@ const ScrollableList = styled.div`
 
 function ListVenue() {
   const navigate = useNavigate();
-
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [selectedRegions, setSelectedRegions] = useState(['전체']);
+  const [venues, setVenues] = useState([]); // ✅ API 데이터 상태
+  const [page, setPage] = useState(1);
+  const size = 20;
 
-  const toggleSheet = () => setIsSheetOpen(!isSheetOpen);
+  // ✅ API 호출 함수 (수정됨)
+  const loadVenues = async () => {
+    try {
+      // ✅ '전체'가 포함되면 regionParam은 undefined → 서버에서 전체 조회
+      const regionParam = selectedRegions.includes('전체') ? undefined : selectedRegions;
 
+      // ✅ 수정된 fetchVenueList에 배열 그대로 전달
+      const data = await fetchVenueList({ page, size, region: regionParam });
+
+      console.log('🎯 [공연장 목록] API 응답:', data);
+      setVenues(data.content || data); // ✅ 백엔드 응답 구조에 맞게 세팅
+    } catch (err) {
+      console.error('📛 공연장 목록 API 호출 실패:', err);
+      setVenues([]);
+    }
+  };
+
+  // ✅ 페이지 로드 & 지역 변경 시 API 호출
+  useEffect(() => {
+    loadVenues();
+  }, [selectedRegions, page]);
+
+  // ✅ 지역 선택 핸들러
   const handleSelectRegion = (region) => {
     if (region === '전체') {
       setSelectedRegions(['전체']);
     } else {
       const alreadySelected = selectedRegions.includes(region);
-      let updated;
-
-      if (alreadySelected) {
-        updated = selectedRegions.filter((r) => r !== region);
-        if (updated.length === 0) updated = ['전체'];
-      } else {
-        updated = selectedRegions.filter((r) => r !== '전체').concat(region);
-      }
-
+      let updated = alreadySelected
+        ? selectedRegions.filter((r) => r !== region)
+        : selectedRegions.filter((r) => r !== '전체').concat(region);
+      if (updated.length === 0) updated = ['전체'];
       setSelectedRegions(updated);
     }
   };
-
-  // ✅ 지역 필터링 적용
-  const filteredVenues = venueSampleData.filter((venue) => {
-    return (
-      selectedRegions.includes('전체') || selectedRegions.includes(venue.region)
-    );
-  });
 
   return (
     <PageWrapper>
       <Header title="공연장" initialSearchTab="공연/공연장" />
       <div style={{ height: '30px' }} />
-      <RegionSelectButton
-        onClick={toggleSheet}
-        selectedRegions={selectedRegions}
-      />
+      <RegionSelectButton onClick={() => setIsSheetOpen(true)} selectedRegions={selectedRegions} />
       <Divider mt="16px" />
 
+      {/* ✅ 공연장 목록 렌더링 */}
       <ScrollableList>
-        {filteredVenues.map((venue) => (
+        {venues.map((venue) => (
           <VenueItem
             key={venue.id}
-            image={venue.profileImg}
-            name={venue.title}
+            image={venue.image_url}        // ✅ 백엔드 응답 필드와 맞춤
+            name={venue.name}              // ✅ 백엔드 응답 필드와 맞춤
             onClick={() => navigate(`/venue/${venue.id}`)}
           />
         ))}
       </ScrollableList>
 
+      {/* ✅ 지역 선택 시트 */}
       {isSheetOpen && (
         <RegionSelectSheet
           selectedRegions={selectedRegions}

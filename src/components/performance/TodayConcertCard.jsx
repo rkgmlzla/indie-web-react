@@ -1,3 +1,4 @@
+//TodayConcertCard.jsx
 import React from 'react';
 import styles from './TodayConcertCard.module.css';
 import iconGo from '../../assets/icons/icon_go_hyunjin.svg'; // ✅ 여기 수정

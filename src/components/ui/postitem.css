@@ -3,14 +3,20 @@
   padding: 12px 0;
   cursor: pointer;
   position: relative;
+  background: #fff;
 }
 
+/* 제목 잘림 해결 */
 .post-item h3 {
   margin: 0 0 6px;
   font-size: 16px;
   font-weight: bold;
+  white-space: normal !important;  /* 한 줄 제한 해제 */
+  overflow: visible !important;
+  text-overflow: clip !important;
 }
 
+/* 게시글 내용 */
 .post-item p {
   margin: 0 0 8px;
   color: #555;
@@ -34,13 +40,21 @@
   color: #f4511e;
 }
 
-/* 게시글 썸네일 */
+/* 썸네일 크기 개선 */
 .post-item .thumbnail {
   position: absolute;
   right: 8px;
   bottom: 12px;
-  width: 64px;
-  height: 64px;
+  width: 80px;      /* 기존 64 → 80 */
+  height: 100px;    /* 기존 64 → 100 */
   object-fit: cover;
-  border-radius: 4px;
+  border-radius: 6px;
+  background: #f0f0f0;
+}
+
+/* 이미지 로딩 오류 방지 및 썸네일 기본 배경 추가 */
+.post-item img {
+  object-fit: cover;
+  border-radius: 6px;
+  background: #f0f0f0;
 }

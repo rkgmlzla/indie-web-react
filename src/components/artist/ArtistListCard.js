@@ -1,74 +1,35 @@
-import React, { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+// ✅ components/artist/ArtistListCard.js
+import React from 'react';
 import styled from 'styled-components';
+import ArtistProfileCard from './ArtistProfileCard';
 
-import HeartButton from '../common/HeartButton';
-import NotifyButton from '../common/NotifyButton';
-
-export default function ArtistListCard({ artist, onToggleLike }) {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const [isLiked, setIsLiked] = useState(artist.isLiked);
-
-  const handleClick = () => {
-    navigate(`/artist/${artist.id}`);
-  };
+export default function ArtistListCard({ artist }) {
+  if (!artist) return null;
 
   return (
-    <Card onClick={handleClick}>
-      <Profile>
-        <Image src={artist.profileImageUrl} alt={artist.name} />
-        <Name>{artist.name}</Name>
-      </Profile>
-      <Right onClick={(e) => e.stopPropagation()}>
-        {location.pathname === '/favorite' && (
-          <>
-            <NotifyButton
-              isNotified={artist.isLiked}
-              onClick={() => onToggleLike(artist.id)}
-              label="공연알림"
-            />
-          </>
-        )}
-        <HeartButton
-          isLiked={artist.isLiked}
-          onClick={() => onToggleLike(artist.id)}
-        />
-      </Right>
-    </Card>
+    <CardContainer>
+      <ArtistProfileCard artist={artist} />
+      <Info>
+        <Name>{artist?.name || '이름 없음'}</Name>
+        {/* 🔹 필요 시 추가 정보 표시 */}
+      </Info>
+    </CardContainer>
   );
 }
 
-const Card = styled.div`
+const CardContainer = styled.div`
   display: flex;
-  justify-content: space-between;
   align-items: center;
   padding: 0.5rem;
-  cursor: pointer;
+  border-bottom: 1px solid #eee;
 `;
 
-const Profile = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-`;
-
-const Image = styled.img`
-  width: 3rem;
-  height: 3rem;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 1px solid ${({ theme }) => theme.colors.outlineGray};
+const Info = styled.div`
+  margin-left: 1rem;
+  flex: 1;
 `;
 
 const Name = styled.div`
-  font-size: ${({ theme }) => theme.fontSizes.lg};
-  font-weight: ${({ theme }) => theme.fontWeights.medium};
-  color: ${({ theme }) => theme.colors.black};
-`;
-
-const Right = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 1rem;
+  font-size: 1rem;
+  font-weight: bold;
 `;

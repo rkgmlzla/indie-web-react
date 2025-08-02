@@ -1,3 +1,4 @@
+//Search2.jsx
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Searchbar from '../../components/ui/searchbar';

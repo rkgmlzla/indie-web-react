@@ -1,84 +1,51 @@
 import axios from 'axios';
-import { baseUrl } from './config';
+export const baseUrl = 'http://127.0.0.1:8000';
 
-// 검색-1.공연 / 공연
-//  공연 검색 (카테고리: performance)
 /**
- * 공연 또는 공연장 검색
- * GET /search/{category}
- * Params: keyword, page, size
- * 인증:  없음
+ * ✅ 공연 + 공연장 검색 (하나의 API에서 둘 다 반환)
  */
-export const searchByCategory = async ({ category, keyword, page, size }) => {
+export const searchPerformanceAndVenue = async ({ keyword, page, size }) => {
   try {
-    const response = await axios.get(`${baseUrl}/search/${category}`, {
-      params: {
-        keyword,
-        page,
-        size,
-      },
-    });
-    return response.data;
+    const url = `${baseUrl}/search/performance`;
+    console.log(`🔗 요청 URL: ${url}?keyword=${keyword}&page=${page}&size=${size}`);
+
+    const response = await axios.get(url, { params: { keyword, page, size } });
+    console.log('🎯 공연/공연장 검색 API 응답:', response.data);
+
+    return {
+      performances: response.data?.performance || [],
+      venues: response.data?.venue || []
+    };
   } catch (error) {
-    console.error(' 검색 요청 실패:', error);
-    throw error;
+    console.error('📛 공연/공연장 검색 실패:', error);
+    return { performances: [], venues: [] };
   }
 };
 
-
-
-
-//검색-2.아티스트
-
-//  아티스트 검색
 /**
- * 아티스트 검색
- * GET /search/artist
- * Params: keyword, page, size
- * 인증:  불필요
+ * ✅ 아티스트 검색
  */
 export const searchArtist = async ({ keyword, page, size }) => {
   try {
-    const response = await axios.get(`${baseUrl}/search/artist`, {
-      params: {
-        keyword,
-        page,
-        size,
-      },
-    });
-    return response.data;
+    const url = `${baseUrl}/search/artist`;
+    const response = await axios.get(url, { params: { keyword, page, size } });
+    return response.data?.artists || [];
   } catch (error) {
-    console.error(' 아티스트 검색 실패:', error);
-    throw error;
+    console.error('📛 아티스트 검색 실패:', error);
+    return [];
   }
 };
 
-
-
-
-// 검색- 3.자유게시판
-
-//  자유게시판 검색
 /**
- * 자유게시판 검색
- * GET /search/post
- * Params: keyword, page, size
- * 인증:  불필요
+ * ✅ 자유게시판 검색
  */
 export const searchPost = async ({ keyword, page, size }) => {
   try {
-    const response = await axios.get(`${baseUrl}/search/post`, {
-      params: {
-        keyword,
-        page,
-        size,
-      },
-    });
-    return response.data;
+    const url = `${baseUrl}/search/post`;
+    const response = await axios.get(url, { params: { keyword, page, size } });
+    return response.data?.posts || [];
   } catch (error) {
-    console.error(' 자유게시판 검색 실패:', error);
-    throw error;
+    console.error('📛 자유게시판 검색 실패:', error);
+    return [];
   }
 };
-
-

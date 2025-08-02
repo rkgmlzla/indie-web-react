@@ -34,21 +34,32 @@ export const fetchNearbyVenues = async (lat, lng, radius = 3) => {
  * Query Params: page, size, region
  * 인증:  필요 없음
  */
+// 공연장 - 2. 공연장 상세 정보 조회 
 export const fetchVenueList = async ({ page, size, region }) => {
   try {
+    let regionParam = null;
+
+    // ✅ region이 배열인 경우 → 콤마 문자열로 변환
+    if (Array.isArray(region)) {
+      regionParam = region.length > 0 ? region.join(",") : null;
+    } 
+    // ✅ region이 문자열인 경우 → 그대로 사용
+    else if (typeof region === "string" && region.trim() !== "") {
+      regionParam = region.trim();
+    }
+
     const response = await axios.get(`${baseUrl}/venue`, {
-      params: { page, size, region },
+      params: { page, size, region: regionParam },
     });
-    return response.data;
+
+    const data = response.data;
+    return data.venue || [];
   } catch (error) {
-    console.error(' 공연장 목록 조회 실패:', error);
+    console.error("❌ 공연장 목록 조회 실패:", error.response?.data || error.message);
     throw error;
   }
 };
 
-
-
-// 공연장 - 2. 공연장 상세 정보 조회 
 /**
  *  공연장 상세 정보 조회
  * Method: GET
