@@ -9,7 +9,6 @@ import MapGrid from './components/MapGrid';
 import samplePosterImage1 from '../../assets/samplePosterItem1.png';
 import samplePosterImage2 from '../../assets/samplePosterItem2.png';
 import samplePosterImage3 from '../../assets/samplePosterItem3.png';
-
 import styled from 'styled-components';
 import MapWideCard from './components/MapWideCard';
 
@@ -23,10 +22,9 @@ const PageWrapper = styled.div`
 const MapPage = () => {
   return (
     <PageWrapper>
-      <Header title="가까운 공연 찾기" initialSearchTab="공연/공연장" />
-      <div style={{ height: '30px' }} />
-
-      <MapView />
+      <Header title="가까운 공연" />
+      <div style={{ height: '56px' }} />
+      <MapView data={sampleData} />
       <MapTime />
       <Divider />
 
@@ -47,6 +45,8 @@ const sampleData = [
     venue: '홍대 언플러그드emememememememem',
     address: '서울특별시 마포구 와우산로 33',
     time: '오후 5시',
+    lat: 37.555897,
+    lng: 126.930797,
   },
   {
     id: 2,
