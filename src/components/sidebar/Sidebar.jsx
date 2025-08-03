@@ -13,7 +13,7 @@ function Sidebar({ onClose }) {
     { label: '공연장', path: '/venue' },
     { label: '아티스트', path: '/artist' },
     { label: '자유게시판', path: '/bulletinboard' },
-    { label: '가까운 공연 찾기', path: '/performance' },
+    { label: '가까운 공연 찾기', path: '/map' },
   ];
 
   const handleBellClick = () => {
