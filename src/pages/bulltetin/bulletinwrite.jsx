@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { ChevronLeft } from 'lucide-react';
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import './bulletinwrite.css';
 import Header from '../../components/layout/Header';
@@ -38,14 +38,26 @@ function BulletinWrite() {
   const removeImage = (index) => {
     setImages(images.filter((_, i) => i !== index));
   };
-  const handleSubmit = () => {
-    // 🔸 여기에 게시글 저장 로직을 넣을 수 있음 (예: Supabase insert 등)
-    console.log('제목:', title);
-    console.log('내용:', content);
-    console.log('업로드된 이미지:', images);
+  const handleSubmit = async () => {
+    if (!isValid) return;
 
-    // 게시 후 자유게시판으로 이동
-    navigate('/bulletinboard');
+    const formData = new FormData();
+    formData.append('title', title);
+    formData.append('content', content);
+    images.forEach((img) => formData.append('images', img));
+
+    try {
+      await axios.post('/post', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+        withCredentials: true,
+      });
+      navigate('/bulletinboard');
+    } catch (error) {
+      console.error('게시글 작성 실패:', error);
+      alert('게시글 작성에 실패했습니다.');
+    }
   };
   return (
     <div className="freeboard__write">

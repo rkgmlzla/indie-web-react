@@ -1,31 +1,52 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { postSampleData } from '../../data/postSampleData';
-import { postcommentSampleData } from '../../data/postcommentSampleData';
-import { userSampleData } from '../../data/userSampleData';
 import PostItem from '../../components/ui/postitem';
 import Header from '../../components/layout/Header';
 import { Pencil } from 'lucide-react';
 import './bulletinboard.css';
+import axios from 'axios';
 
 function BulletinBoard() {
   const navigate = useNavigate();
-  const [filter, setFilter] = useState('all'); // 'all' | 'myPosts' | 'myComments'
-  const [currentUserId, setCurrentUserId] = useState(1);
-  // 필터에 따라 게시글 선택
-  const filteredPosts = postSampleData.filter((post) => {
+  const [filter, setFilter] =
+    (useState < 'all') | 'myPosts' | ('myComments' > 'all');
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const currentUserId = 1; // ✅ 추후 전역 상태에서 관리
+
+  const fetchPosts = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get('/post', {
+        params: {
+          page: 1,
+          size: 50,
+          sort: 'recent',
+        },
+        withCredentials: true, // 쿠키 기반 인증인 경우
+      });
+      setPosts(response.data.posts);
+    } catch (err) {
+      console.error('❌ 게시글 불러오기 실패:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchPosts();
+  }, []);
+
+  const filteredPosts = posts.filter((post) => {
     if (filter === 'myPosts') return post.user_id === currentUserId;
     if (filter === 'myComments') {
-      return postcommentSampleData.some(
-        (comment) =>
-          comment.user_id === currentUserId && comment.post_id === post.id
-      );
+      // ⭐️ API 확장 전까진 이건 비워두는 구조
+      return false;
     }
     return true;
   });
   return (
     <div className="board">
-      {/* ✅ 공통 헤더 삽입 */}
       <Header title="자유게시판" initialSearchTab="자유게시판" />
       <div style={{ height: '30px' }} />
       <div className="board__tabs">
