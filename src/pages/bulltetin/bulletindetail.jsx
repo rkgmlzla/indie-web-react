@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ChevronLeft, Search, MoreVertical } from 'lucide-react';
-import { postSampleData } from '../../data/postSampleData';
-import { postcommentSampleData } from '../../data/postcommentSampleData';
-import { userSampleData } from '../../data/userSampleData';
+import axios from 'axios';
 import './bulletindetail.css';
 import Header from '../../components/layout/Header';
 
@@ -11,52 +9,74 @@ function Bulletindetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [post, setPost] = useState(null);
-  const [comment, setComment] = useState('');
   const [comments, setComments] = useState([]);
-  const currentUserId = 1;
+  const [comment, setComment] = useState('');
+  const currentUserId = 1; // ✅ 로그인 유저 ID (임시)
 
-  const getNicknameById = (uid) => {
-    return userSampleData.find((u) => u.id === uid)?.nickname || '알 수 없음';
-  };
-  const getProfileImageById = (uid) => {
-    return userSampleData.find((u) => u.id === uid)?.profile;
-  };
-  useEffect(() => {
-    const postItem = postSampleData.find((p) => p.id === Number(id));
-    const postComments = postcommentSampleData.filter(
-      (c) => c.post_id === Number(id)
-    );
-    if (postItem) {
-      setPost(postItem);
-      setComments(postComments);
+  const fetchPost = async () => {
+    try {
+      const res = await axios.get(`/post/${id}`, { withCredentials: true });
+      setPost(res.data);
+    } catch (error) {
+      console.error('게시물 불러오기 실패:', error);
     }
-  }, [id]);
-
-  const handleCommentSubmit = () => {
-    if (!comment.trim()) return;
-    const newComment = {
-      id: Date.now(),
-      post_id: Number(id),
-      user_id: currentUserId,
-      content: comment,
-      created_at: new Date().toISOString(),
-    };
-    setComments((prev) => [...prev, newComment]);
-    setComment('');
   };
 
-  const handleDeletePost = () => {
-    if (window.confirm('정말 이 게시물을 삭제하시겠습니까?')) {
-      // 실제 삭제 로직은 서버와 연동 필요
+  const fetchComments = async () => {
+    try {
+      const res = await axios.get(`/comment/post/${id}`, {
+        withCredentials: true,
+      });
+      setComments(res.data);
+    } catch (error) {
+      console.error('댓글 불러오기 실패:', error);
+    }
+  };
+
+  const handleCommentSubmit = async () => {
+    if (!comment.trim()) return;
+
+    try {
+      await axios.post(
+        '/comment',
+        {
+          post_id: Number(id),
+          content: comment,
+        },
+        { withCredentials: true }
+      );
+      setComment('');
+      fetchComments(); // 댓글 다시 불러오기
+    } catch (error) {
+      console.error('댓글 등록 실패:', error);
+    }
+  };
+
+  const handleDeletePost = async () => {
+    if (!window.confirm('정말 이 게시물을 삭제하시겠습니까?')) return;
+    try {
+      await axios.delete(`/post/${id}`, { withCredentials: true });
       alert('게시물이 삭제되었습니다.');
       navigate('/bulletinboard');
+    } catch (error) {
+      console.error('게시물 삭제 실패:', error);
     }
   };
-  const handleDeleteComment = (commentId) => {
-    if (window.confirm('정말 이 댓글을 삭제하시겠습니까?')) {
-      setComments((prev) => prev.filter((c) => c.id !== commentId));
+
+  const handleDeleteComment = async (commentId) => {
+    if (!window.confirm('정말 이 댓글을 삭제하시겠습니까?')) return;
+    try {
+      await axios.delete(`/comment/${commentId}`, { withCredentials: true });
+      fetchComments();
+    } catch (error) {
+      console.error('댓글 삭제 실패:', error);
     }
   };
+
+  useEffect(() => {
+    fetchPost();
+    fetchComments();
+  }, [id]);
 
   return (
     <div className="post-detail">
@@ -69,12 +89,12 @@ function Bulletindetail() {
           <div className="post-header">
             <div className="author">
               <img
-                src={getProfileImageById(post.user_id)}
+                src={post.user.profile_url}
                 alt="작성자 프로필"
                 className="profile-img"
               />
               <div className="author-name-time">
-                <span className="name">{getNicknameById(post.user_id)}</span>
+                <span className="name">{post.user.nickname}</span>
                 <span className="time">
                   {new Date(post.created_at).toLocaleString()}
                 </span>
@@ -92,7 +112,10 @@ function Bulletindetail() {
 
           <h3>{post.title}</h3>
           <p>{post.content}</p>
-          {post.image && <img src={post.image} alt="첨부 이미지" />}
+          {post.imageURLs?.length > 0 &&
+            post.imageURLs.map((url, idx) => (
+              <img key={idx} src={url} alt={`첨부 이미지 ${idx + 1}`} />
+            ))}
         </div>
       )}
 
@@ -104,14 +127,12 @@ function Bulletindetail() {
             <div className="comment-header">
               <div className="left">
                 <img
-                  src={getProfileImageById(c.user_id)}
+                  src={c.user.profile_url}
                   alt="댓글 작성자 프로필"
                   className="profile-img"
                 />
                 <div className="comment-info">
-                  <span className="comment-author">
-                    {getNicknameById(c.user_id)}
-                  </span>
+                  <span className="comment-author">{c.user.nickname}</span>
                 </div>
               </div>
 

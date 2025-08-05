@@ -12,7 +12,6 @@ const NewConcertList = ({ performances = [] }) => {
     <div className={styles.sectionContainer}>
       <div className={styles.titleRow}>
         <h2 className={styles.sectionTitle}>NEW 업로드 공연</h2>
-        <img src={iconGo} alt="go" className={styles.goIcon} />
       </div>
       <div className={styles.listContainer}>
         {performances.map((item) => (

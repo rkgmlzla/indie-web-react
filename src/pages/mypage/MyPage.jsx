@@ -1,38 +1,98 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { Settings, Pencil } from 'lucide-react';
 import './Mypage.css';
 import Toggle from '../../components/ui/toggle';
 import Header from '../../components/layout/Header';
-import { userSampleData } from '../../data/userSampleData';
+import axios from 'axios';
 
 function MyPage() {
-  const currentUserId = 1;
-  const currentUser = userSampleData.find((u) => u.id === currentUserId);
-
-  const [profileImage, setProfileImage] = useState(currentUser.profile);
-  const [nickname, setNickname] = useState(currentUser.nickname);
+  const [profileImage, setProfileImage] = useState('');
+  const [nickname, setNickname] = useState('');
   const [editingNickname, setEditingNickname] = useState(false);
+  const [alarmEnabled, setAlarmEnabled] = useState(false);
+  const [locationEnabled, setLocationEnabled] = useState(false);
 
   const fileInputRef = useRef(null);
 
+  // ✅ accessToken은 실제 로그인 로직에 따라 설정 필요
+  const accessToken = localStorage.getItem('accessToken');
+
+  // ✅ 유저 정보 불러오기
+  useEffect(() => {
+    axios
+      .get('/user/me', {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      })
+      .then((res) => {
+        const user = res.data;
+        setProfileImage(user.profile_url);
+        setNickname(user.nickname);
+        setAlarmEnabled(user.alarmEnabled);
+        setLocationEnabled(user.locationEnabled);
+      });
+  }, []);
+
+  // ✅ 프로필 이미지 클릭 -> 파일창 열기
   const handleProfileClick = () => {
-    fileInputRef.current.click(); // 숨겨진 파일 선택창 열기
+    fileInputRef.current.click();
   };
 
-  const handleImageChange = (e) => {
+  // ✅ 이미지 변경 시 서버 업로드
+  const handleImageChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setProfileImage(imageUrl); // 미리보기
-      // 실제 저장하려면 서버 업로드 필요
+      const previewUrl = URL.createObjectURL(file);
+      setProfileImage(previewUrl); // 미리보기
+
+      const formData = new FormData();
+      formData.append('profileImage', file);
+
+      await axios.patch('/user/me/profile-image', formData, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'multipart/form-data',
+        },
+      });
     }
   };
 
-  const handleNicknameSave = () => {
+  // ✅ 닉네임 저장
+  const handleNicknameSave = async () => {
     setEditingNickname(false);
-    // 서버에 저장하는 로직 추가 가능
+    await axios.patch(
+      '/user/me',
+      { nickname },
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
   };
 
+  // ✅ 알림/위치 설정 변경
+  const handleSettingChange = async (key, value) => {
+    const newAlarm = key === 'alarm' ? value : alarmEnabled;
+    const newLocation = key === 'location' ? value : locationEnabled;
+
+    setAlarmEnabled(newAlarm);
+    setLocationEnabled(newLocation);
+
+    await axios.patch(
+      '/user/me/setting',
+      {
+        alarmEnabled: newAlarm,
+        locationEnabled: newLocation,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+  };
   return (
     <div className="page">
       <Header title="마이페이지" showBack showSearch={false} showMenu={false} />
@@ -89,11 +149,17 @@ function MyPage() {
       <div className="settings">
         <div className="settings__toggle">
           <p>알림 설정</p>
-          <Toggle />
+          <Toggle
+            value={alarmEnabled}
+            onChange={(v) => handleSettingChange('alarm', v)}
+          />
         </div>
         <div className="settings__toggle">
           <p>위치정보 사용</p>
-          <Toggle />
+          <Toggle
+            value={locationEnabled}
+            onChange={(v) => handleSettingChange('location', v)}
+          />
         </div>
       </div>
     </div>

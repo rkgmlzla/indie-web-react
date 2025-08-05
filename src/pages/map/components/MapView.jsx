@@ -10,11 +10,14 @@ const MapView = ({ data }) => {
 
       // 마커 찍기
       data.forEach((item) => {
-        if (item.lat && item.lng) {
+        if (item.latitude && item.longitude) {
           new window.naver.maps.Marker({
-            position: new window.naver.maps.LatLng(item.lat, item.lng),
+            position: new window.naver.maps.LatLng(
+              item.latitude,
+              item.longitude
+            ),
             map,
-            title: item.title,
+            title: item.name,
           });
         }
       });
