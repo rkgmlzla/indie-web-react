@@ -31,7 +31,9 @@ function ListVenue() {
   // ✅ API 호출 함수
   const loadVenues = async () => {
     try {
+
       const regionParam = selectedRegions.includes('전체') ? undefined : selectedRegions;
+
       const data = await fetchVenueList({ page, size, region: regionParam });
 
       console.log('🎯 [공연장 목록] API 응답:', data);
@@ -71,13 +73,17 @@ function ListVenue() {
     <PageWrapper>
       <Header title="공연장" initialSearchTab="공연/공연장" />
       <div style={{ height: '30px' }} />
+
       <RegionSelectButton onClick={() => setIsSheetOpen(true)} selectedRegions={selectedRegions} />
       <Divider $mt="16px" />
 
+
       {/* ✅ 공연장 목록 렌더링 - 안전한 조건 추가 */}
       <ScrollableList>
+
         {Array.isArray(venues) &&
           venues.map((venue) => (
+
             <VenueItem
               key={venue.id}
               image={venue.image_url}

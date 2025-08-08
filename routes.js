@@ -7,7 +7,6 @@ import ArtistListPage from './pages/artist/ArtistListPage';
 import ArtistDetailPage from './pages/artist/ArtistDetailPage';
 import FavoritePage from './pages/favorite/FavoritePage';
 import React from 'react';
-import LoginPage from './pages/login/LoginPage'; // ✅ 카카오 로그인 페이지
 import MyPage from './pages/mypage/MyPage'; // ✅ 마이페이지
 import Search from './pages/search/Search'; // ✅ 검색 페이지
 import Search2 from './pages/search/Search2';
@@ -17,6 +16,7 @@ import BulletinBoard from './pages/bulltetin/bulletinboard';
 import BulletinWrite from './pages/bulltetin/bulletinwrite';
 import Bulletindetail from './pages/bulltetin/bulletindetail';
 import MapPage from './pages/map/MapPage';
+import KakaoLogin from './src/pages/login/LoginPage';
 const routes = [
   { path: '/', element: <HomePage /> },
   { path: '/notification', element: <NotificationPage /> },
@@ -32,7 +32,7 @@ const routes = [
   },
   {
     path: '/login',
-    element: <LoginPage />,
+    element: <KakaoLogin />,
   },
   {
     path: '/mypage',

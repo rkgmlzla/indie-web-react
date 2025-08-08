@@ -1,14 +1,12 @@
-import { useState } from 'react';
+// Toggle.jsx
 import './toggle.css';
 
-function Toggle() {
-  const [on, setOn] = useState(true);
-
+function Toggle({ value, onChange }) {
   return (
     <button
-      className={`toggle-btn ${on ? 'on' : 'off'}`}
-      onClick={() => setOn(!on)}>
-      {on ? 'ON' : 'OFF'}
+      className={`toggle-btn ${value ? 'on' : 'off'}`}
+      onClick={() => onChange(!value)}>
+      {value ? 'ON' : 'OFF'}
     </button>
   );
 }

@@ -1,17 +1,19 @@
-// src/pages/map/components/MapWideCard.jsx
-// <MapWideCard data={sampleData} />
 import React from 'react';
 import styled from 'styled-components';
 import IconMore from '../../../assets/icons/icon_y_more.svg';
 import IconCopy from '../../../assets/icons/icon_y_copy.svg';
+import { useNavigate } from 'react-router-dom';
 
 const CardWrapper = styled.div`
   display: flex;
   flex-direction: row;
-  width: 100%;
+  width: 94%;
   margin: 0 16px;
-  padding-top: ${({ noTopPadding }) => (noTopPadding ? '0' : '16px')};
+  padding: 4px;
   box-sizing: border-box;
+  background: #ffdabaff;
+  border-radius: 13px;
+  padding-top: ${({ $noTopPadding }) => ($noTopPadding ? '0' : '16px')};
 `;
 
 const Poster = styled.img`
@@ -23,7 +25,7 @@ const Poster = styled.img`
 
 const InfoBox = styled.div`
   margin-left: 12px;
-  flex: 1 1 auto;  
+  flex: 1 1 auto;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -104,24 +106,44 @@ const FixedIcon = styled.img`
   flex-shrink: 0;
 `;
 
+const formatTimeOnly = (timeStr) => {
+  if (!timeStr) return '-';
+  const [hourStr, minuteStr] = timeStr.split(':');
+  const h = parseInt(hourStr, 10);
+  const m = parseInt(minuteStr, 10);
+  const period = h >= 12 ? '오후' : '오전';
+  const hour12 = h % 12 === 0 ? 12 : h % 12;
+  return `${period} ${hour12}시${m === 0 ? '' : ` ${m}분`}`;
+};
+
 const MapWideCard = ({ data, noTopPadding = false }) => {
-  const { title, time, name, address, poster } = data;
+  const navigate = useNavigate();
+  const { name, address, upcomingPerformance = [] } = data;
+  console.log('🔥 upcomingPerformance:', data.upcomingPerformance);
+  const perf = upcomingPerformance[0]; // ✅ 그냥 이거 하나만 씀
 
   const handleVenueClick = () => {
-    console.log('Venue clicked');
+    if (data?.venue_id || data?.id) {
+      navigate(`/venue/${data.venue_id ?? data.id}`);
+    }
   };
 
   const handleAddressClick = () => {
-    console.log('Address clicked');
+    const copyTarget = perf?.address ?? address;
+    if (copyTarget) {
+      navigator.clipboard.writeText(copyTarget).then(() => {
+        alert('주소가 복사되었습니다.');
+      });
+    }
   };
 
   return (
-    <CardWrapper noTopPadding={noTopPadding}>
-      <Poster src={poster} alt="poster" />
+    <CardWrapper $noTopPadding={noTopPadding}>
+      <Poster src={perf?.image_url ?? '/default.jpg'} alt="poster" />
       <InfoBox>
         <TopInfoBox>
-          <Title>{title}</Title>
-          <Time>{time}</Time>
+          <Title>{perf?.title ?? '공연 없음'}</Title>
+          <Time>{perf?.time ? formatTimeOnly(perf.time) : '-'}</Time>
         </TopInfoBox>
 
         <BottomInfoBox>
@@ -131,9 +153,10 @@ const MapWideCard = ({ data, noTopPadding = false }) => {
               <FixedIcon src={IconMore} alt="more" />
             </TextWrapper>
           </RowWrapper>
+
           <RowWrapper onClick={handleAddressClick}>
             <TextWrapper>
-              <AddressText>{address}</AddressText>
+              <AddressText>📍 {perf?.address ?? address ?? '-'}</AddressText>
               <FixedIcon src={IconCopy} alt="copy" />
             </TextWrapper>
           </RowWrapper>
@@ -144,4 +167,3 @@ const MapWideCard = ({ data, noTopPadding = false }) => {
 };
 
 export default MapWideCard;
-

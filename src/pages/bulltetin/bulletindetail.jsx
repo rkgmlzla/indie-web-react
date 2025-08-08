@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ChevronLeft, Search, MoreVertical } from 'lucide-react';
-import axios from 'axios';
 import './bulletindetail.css';
 import Header from '../../components/layout/Header';
+import api from '../../lib/api'; // axios 대신 api 인스턴스 사용
 
 function Bulletindetail() {
   const { id } = useParams();
@@ -15,7 +15,8 @@ function Bulletindetail() {
 
   const fetchPost = async () => {
     try {
-      const res = await axios.get(`/post/${id}`, { withCredentials: true });
+      const res = await api.get(`/post/${id}`);
+
       setPost(res.data);
     } catch (error) {
       console.error('게시물 불러오기 실패:', error);
@@ -24,10 +25,8 @@ function Bulletindetail() {
 
   const fetchComments = async () => {
     try {
-      const res = await axios.get(`/comment/post/${id}`, {
-        withCredentials: true,
-      });
-      setComments(res.data);
+      const res = await api.get(`/post/${id}/comment`);
+      setComments(res.data.comment);
     } catch (error) {
       console.error('댓글 불러오기 실패:', error);
     }
@@ -37,14 +36,9 @@ function Bulletindetail() {
     if (!comment.trim()) return;
 
     try {
-      await axios.post(
-        '/comment',
-        {
-          post_id: Number(id),
-          content: comment,
-        },
-        { withCredentials: true }
-      );
+      await api.post(`/post/${id}/comment`, {
+        content: comment,
+      });
       setComment('');
       fetchComments(); // 댓글 다시 불러오기
     } catch (error) {
@@ -55,7 +49,7 @@ function Bulletindetail() {
   const handleDeletePost = async () => {
     if (!window.confirm('정말 이 게시물을 삭제하시겠습니까?')) return;
     try {
-      await axios.delete(`/post/${id}`, { withCredentials: true });
+      await api.delete(`/post/${id}`);
       alert('게시물이 삭제되었습니다.');
       navigate('/bulletinboard');
     } catch (error) {
@@ -66,7 +60,8 @@ function Bulletindetail() {
   const handleDeleteComment = async (commentId) => {
     if (!window.confirm('정말 이 댓글을 삭제하시겠습니까?')) return;
     try {
-      await axios.delete(`/comment/${commentId}`, { withCredentials: true });
+      await api.delete(`/post/${id}/comment/${commentId}`);
+
       fetchComments();
     } catch (error) {
       console.error('댓글 삭제 실패:', error);
@@ -77,7 +72,11 @@ function Bulletindetail() {
     fetchPost();
     fetchComments();
   }, [id]);
-
+  useEffect(() => {
+    if (post) {
+      console.log('post:', post); // 👈 전체 구조 확인
+    }
+  }, [post]);
   return (
     <div className="post-detail">
       <Header title="자유게시판" initialSearchTab="자유게시판" />
@@ -88,11 +87,17 @@ function Bulletindetail() {
         <div className="post">
           <div className="post-header">
             <div className="author">
-              <img
-                src={post.user.profile_url}
-                alt="작성자 프로필"
-                className="profile-img"
-              />
+              {post.user.profile_url && (
+                <img
+                  src={
+                    post.user.profile_url.startsWith('http')
+                      ? post.user.profile_url
+                      : `http://localhost:8000${post.user.profile_url}`
+                  }
+                  alt="작성자 프로필"
+                  className="profile-img"
+                />
+              )}
               <div className="author-name-time">
                 <span className="name">{post.user.nickname}</span>
                 <span className="time">
@@ -100,7 +105,7 @@ function Bulletindetail() {
                 </span>
               </div>
             </div>
-            {post.user_id === currentUserId && (
+            {post.user.id === currentUserId && (
               <div className="post-menu">
                 <MoreVertical
                   className="menu-icon"
@@ -112,11 +117,19 @@ function Bulletindetail() {
 
           <h3>{post.title}</h3>
           <p>{post.content}</p>
-          {post.imageURLs?.length > 0 &&
-            post.imageURLs.map((url, idx) => (
-              <img key={idx} src={url} alt={`첨부 이미지 ${idx + 1}`} />
-            ))}
-        </div>
+          {post.images?.length > 0 && (
+            <div className="post-image-grid">
+              {post.images.map((url, idx) => (
+                <img
+                  key={idx}
+                  src={`http://localhost:8000${url}`}
+                  alt={`첨부 이미지 ${idx + 1}`}
+                  className="post-image"
+                />
+              ))}
+            </div>
+          )}
+        </div> // ✅ 요 괄호를 추가해서 닫아주세요!
       )}
 
       {/* 댓글 영역 */}
@@ -137,7 +150,7 @@ function Bulletindetail() {
               </div>
 
               {/* ✅ 내가 쓴 댓글일 경우 삭제 아이콘 */}
-              {c.user_id === currentUserId && (
+              {c.user.id === currentUserId && (
                 <MoreVertical
                   className="menu-icon comment-delete"
                   onClick={() => handleDeleteComment(c.id)}

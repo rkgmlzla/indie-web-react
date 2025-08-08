@@ -2,7 +2,6 @@ import axios from 'axios';
 
 import { baseUrl } from './config';
 
-
 //마이페이지-로그인/로그아웃- 3.로그인 후 유저 정보 조회
 /**
  *  로그인 후 사용자 정보 조회 API
@@ -13,7 +12,7 @@ export const fetchUserInfo = async (authToken) => {
   try {
     const response = await axios.get(`${baseUrl}/user/me`, {
       headers: {
-        Authorization: `Bearer ${authToken}`, 
+        Authorization: `Bearer ${authToken}`,
       },
     });
     return response.data;
@@ -22,7 +21,6 @@ export const fetchUserInfo = async (authToken) => {
     throw error;
   }
 };
-
 
 //마이페이지-설정변경-1.닉네임수정
 /**
@@ -37,7 +35,7 @@ export const updateNickname = async (nickname, authToken) => {
       { nickname }, // Request Body
       {
         headers: {
-          Authorization: `Bearer ${authToken}`, 
+          Authorization: `Bearer ${authToken}`,
         },
       }
     );
@@ -63,22 +61,22 @@ export const updateProfileImage = async (file, authToken) => {
     const formData = new FormData();
     formData.append('profileImage', file);
 
-    const response = await axios.patch(`${baseUrl}/user/me/profile-image`, formData, {
-      headers: {
-        Authorization: `Bearer ${authToken}`,
-        'Content-Type': 'multipart/form-data',
-      },
-    });
+    const response = await axios.patch(
+      `${baseUrl}/user/me/profile-image`,
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          'Content-Type': 'multipart/form-data',
+        },
+      }
+    );
     return response.data;
   } catch (error) {
     console.error(' 프로필 이미지 변경(파일) 실패:', error);
     throw error;
   }
 };
-
-
-
-
 
 //마이페이지-설정변경-2.프로필 이미지 변경2( 이미지 첨부 X → application/json)
 /**
@@ -105,18 +103,17 @@ export const removeProfileImage = async (authToken) => {
   }
 };
 
-
-
-
-
-
-//마이페이지-설정변경-3.알림/위치 설정 ON OFF 
+//마이페이지-설정변경-3.알림/위치 설정 ON OFF
 /**
  *  알림/위치 설정 ON/OFF API
  * PATCH /user/me/setting
  * 인증 필요
  */
-export const updateUserSettings = async (alarmEnabled, locationEnabled, authToken) => {
+export const updateUserSettings = async (
+  alarmEnabled,
+  locationEnabled,
+  authToken
+) => {
   try {
     const response = await axios.patch(
       `${baseUrl}/user/me/setting`,
@@ -126,18 +123,13 @@ export const updateUserSettings = async (alarmEnabled, locationEnabled, authToke
       },
       {
         headers: {
-          Authorization: `Bearer ${authToken}`, 
+          Authorization: `Bearer ${authToken}`,
         },
       }
     );
     return response.data;
   } catch (error) {
-    console.error(' 알림/위치 설정 변경 실패:', error);
+    console.error('알림/위치 설정 변경 실패:', error.response?.data || error);
     throw error;
   }
 };
-
-
-
-
-

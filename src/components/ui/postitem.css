@@ -1,6 +1,66 @@
 .post-item {
   display: flex;
   justify-content: space-between;
+
+  position: relative;
+  padding: 12px 0;
+  border-bottom: 1px solid #ddd;
+  background: #fff;
+  gap: 12px;
+  cursor: pointer;
+  overflow: hidden;
+  border-radius: 10px;
+
+  .thumbnail {
+    flex-shrink: 0;
+    width: 70px;
+    height: 70px;
+    object-fit: cover;
+    border-radius: 6px;
+    background: #f0f0f0;
+  }
+
+  .post-text {
+    flex: 1;
+    overflow: hidden;
+
+    h3 {
+      margin: 0 0 6px;
+      font-size: 16px;
+      font-weight: bold;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    p {
+      margin: 0 0 8px;
+      color: #555;
+      font-size: 14px;
+      line-height: 1.4;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      line-clamp: 2;
+    }
+
+    .meta {
+      display: flex;
+      gap: 10px;
+      font-size: 12px;
+      color: #888;
+      align-items: center;
+
+      .comment-count {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        color: #f4511e;
+      }
+    }
+  }
   align-items: center;
   border-bottom: 1px solid #ddd;
   padding: 12px 0;
@@ -9,52 +69,4 @@
   gap: 12px;
 }
 
-/* 텍스트 영역 */
-.post-text {
-  flex: 1;
-}
 
-/* 제목 */
-.post-item h3 {
-  margin: 0 0 6px;
-  font-size: 16px;
-  font-weight: bold;
-}
-
-/* 내용 */
-.post-item p {
-  margin: 0 0 8px;
-  color: #555;
-  font-size: 14px;
-  line-height: 1.4;
-}
-
-/* 메타 정보 */
-.post-item .meta {
-  display: flex;
-  gap: 10px;
-  font-size: 12px;
-  color: #888;
-  align-items: center;
-}
-
-/* 댓글 수 */
-.comment-count {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  color: #f4511e;
-}
-
-/* ✅ 썸네일 이미지 */
-.thumbnail {
-  width: 80px;
-  height: 100px;
-  object-fit: cover;
-  border-radius: 6px;
-  background: #f0f0f0;
-
-  /* ✅ 정확한 수직 가운데 정렬 */
-  align-self: center;
-  display: block;
-}

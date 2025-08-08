@@ -4,25 +4,36 @@ import styled from 'styled-components';
 import MapWideCard from './MapWideCard';
 
 const Wrapper = styled.div`
-  width: 100%-32px;
+  width: calc(100% - 32px); // ✅ 제대로 된 CSS 계산식
   max-width: 100%;
-  background-color: #F14F2133; 
-  border-radius: 5px;
-  padding: 8px;
-  margin: 16px 16px 0px 16px; 
-  justify-content: center;
+  border-radius: 13px;
   box-sizing: border-box;
-  
-  & > div {
-    margin-left: 0;
-    margin-right: 0;
-  }
 `;
 
-const MapWideSelectCard = (props) => {
+const MapWideSelectCard = ({
+  title,
+  time,
+  name,
+  address,
+  poster,
+  nextPerformance,
+  upcomingPerformance,
+  venue_id,
+}) => {
   return (
     <Wrapper>
-      <MapWideCard data={props} noTopPadding />
+      <MapWideCard
+        data={{
+          id: venue_id,
+          name,
+          address,
+          upcomingPerformance: Array.isArray(upcomingPerformance)
+            ? upcomingPerformance.filter(Boolean)
+            : [],
+          image_url: poster,
+        }}
+        noTopPadding
+      />
     </Wrapper>
   );
 };
