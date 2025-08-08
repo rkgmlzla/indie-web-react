@@ -1,3 +1,4 @@
+// ✅ src/pages/map/components/MapView.jsx
 import React, { useEffect } from 'react';
 
 const MapView = ({ data }) => {
@@ -8,19 +9,21 @@ const MapView = ({ data }) => {
         zoom: 13,
       });
 
-      // 마커 찍기
-      data.forEach((item) => {
-        if (item.latitude && item.longitude) {
-          new window.naver.maps.Marker({
-            position: new window.naver.maps.LatLng(
-              item.latitude,
-              item.longitude
-            ),
-            map,
-            title: item.name,
-          });
-        }
-      });
+      // ✅ undefined 방지: 안전하게 체크
+      if (Array.isArray(data)) {
+        data.forEach((item) => {
+          if (item.latitude && item.longitude) {
+            new window.naver.maps.Marker({
+              position: new window.naver.maps.LatLng(
+                item.latitude,
+                item.longitude
+              ),
+              map,
+              title: item.name,
+            });
+          }
+        });
+      }
     }
   }, [data]);
 
