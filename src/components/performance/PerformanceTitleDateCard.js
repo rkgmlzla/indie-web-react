@@ -1,12 +1,13 @@
 import React from 'react';
 import styled from 'styled-components';
+import dayjs from 'dayjs'; // ✅ 추가
 
 export default function PerformanceTitleDateCard({ performance, onClick }) {
   return (
     <Card onClick={onClick}>
       <Poster src={performance.posterUrl} alt={performance.title} />
       <Title>{performance.title}</Title>
-      <Date>{performance.date}</Date>
+      <Date>{dayjs(performance.date).format('YYYY-MM-DD HH:mm')}</Date> {/* ✅ 날짜 포맷 적용 */}
     </Card>
   );
 }

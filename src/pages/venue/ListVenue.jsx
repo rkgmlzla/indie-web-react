@@ -71,7 +71,7 @@ function ListVenue() {
       <Header title="공연장" initialSearchTab="공연/공연장" />
       <div style={{ height: '30px' }} />
       <RegionSelectButton onClick={() => setIsSheetOpen(true)} selectedRegions={selectedRegions} />
-      <Divider mt="16px" />
+      <Divider $mt="16px" />
 
       {/* ✅ 공연장 목록 렌더링 */}
       <ScrollableList>

@@ -1,5 +1,5 @@
 import axios from 'axios';
-export const baseUrl = 'http://127.0.0.1:8000';
+import { baseUrl } from './config';
 
 /**
  * ✅ 공연 + 공연장 검색 (하나의 API에서 둘 다 반환)
