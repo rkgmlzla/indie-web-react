@@ -1,4 +1,4 @@
-// ✅ src/pages/artist/ArtistDetailPage.js
+// ArtistDetailPage.js
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
@@ -8,7 +8,6 @@ import PerformanceTitleDateCard from '../../components/performance/PerformanceTi
 import Divider from '../../components/common/Divider';
 import Header from '../../components/layout/Header';
 
-// ✅ API imports
 import { fetchArtistDetail } from '../../api/artistApi';
 import { likeArtist, unlikeArtist } from '../../api/likeApi';
 import { registerArtistAlert, cancelArtistAlert } from '../../api/alertApi';
@@ -23,60 +22,74 @@ export default function ArtistDetailPage() {
   const [scheduledPerformances, setScheduledPerformances] = useState([]);
   const [pastPerformances, setPastPerformances] = useState([]);
 
-  const authToken = 'user_token_here'; // 🔹 로그인 시 토큰으로 대체
+  const authToken = 'user_token_here'; // 🔑 로그인 시 토큰으로 교체
 
-  // ✅ 아티스트 상세 정보 API 호출
   useEffect(() => {
     const loadArtist = async () => {
       try {
         const data = await fetchArtistDetail(id);
-        console.log('🎯 [아티스트 상세] API 응답:', data);
+        console.log('🎯 [아티스트 상세] API 성공:', data);
 
-        // ✅ 필드명 매핑 (백엔드 → 프론트 변수 변환)
-        const mappedData = {
+        setArtist({
           ...data,
           profileImageUrl: data.image_url,
           spotify: data.spotify_url,
-          instagram: data.instagram_account
-        };
+          instagram: data.instagram_account,
+        });
 
-        setArtist(mappedData);
         setIsLiked(data.isLiked || false);
         setIsNotified(data.isNotified || false);
-        setScheduledPerformances(data.upcomingPerformances || []); // ✅ 이름 일치
+        setScheduledPerformances(data.upcomingPerformances || []);
         setPastPerformances(data.pastPerformances || []);
       } catch (err) {
-        console.error('📛 아티스트 상세 API 호출 실패:', err);
+        console.error('📛 [아티스트 상세] API 실패:', err);
       }
     };
+
     loadArtist();
   }, [id]);
 
-  // ✅ 찜 버튼 API
+  // ✅ 찜 ON/OFF
   const toggleLike = async () => {
     try {
       if (isLiked) {
         await unlikeArtist(id, authToken);
+        console.log('💔 [찜] 아티스트 언찜 API 성공');
       } else {
         await likeArtist(id, authToken);
+        console.log('❤️ [찜] 아티스트 찜 API 성공');
       }
       setIsLiked((prev) => !prev);
-    } catch (err) {
-      console.error('📛 아티스트 찜 API 실패:', err);
+    } catch (error) {
+      console.error('📛 [찜] 아티스트 찜/언찜 API 실패:', error);
     }
   };
 
-  // ✅ 알림 버튼 API
+  // ✅ 알림 ON/OFF
   const toggleNotify = async () => {
     try {
       if (isNotified) {
         await cancelArtistAlert(id, authToken);
+        setIsNotified(false);
+        console.log('🔕 [알림] 아티스트 알림 취소 성공');
       } else {
         await registerArtistAlert(id, authToken);
+        setIsNotified(true);
+        console.log('🔔 [알림] 아티스트 알림 등록 성공');
       }
-      setIsNotified((prev) => !prev);
-    } catch (err) {
-      console.error('📛 아티스트 알림 API 실패:', err);
+    } catch (error) {
+      const detail = error.response?.data?.detail;
+
+      if (detail === 'Alert already set') {
+        setIsNotified(true);
+        console.warn('🔔 [알림] 이미 등록된 알림입니다.');
+      } else if (detail === 'Alert not found') {
+        setIsNotified(false);
+        console.warn('🔕 [알림] 등록되지 않은 알림입니다.');
+      } else {
+        console.error('📛 [알림] 알림 등록/취소 실패:', error);
+        alert('알림 등록 중 오류가 발생했습니다.');
+      }
     }
   };
 
@@ -89,8 +102,7 @@ export default function ArtistDetailPage() {
       <Container>
         <ProfileSection>
           <ProfileWrapper>
-            {/* ✅ 필드명 수정 */}
-            <ProfileImage src={artist.profileImageUrl} alt={artist.name} />
+            <ProfileImage src={artist.profileImageUrl || '/default_profile.png'} alt={artist.name} />
             <StyledHeartButton isLiked={isLiked} onClick={toggleLike} />
           </ProfileWrapper>
           <ProfileInfo>
@@ -102,19 +114,15 @@ export default function ArtistDetailPage() {
         <Divider />
 
         <InfoSection>
-          {/* ✅ 스포티파이 링크 수정 */}
           <LabelRow>
             <Label>스포티파이</Label>
             <Value>
               {artist.spotify ? (
                 <a href={artist.spotify} target="_blank" rel="noreferrer">바로가기</a>
-              ) : (
-                '정보 없음'
-              )}
+              ) : '정보 없음'}
             </Value>
           </LabelRow>
 
-          {/* ✅ 인스타그램 링크 수정 */}
           <LabelRow>
             <Label>인스타그램</Label>
             <Value>
@@ -122,9 +130,7 @@ export default function ArtistDetailPage() {
                 <a href={`https://instagram.com/${artist.instagram}`} target="_blank" rel="noreferrer">
                   @{artist.instagram}
                 </a>
-              ) : (
-                '정보 없음'
-              )}
+              ) : '정보 없음'}
             </Value>
           </LabelRow>
 
@@ -133,7 +139,11 @@ export default function ArtistDetailPage() {
             <HorizontalScroll>
               {scheduledPerformances.length > 0 ? (
                 scheduledPerformances.map((p) => (
-                  <PerformanceTitleDateCard key={p.id} performance={p} onClick={() => navigate(`/performance/${p.id}`)} />
+                  <PerformanceTitleDateCard
+                    key={p.id}
+                    performance={p}
+                    onClick={() => navigate(`/performance/${p.id}`)}
+                  />
                 ))
               ) : (
                 <div>예정 공연 없음</div>
@@ -146,7 +156,11 @@ export default function ArtistDetailPage() {
             <HorizontalScroll>
               {pastPerformances.length > 0 ? (
                 pastPerformances.map((p) => (
-                  <PerformanceTitleDateCard key={p.id} performance={p} onClick={() => navigate(`/performance/${p.id}`)} />
+                  <PerformanceTitleDateCard
+                    key={p.id}
+                    performance={p}
+                    onClick={() => navigate(`/performance/${p.id}`)}
+                  />
                 ))
               ) : (
                 <div>지난 공연 없음</div>
@@ -159,17 +173,70 @@ export default function ArtistDetailPage() {
   );
 }
 
-// ✅ 스타일 유지
+//스타일
+// ✅ 스타일
 const Container = styled.div`display: flex; flex-direction: column; gap: 1rem;`;
 const ProfileSection = styled.div`display: flex; align-items: center; gap: 1.25rem; padding: 1.25rem;`;
-const ProfileWrapper = styled.div`position: relative; width: 5rem; height: 5rem; margin-right: 1rem;`;
-const ProfileImage = styled.img`width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 1px solid ${({ theme }) => theme.colors.outlineGray};`;
+
+const ProfileWrapper = styled.div`
+  position: relative;
+  width: 5rem;
+  height: 5rem;
+  aspect-ratio: 1 / 1;         /* ✅ 정사각형 비율 고정 */
+  margin-right: 1rem;
+  flex-shrink: 0;
+`;
+
+const ProfileImage = styled.img`
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 1 / 1;         /* ✅ 이미지 비율 유지 */
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid ${({ theme }) => theme.colors.outlineGray};
+`;
+
 const StyledHeartButton = styled(HeartButton)`position: absolute; bottom: -0.4rem; right: -0.4rem;`;
-const ProfileInfo = styled.div`flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 0.75rem;`;
-const Name = styled.div`font-size: ${({ theme }) => theme.fontSizes.lg}; font-weight: ${({ theme }) => theme.fontWeights.semibold};`;
+
+const ProfileInfo = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.75rem;
+`;
+
+const Name = styled.div`
+  font-size: ${({ theme }) => theme.fontSizes.lg};
+  font-weight: ${({ theme }) => theme.fontWeights.semibold};
+`;
+
 const InfoSection = styled.div`padding: 1.25rem;`;
-const LabelRow = styled.div`display: grid; grid-template-columns: 6rem 1fr; gap: 1rem; padding: 0.25rem 0;`;
-const Label = styled.div`font-size: ${({ theme }) => theme.fontSizes.md}; font-weight: ${({ theme }) => theme.fontWeights.semibold};`;
-const Value = styled.div`font-size: ${({ theme }) => theme.fontSizes.base}; font-weight: ${({ theme }) => theme.fontWeights.regular};`;
+
+const LabelRow = styled.div`
+  display: grid;
+  grid-template-columns: 6rem 1fr;
+  gap: 1rem;
+  padding: 0.25rem 0;
+`;
+
+const Label = styled.div`
+  font-size: ${({ theme }) => theme.fontSizes.md};
+  font-weight: ${({ theme }) => theme.fontWeights.semibold};
+`;
+
+const Value = styled.div`
+  font-size: ${({ theme }) => theme.fontSizes.base};
+  font-weight: ${({ theme }) => theme.fontWeights.regular};
+`;
+
 const PerformanceSection = styled.div`padding: 0.25rem 0;`;
-const HorizontalScroll = styled.div`display: flex; overflow-x: auto; gap: 1rem; &::-webkit-scrollbar { display: none; }`;
+
+const HorizontalScroll = styled.div`
+  display: flex;
+  overflow-x: auto;
+  gap: 1rem;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+`;

@@ -1,3 +1,4 @@
+// ✅ src/pages/calendar/index.jsx
 import React, { useState, useEffect } from 'react';
 import { format, addMonths, subMonths } from 'date-fns';
 import CalendarGrid from './components/CalendarGrid';
@@ -38,7 +39,6 @@ function CalendarPage() {
   // ✅ 날짜별 공연 리스트 로드
   const loadDailyConcerts = async (date) => {
     try {
-      // ✅ 다중 지역 지원 → 배열 그대로 전달
       const regionParam = selectedRegions.includes('전체') ? undefined : selectedRegions;
       const data = await fetchPerformancesByDate(date, regionParam);
       console.log(`🎯 [캘린더] ${date} 공연 리스트 응답:`, data);
@@ -56,6 +56,12 @@ function CalendarPage() {
     const regionParam = selectedRegions.includes('전체') ? undefined : selectedRegions;
     loadMonthlyConcertDates(year, month, regionParam);
   }, [currentMonth, selectedRegions]);
+
+  // ✅ 초기 진입 시 오늘 공연 로딩
+  useEffect(() => {
+    const formatted = format(selectedDate, 'yyyy-MM-dd');
+    loadDailyConcerts(formatted);
+  }, []);
 
   // ✅ 날짜 클릭 시 공연 로딩
   const handleDateClick = (date) => {
@@ -99,7 +105,7 @@ function CalendarPage() {
         <CalendarGrid
           currentMonth={currentMonth}
           selectedDate={selectedDate}
-          onDateClick={handleDateClick}   // ✅ 수정 포인트
+          onDateClick={handleDateClick}
           concerts={monthConcertDates}
         />
 

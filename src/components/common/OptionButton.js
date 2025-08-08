@@ -1,27 +1,24 @@
-// components/common/OptionButton.js
-import React from 'react';
+// ✅ isSelected → $isSelected 로 DOM 전달 방지
 import styled from 'styled-components';
 
-export default function OptionButton({ label, isSelected, onClick }) {
-    return (
-        <StyledButton isSelected={isSelected} onClick={onClick}>
-            {label}
-        </StyledButton>
-    );
-}
-
-const StyledButton = styled.button`
-    padding: 0.5rem 0.75rem;
-    border: 1.5px solid
-        ${({ isSelected, theme }) =>
-        isSelected ? theme.colors.themeOrange : theme.colors.outlineGray};
-    background-color: ${({ isSelected, theme }) =>
-        isSelected ? theme.colors.themeOrangeAlpha : 'transparent'};
-    color: ${({ isSelected, theme }) => 
-        isSelected ? theme.colors.themeOrange : theme.colors.darkGray};
-    font-weight: ${({ theme }) => theme.fontWeights.regular};
-    font-size: ${({ theme }) => theme.fontSizes.sm};
-    border-radius: 2rem;
-    white-space: nowrap;
-    cursor: pointer;
+const Button = styled.button`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1rem;
+  border-radius: 1.5rem;
+  font-size: ${({ theme }) => theme.fontSizes.sm};
+  font-weight: ${({ theme }) => theme.fontWeights.medium};
+  border: 1.5px solid ${({ theme }) => theme.colors.outlineGray};
+  background-color: ${({ $isSelected, theme }) =>
+    $isSelected ? theme.colors.primaryLight : theme.colors.bgWhite};
+  color: ${({ $isSelected, theme }) =>
+    $isSelected ? theme.colors.primary : theme.colors.black};
+  cursor: pointer;
 `;
+
+const OptionButton = ({ label, onClick, isSelected }) => {
+  return <Button onClick={onClick} $isSelected={isSelected}>{label}</Button>;
+};
+
+export default OptionButton;

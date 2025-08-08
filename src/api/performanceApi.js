@@ -64,26 +64,34 @@ export const fetchPerformancesByDate = async (date) => {
     throw error;
   }
 };
-
 // 공연-1. 공연 목록 조회 (수정 완료 ✅)
 export const fetchPerformances = async ({ region, sort, page, size }) => {
   try {
-    // ✅ region이 배열이면 콤마 문자열로 변환
-    const regionParam = Array.isArray(region) ? region.join(",") : region;
+    const params = new URLSearchParams();
 
-    const params = Object.fromEntries(
-      Object.entries({ region: regionParam, sort, page, size }).filter(
-        ([_, v]) => v !== undefined && v !== null && v !== ""
-      )
-    );
+    if (region && Array.isArray(region)) {
+      region.forEach((r) => params.append('region', r));
+    } else if (region) {
+      params.append('region', region);
+    }
 
-    const response = await axios.get(`${baseUrl}/performance`, { params });
-    return safeArray(response.data); // ✅ data.performances만 배열 반환
+    if (sort) params.append('sort', sort);
+    if (page) params.append('page', page);
+    if (size) params.append('size', size);
+
+    const response = await axios.get(`${baseUrl}/performance`, {
+      params,
+    });
+
+    return Array.isArray(response.data?.performances)
+      ? response.data.performances
+      : [];
   } catch (error) {
     console.error('❌ 공연 목록 조회 실패:', error.response?.data || error.message);
     throw error;
   }
 };
+
 
 // 공연-2. 공연 상세 정보 조회 (단일 객체 반환)
 export const fetchPerformanceDetail = async (id) => {

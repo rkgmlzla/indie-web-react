@@ -104,9 +104,14 @@ const regionParam = selectedRegions.includes('전체') ? undefined : selectedReg
       <Container>
         <FilterBar>
           <FilterGroup>
-            <FilterButton onClick={() => setIsSortModalOpen(true)}>
-              {sortOption === 'latest' ? '최근등록순' : '인기순'}
-            </FilterButton>
+           <FilterButton onClick={() => setIsSortModalOpen(true)}>
+  {sortOption === 'latest'
+    ? '최근등록순'
+    : sortOption === 'date'
+    ? '공연임박순'
+    : '인기순'}
+</FilterButton>
+
             <FilterButton onClick={() => setIsRegionModalOpen(true)}>
               {selectedRegions[0] === '전체' ? '지역 전체' : `지역: ${selectedRegions.join(', ')}`}
             </FilterButton>

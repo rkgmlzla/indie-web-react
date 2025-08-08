@@ -1,22 +1,27 @@
 .post-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   border-bottom: 1px solid #ddd;
   padding: 12px 0;
   cursor: pointer;
-  position: relative;
   background: #fff;
+  gap: 12px;
 }
 
-/* 제목 잘림 해결 */
+/* 텍스트 영역 */
+.post-text {
+  flex: 1;
+}
+
+/* 제목 */
 .post-item h3 {
   margin: 0 0 6px;
   font-size: 16px;
   font-weight: bold;
-  white-space: normal !important;  /* 한 줄 제한 해제 */
-  overflow: visible !important;
-  text-overflow: clip !important;
 }
 
-/* 게시글 내용 */
+/* 내용 */
 .post-item p {
   margin: 0 0 8px;
   color: #555;
@@ -24,6 +29,7 @@
   line-height: 1.4;
 }
 
+/* 메타 정보 */
 .post-item .meta {
   display: flex;
   gap: 10px;
@@ -32,7 +38,7 @@
   align-items: center;
 }
 
-/* 댓글 수 아이콘 포함 영역 */
+/* 댓글 수 */
 .comment-count {
   display: flex;
   align-items: center;
@@ -40,21 +46,15 @@
   color: #f4511e;
 }
 
-/* 썸네일 크기 개선 */
-.post-item .thumbnail {
-  position: absolute;
-  right: 8px;
-  bottom: 12px;
-  width: 80px;      /* 기존 64 → 80 */
-  height: 100px;    /* 기존 64 → 100 */
+/* ✅ 썸네일 이미지 */
+.thumbnail {
+  width: 80px;
+  height: 100px;
   object-fit: cover;
   border-radius: 6px;
   background: #f0f0f0;
-}
 
-/* 이미지 로딩 오류 방지 및 썸네일 기본 배경 추가 */
-.post-item img {
-  object-fit: cover;
-  border-radius: 6px;
-  background: #f0f0f0;
+  /* ✅ 정확한 수직 가운데 정렬 */
+  align-self: center;
+  display: block;
 }
