@@ -144,6 +144,49 @@ export const fetchLikedArtists = async ({ page, size, authToken }) => {
   }
 };
 
+/**
+ * 🎯 아티스트 알림 등록 (ON)
+ * Method: POST
+ * Endpoint: /alert
+ * Body: { type: "artist", refId }
+ * 인증 필요: ✅
+ */
+export const registerArtistAlert = async (artistId, authToken) => {
+  try {
+    const response = await axios.post(
+      `${baseUrl}/alert`,
+      { type: 'artist', refId: artistId },
+      { headers: { Authorization: `Bearer ${authToken}` } }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('📛 아티스트 알림 등록 실패:', error);
+    throw error;
+  }
+};
+
+/**
+ * 🎯 아티스트 알림 해제 (OFF)
+ * Method: DELETE
+ * Endpoint: /alert/{artistId}?type=artist
+ * Query: type=artist
+ * 인증 필요: ✅
+ */
+export const cancelArtistAlert = async (artistId, authToken) => {
+  try {
+    const response = await axios.delete(
+      `${baseUrl}/alert/${artistId}`,
+      {
+        headers: { Authorization: `Bearer ${authToken}` },
+        params: { type: 'artist' }
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('📛 아티스트 알림 해제 실패:', error);
+    throw error;
+  }
+};
 
 
 

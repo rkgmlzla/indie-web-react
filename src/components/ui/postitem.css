@@ -1,6 +1,7 @@
 .post-item {
   display: flex;
   justify-content: space-between;
+
   position: relative;
   padding: 12px 0;
   border-bottom: 1px solid #ddd;
@@ -60,4 +61,12 @@
       }
     }
   }
+  align-items: center;
+  border-bottom: 1px solid #ddd;
+  padding: 12px 0;
+  cursor: pointer;
+  background: #fff;
+  gap: 12px;
 }
+
+

@@ -6,10 +6,9 @@ import IconCopy from '../../assets/icons/icon_y_copy.svg';
 import MapView from '../map/components/MapView';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import { fetchVenueDetail } from '../../api/venueApi'; // ✅ API import
 
-// ✅ 공연장 상세 API import
-import { fetchVenueDetail } from '../../api/venueApi';
-
+// 스타일 컴포넌트 생략 없이 유지 (기존 코드와 동일)
 const Container = styled.div` width: 100%; margin: 0; padding: 0; `;
 const InnerWrapper = styled.div` padding: 16px 0; `;
 const Row = styled.div` display: flex; margin-bottom: 12px; `;
@@ -31,31 +30,36 @@ const Poster = styled.img` width: 100%; aspect-ratio: 3 / 4; border-radius: 5px;
 const Title = styled.div` margin-top: 4px; font-weight: ${({ theme }) => theme.fontWeights.medium}; font-size: ${({ theme }) => theme.fontSizes.xs}; color: ${({ theme }) => theme.colors.darkGray}; line-height: 18px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; `;
 const Date = styled.div` margin-top: 2px; font-weight: ${({ theme }) => theme.fontWeights.regular}; font-size: ${({ theme }) => theme.fontSizes.xxs}; color: ${({ theme }) => theme.colors.lightGray}; line-height: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; `;
 
-const UpcomingCard = ({ data, onClick }) => (
-  <div onClick={onClick}>
-    <Poster src={data.image_url} alt={data.title} />
-    <Title>{data.title}</Title>
-    <Date>{data.date}</Date>
-  </div>
-);
+// ✅ 카드 렌더링 컴포넌트
+const UpcomingCard = ({ data, onClick }) => {
+  if (!data) return null;
+  return (
+    <div onClick={onClick}>
+      <Poster src={data.image_url || ''} alt={data.title || '공연명'} />
+      <Title>{data.title || '제목 없음'}</Title>
+      <Date>{data.date || ''}</Date>
+    </div>
+  );
+};
 
 const DetailVenue = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-
   const [venue, setVenue] = useState(null);
   const [upcomingConcerts, setUpcomingConcerts] = useState([]);
 
-  // ✅ API 호출
   useEffect(() => {
     const loadVenueDetail = async () => {
       try {
         const data = await fetchVenueDetail(id);
         console.log('🎯 [공연장 상세] API 응답:', data);
-        setVenue(data);
-        setUpcomingConcerts(data.upcomingPerformance || []); // ✅ 백엔드 필드명 반영
+
+        setVenue(data || null);
+        setUpcomingConcerts(Array.isArray(data?.upcomingPerformance) ? data.upcomingPerformance : []);
       } catch (err) {
         console.error('📛 공연장 상세 API 호출 실패:', err);
+        setVenue(null);
+        setUpcomingConcerts([]);
       }
     };
     loadVenueDetail();
@@ -70,8 +74,8 @@ const DetailVenue = () => {
       <Container>
         <InnerWrapper>
           <Row>
-            <ProfileImage src={venue.image_url} alt="공연장 이미지" />
-            <VenueName>{venue.name}</VenueName>
+            <ProfileImage src={venue.image_url || ''} alt="공연장 이미지" />
+            <VenueName>{venue.name || '공연장 이름 없음'}</VenueName>
           </Row>
 
           <Divider mt="24px" mb="24px" />
@@ -87,13 +91,20 @@ const DetailVenue = () => {
             <AddressTag>주소</AddressTag>
             <AddressContentWrapper>
               <AddressLabelWrapper>
-                <AddressLabel>{venue.address}</AddressLabel>
-                <CopyIcon src={IconCopy} alt="복사 아이콘" onClick={() => navigator.clipboard.writeText(venue.address)} />
+                <AddressLabel>{venue.address || '주소 정보 없음'}</AddressLabel>
+                <CopyIcon src={IconCopy} alt="복사 아이콘" onClick={() => navigator.clipboard.writeText(venue.address || '')} />
               </AddressLabelWrapper>
             </AddressContentWrapper>
           </Row>
 
-          <MapView />
+          {/* ✅ MapView에 venue 좌표를 명시적으로 넘김 */}
+          <MapView
+            data={
+              venue.latitude && venue.longitude
+                ? [{ name: venue.name, latitude: venue.latitude, longitude: venue.longitude }]
+                : []
+            }
+          />
 
           <UpcomingTag>예정 공연</UpcomingTag>
           <UpcomingScrollWrapper>

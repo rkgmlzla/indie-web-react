@@ -1,6 +1,7 @@
 import './postitem.css';
 import { MessageCirclePlus } from 'lucide-react';
 
+
 const formatDate = (isoDate) => {
   if (!isoDate) return '';
   const date = new Date(isoDate);
@@ -36,6 +37,7 @@ function PostItem({ post, onClick }) {
         />
       )}
     </li>
+
   );
 }
 

@@ -1,3 +1,4 @@
+// Search.jsx
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Bell, BellOff, Heart } from 'lucide-react';
@@ -9,6 +10,12 @@ import Header from '../../components/layout/Header';
 
 // ✅ API Import
 import { searchPerformanceAndVenue, searchArtist, searchPost } from '../../api/searchApi';
+import {
+  likeArtist,
+  unlikeArtist,
+  registerArtistAlert,
+  cancelArtistAlert,
+} from '../../api/likeApi';
 
 function Search() {
   const location = useLocation();
@@ -29,7 +36,6 @@ function Search() {
   const [alarmState, setAlarmState] = useState({});
   const [likedState, setLikedState] = useState({});
 
-  // ✅ API 호출 함수
   const fetchSearchResults = useCallback(async (searchKeyword, currentTab) => {
     if (!searchKeyword) return;
 
@@ -47,7 +53,17 @@ function Search() {
         setVenues(uniqueVenues);
       } else if (currentTab === '아티스트') {
         const artistRes = await searchArtist({ keyword: searchKeyword, page: 1, size: 10 });
-        setArtists(Array.isArray(artistRes) ? artistRes : []);
+        setArtists(artistRes);
+
+        // ✅ 상태 초기화
+        const initialLiked = {};
+        const initialAlarm = {};
+        artistRes.forEach((artist) => {
+          initialLiked[artist.id] = artist.isLiked;
+          initialAlarm[artist.id] = artist.isAlarmEnabled;
+        });
+        setLikedState(initialLiked);
+        setAlarmState(initialAlarm);
       } else if (currentTab === '자유게시판') {
         const postRes = await searchPost({ keyword: searchKeyword, page: 1, size: 10 });
         setPosts(Array.isArray(postRes) ? postRes : []);
@@ -57,7 +73,6 @@ function Search() {
     }
   }, []);
 
-  // ✅ 검색 버튼 클릭 시
   const handleSearch = (newKeyword) => {
     setKeyword(newKeyword);
     setRecent((prev) => [newKeyword, ...prev.filter((w) => w !== newKeyword)].slice(0, 10));
@@ -65,13 +80,49 @@ function Search() {
     fetchSearchResults(newKeyword, tab);
   };
 
-  // ✅ 탭 변경 시 자동 검색
   useEffect(() => {
     if (keyword) fetchSearchResults(keyword, tab);
   }, [tab, keyword, fetchSearchResults]);
 
-  const toggleAlarm = (id) => setAlarmState((prev) => ({ ...prev, [id]: !prev[id] }));
-  const toggleLike = (id) => setLikedState((prev) => ({ ...prev, [id]: !prev[id] }));
+  const handleToggleAlarm = async (artistId) => {
+    const authToken = localStorage.getItem('accessToken');
+    const isOn = alarmState[artistId];
+
+    try {
+      if (isOn) {
+        await cancelArtistAlert(artistId, authToken);
+      } else {
+        await registerArtistAlert(artistId, authToken);
+      }
+      setAlarmState((prev) => ({ ...prev, [artistId]: !isOn }));
+    } catch (err) {
+      if (err.response?.status === 409) {
+        console.warn('🔔 이미 처리된 상태입니다');
+      } else {
+        console.error('📛 알림 토글 실패:', err);
+      }
+    }
+  };
+
+  const handleToggleLike = async (artistId) => {
+    const authToken = localStorage.getItem('accessToken');
+    const isOn = likedState[artistId];
+
+    try {
+      if (isOn) {
+        await unlikeArtist(artistId, authToken);
+      } else {
+        await likeArtist(artistId, authToken);
+      }
+      setLikedState((prev) => ({ ...prev, [artistId]: !isOn }));
+    } catch (err) {
+      if (err.response?.status === 409) {
+        console.warn('❤️ 이미 처리된 상태입니다');
+      } else {
+        console.error('📛 찜 토글 실패:', err);
+      }
+    }
+  };
 
   return (
     <div className="search-page">
@@ -85,10 +136,18 @@ function Search() {
       <div className="recent">
         <h4>최근 검색어</h4>
         <div className="recent-list">
-          {recent.map((word, idx) => (
+          {recent.slice(0, 4).map((word, idx) => (
             <div key={idx} className="recent-chip" onClick={() => handleSearch(word)}>
               {word}
-              <button onClick={(e) => { e.stopPropagation(); setRecent((prev) => prev.filter((w) => w !== word)); }} className="close-btn">×</button>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setRecent((prev) => prev.filter((w) => w !== word));
+                }}
+                className="close-btn"
+              >
+                ×
+              </button>
             </div>
           ))}
         </div>
@@ -102,7 +161,7 @@ function Search() {
             {concerts.length > 0 ? concerts.map((item) => (
               <PostItem
                 key={item.id}
-                performance={item}   // ✅ 공연 데이터 전달
+                performance={item}
                 onClick={() => navigate(`/performance/${item.id}`)}
               />
             )) : <p><strong>{keyword}</strong>와(과) 일치하는 공연이 없습니다.</p>}
@@ -124,16 +183,29 @@ function Search() {
       {keyword && tab === '아티스트' && (
         <div className="artist-list">
           {artists.length > 0 ? artists.map((artist) => (
-            <div className="artist-item" key={artist.id}>
+            <div className="artist-item" key={artist.id} onClick={() => navigate(`/artist/${artist.id}`)}>
               <div className="artist-info">
                 <img className="artist-img" src={artist.profile_url || '/no-image.png'} alt={artist.name} />
                 <span className="artist-name">{artist.name}</span>
               </div>
               <div className="artist-buttons">
-                <div className={`notify ${alarmState[artist.id] ? 'on' : ''}`} onClick={() => toggleAlarm(artist.id)}>
+                <div
+                  className={`notify ${alarmState[artist.id] ? 'on' : ''}`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleToggleAlarm(artist.id);
+                  }}
+                >
                   공연알림 {alarmState[artist.id] ? <Bell size={16} /> : <BellOff size={16} />}
                 </div>
-                <Heart className={`heart ${likedState[artist.id] ? 'on' : ''}`} size={20} onClick={() => toggleLike(artist.id)} />
+                <Heart
+                  className={`heart ${likedState[artist.id] ? 'on' : ''}`}
+                  size={20}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleToggleLike(artist.id);
+                  }}
+                />
               </div>
             </div>
           )) : <p><strong>{keyword}</strong>와(과) 일치하는 아티스트가 없습니다.</p>}

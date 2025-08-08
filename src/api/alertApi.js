@@ -61,12 +61,12 @@ export const registerArtistAlert = async (artistId, authToken) => {
   try {
     const response = await axios.post(
       `${baseUrl}/alert`,
-      { type: 'artist', refId: artistId },
+      { type: 'artist', refId: artistId }, // ✅ 이걸로 돌려놓자
       { headers: { Authorization: `Bearer ${authToken}` } }
     );
     return response.data;
   } catch (error) {
-    console.error('📛 아티스트 알림 등록 실패:', error);
+    console.error('📛 아티스트 알림 등록 실패:', error.response?.data || error);
     throw error;
   }
 };

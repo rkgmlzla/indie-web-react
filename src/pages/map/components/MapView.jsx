@@ -6,7 +6,7 @@ const MapView = ({
   selectedVenue,
   setSelectedCardId,
   setSelectedVenue,
-  handleMarkerClick, // ✅ 추가
+  handleMarkerClick,
 }) => {
   const mapRef = useRef(null);
   const markersRef = useRef([]);

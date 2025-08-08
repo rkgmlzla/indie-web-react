@@ -7,9 +7,7 @@ import RegionSelectButton from './components/RegionSelectButton';
 import RegionSelectSheet from './components/RegionSelectSheet';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-
-// ✅ 공연장 목록 API import
-import { fetchVenueList } from '../../api/venueApi';
+import { fetchVenueList } from '../../api/venueApi'; // ✅ 공연장 목록 API import
 
 const PageWrapper = styled.div`
   height: 100vh;
@@ -26,35 +24,38 @@ function ListVenue() {
   const navigate = useNavigate();
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [selectedRegions, setSelectedRegions] = useState(['전체']);
-  const [venues, setVenues] = useState([]); // ✅ API 데이터 상태
+  const [venues, setVenues] = useState([]); // ✅ 공연장 리스트 상태
   const [page, setPage] = useState(1);
   const size = 20;
 
-  // ✅ API 호출 함수 (수정됨)
+  // ✅ API 호출 함수
   const loadVenues = async () => {
     try {
-      // ✅ '전체'가 포함되면 regionParam은 undefined → 서버에서 전체 조회
-      const regionParam = selectedRegions.includes('전체')
-        ? undefined
-        : selectedRegions;
 
-      // ✅ 수정된 fetchVenueList에 배열 그대로 전달
+      const regionParam = selectedRegions.includes('전체') ? undefined : selectedRegions;
+
       const data = await fetchVenueList({ page, size, region: regionParam });
 
       console.log('🎯 [공연장 목록] API 응답:', data);
-      setVenues(data.content || data); // ✅ 백엔드 응답 구조에 맞게 세팅
+
+      // ✅ 응답이 undefined/null일 경우 대비
+      const venueList = Array.isArray(data?.content)
+        ? data.content
+        : Array.isArray(data)
+        ? data
+        : [];
+
+      setVenues(venueList);
     } catch (err) {
       console.error('📛 공연장 목록 API 호출 실패:', err);
       setVenues([]);
     }
   };
 
-  // ✅ 페이지 로드 & 지역 변경 시 API 호출
   useEffect(() => {
     loadVenues();
   }, [selectedRegions, page]);
 
-  // ✅ 지역 선택 핸들러
   const handleSelectRegion = (region) => {
     if (region === '전체') {
       setSelectedRegions(['전체']);
@@ -72,17 +73,17 @@ function ListVenue() {
     <PageWrapper>
       <Header title="공연장" initialSearchTab="공연/공연장" />
       <div style={{ height: '30px' }} />
-      <RegionSelectButton
-        onClick={() => setIsSheetOpen(true)}
-        selectedRegions={selectedRegions}
-      />
-      <Divider mt="16px" />
 
-      {/* ✅ 공연장 목록 렌더링 */}
+      <RegionSelectButton onClick={() => setIsSheetOpen(true)} selectedRegions={selectedRegions} />
+      <Divider $mt="16px" />
+
+
+      {/* ✅ 공연장 목록 렌더링 - 안전한 조건 추가 */}
       <ScrollableList>
-        {venues
-          .filter((venue) => !!venue.id) // ✅ id가 있는 항목만 렌더링
-          .map((venue) => (
+
+        {Array.isArray(venues) &&
+          venues.map((venue) => (
+
             <VenueItem
               key={venue.id}
               image={venue.image_url}
@@ -92,7 +93,6 @@ function ListVenue() {
           ))}
       </ScrollableList>
 
-      {/* ✅ 지역 선택 시트 */}
       {isSheetOpen && (
         <RegionSelectSheet
           selectedRegions={selectedRegions}

@@ -4,7 +4,7 @@
   gap: 8px;
 }
 
-.dayLabel {
+.dayLabel { 
   text-align: center;
   font-weight: bold;
 }
@@ -48,9 +48,8 @@
   border: 2px solid orange;
 }
 
-/* ✅ 오늘 날짜 스타일 (테두리 + 빨간 점) */
+/* ✅ 오늘 날짜 (공연 유무 무관): 빨간 점만 표시, border는 concert로 통일 */
 .today {
-  border: 1px solid #555;
   font-weight: bold;
 }
 
