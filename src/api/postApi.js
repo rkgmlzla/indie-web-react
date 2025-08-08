@@ -1,7 +1,6 @@
 import axios from 'axios';
-
+import api from './api';
 import { baseUrl } from './config';
-
 
 // 자유게시판-1.글  목록 조회
 /**
@@ -12,19 +11,11 @@ import { baseUrl } from './config';
  * 인증:  필터링 없을 경우 불필요
  */
 export const fetchPostList = async ({ page, size, sort, type }) => {
-  try {
-    const response = await axios.get(`${baseUrl}/post`, {
-      params: { page, size, sort, type },
-    });
-    return response.data;
-  } catch (error) {
-    console.error(' 게시글 목록 조회 실패:', error);
-    throw error;
-  }
+  const response = await api.get('/post', {
+    params: { page, size, sort, type },
+  });
+  return response.data;
 };
-
-
-
 
 // 자유게시판-2.게시물 상세 정보 조회
 /**
@@ -42,13 +33,17 @@ export const fetchPostDetail = async (postId) => {
   }
 };
 
-
 // 게시물 -1.작성1(이미지 첨부 O → multipart/form-data)
 /**
  * 게시물 작성 (이미지 첨부 O) - 수정 버전
  * 🔹 images가 null/undefined/빈배열일 때 안전하게 처리
  */
-export const createPostWithImages = async (title, content, images, authToken) => {
+export const createPostWithImages = async (
+  title,
+  content,
+  images,
+  authToken
+) => {
   try {
     const formData = new FormData();
     formData.append('title', title);
@@ -71,8 +66,6 @@ export const createPostWithImages = async (title, content, images, authToken) =>
     throw error;
   }
 };
-
-
 
 // 게시물-1. 작성2(이미지 첨부 X → application/json)
 
@@ -99,7 +92,3 @@ export const createPost = async (title, content, authToken) => {
     throw error;
   }
 };
-
-
-
-

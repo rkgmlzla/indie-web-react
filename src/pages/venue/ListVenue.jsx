@@ -34,7 +34,9 @@ function ListVenue() {
   const loadVenues = async () => {
     try {
       // ✅ '전체'가 포함되면 regionParam은 undefined → 서버에서 전체 조회
-      const regionParam = selectedRegions.includes('전체') ? undefined : selectedRegions;
+      const regionParam = selectedRegions.includes('전체')
+        ? undefined
+        : selectedRegions;
 
       // ✅ 수정된 fetchVenueList에 배열 그대로 전달
       const data = await fetchVenueList({ page, size, region: regionParam });
@@ -70,19 +72,24 @@ function ListVenue() {
     <PageWrapper>
       <Header title="공연장" initialSearchTab="공연/공연장" />
       <div style={{ height: '30px' }} />
-      <RegionSelectButton onClick={() => setIsSheetOpen(true)} selectedRegions={selectedRegions} />
+      <RegionSelectButton
+        onClick={() => setIsSheetOpen(true)}
+        selectedRegions={selectedRegions}
+      />
       <Divider mt="16px" />
 
       {/* ✅ 공연장 목록 렌더링 */}
       <ScrollableList>
-        {venues.map((venue) => (
-          <VenueItem
-            key={venue.id}
-            image={venue.image_url}        // ✅ 백엔드 응답 필드와 맞춤
-            name={venue.name}              // ✅ 백엔드 응답 필드와 맞춤
-            onClick={() => navigate(`/venue/${venue.id}`)}
-          />
-        ))}
+        {venues
+          .filter((venue) => !!venue.id) // ✅ id가 있는 항목만 렌더링
+          .map((venue) => (
+            <VenueItem
+              key={venue.id}
+              image={venue.image_url}
+              name={venue.name}
+              onClick={() => navigate(`/venue/${venue.id}`)}
+            />
+          ))}
       </ScrollableList>
 
       {/* ✅ 지역 선택 시트 */}

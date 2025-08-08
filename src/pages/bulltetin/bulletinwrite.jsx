@@ -41,24 +41,27 @@ function BulletinWrite() {
   const handleSubmit = async () => {
     if (!isValid) return;
 
-    const formData = new FormData();
-    formData.append('title', title);
-    formData.append('content', content);
-    images.forEach((img) => formData.append('images', img));
+    const accessToken = localStorage.getItem('accessToken');
 
     try {
-      await axios.post('/post', formData, {
+      const formData = new FormData();
+      formData.append('title', title);
+      formData.append('content', content);
+      images.forEach((img) => formData.append('images', img));
+
+      await axios.post('http://localhost:8000/post', formData, {
         headers: {
-          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${accessToken}`, // Content-Type 생략 → 자동 설정됨
         },
-        withCredentials: true,
       });
-      navigate('/bulletinboard');
+
+      navigate('/bulletinboard'); // 성공 시 이동
     } catch (error) {
       console.error('게시글 작성 실패:', error);
       alert('게시글 작성에 실패했습니다.');
     }
   };
+
   return (
     <div className="freeboard__write">
       <Header title="자유게시판" showBack showSearch={false} showMenu={false} />

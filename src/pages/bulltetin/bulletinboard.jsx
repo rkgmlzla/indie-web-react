@@ -8,8 +8,7 @@ import axios from 'axios';
 
 function BulletinBoard() {
   const navigate = useNavigate();
-  const [filter, setFilter] =
-    (useState < 'all') | 'myPosts' | ('myComments' > 'all');
+  const [filter, setFilter] = useState('all');
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const currentUserId = 1; // ✅ 추후 전역 상태에서 관리
@@ -17,15 +16,73 @@ function BulletinBoard() {
   const fetchPosts = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('/post', {
-        params: {
-          page: 1,
-          size: 50,
-          sort: 'recent',
-        },
-        withCredentials: true, // 쿠키 기반 인증인 경우
-      });
-      setPosts(response.data.posts);
+      let response;
+
+      if (filter === 'myPosts') {
+        const response = await axios.get('http://localhost:8000/post', {
+          params: {
+            page: 1,
+            size: 50,
+            sort: 'recent',
+          },
+          withCredentials: true,
+        });
+
+        const currentUserNickname = '야호'; // ✅ 실제 사용자 닉네임 (전역 상태에서 받아오는 게 이상적)
+
+        console.log('📌 받아온 post:', response.data.posts);
+
+        const myPosts = (response.data.posts || []).filter(
+          (post) => post.author === currentUserNickname
+        );
+
+        setPosts(myPosts);
+      } else if (filter === 'myComments') {
+        // 전체 글 불러오기
+        const postResponse = await axios.get('http://localhost:8000/post', {
+          params: {
+            page: 1,
+            size: 50,
+            sort: 'recent',
+          },
+          withCredentials: true,
+        });
+
+        const allPosts = postResponse.data.posts;
+
+        // 각 게시물에 대해 댓글 요청 보내기 (Promise.all로 병렬 처리)
+        const postWithMyComments = await Promise.all(
+          allPosts.map(async (post) => {
+            try {
+              const commentRes = await axios.get(
+                `http://localhost:8000/post/${post.id}/comment`,
+                {
+                  withCredentials: true,
+                }
+              );
+              const hasMyComment = commentRes.data.comment.some(
+                (c) => c.user.id === currentUserId
+              );
+              return hasMyComment ? post : null;
+            } catch (e) {
+              console.warn('댓글 가져오기 실패:', e);
+              return null;
+            }
+          })
+        );
+
+        setPosts(postWithMyComments.filter(Boolean));
+      } else {
+        response = await axios.get('http://localhost:8000/post', {
+          params: {
+            page: 1,
+            size: 50,
+            sort: 'recent',
+          },
+          withCredentials: true,
+        });
+        setPosts(response.data.posts);
+      }
     } catch (err) {
       console.error('❌ 게시글 불러오기 실패:', err);
     } finally {
@@ -35,7 +92,7 @@ function BulletinBoard() {
 
   useEffect(() => {
     fetchPosts();
-  }, []);
+  }, [filter]);
 
   const filteredPosts = posts.filter((post) => {
     if (filter === 'myPosts') return post.user_id === currentUserId;
@@ -67,7 +124,7 @@ function BulletinBoard() {
         </button>
       </div>
       <ul className="board__list">
-        {filteredPosts.map((post) => (
+        {posts.map((post) => (
           <PostItem
             key={post.id}
             post={post}
@@ -75,6 +132,7 @@ function BulletinBoard() {
           />
         ))}
       </ul>
+
       <button className="write-btn" onClick={() => navigate('/bulletinwrite')}>
         <Pencil size={16} strokeWidth={2} />
         글쓰기
