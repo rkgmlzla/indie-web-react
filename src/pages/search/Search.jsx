@@ -1,4 +1,3 @@
-// Search.jsx
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Bell, BellOff, Heart } from 'lucide-react';
@@ -35,6 +34,52 @@ function Search() {
 
   const [alarmState, setAlarmState] = useState({});
   const [likedState, setLikedState] = useState({});
+
+  // ---- 헬퍼들 ----
+  const ensureHttp = (u) => {
+    if (!u) return null;
+    if (u.startsWith('http://') || u.startsWith('https://')) return u;
+    if (u.startsWith('//')) return `https:${u}`;
+    if (u.startsWith('/')) return `http://localhost:8001${u}`; // 백엔드 상대경로 처리
+    return `https://${u}`; // placeholder 같은 문자열 처리
+  };
+
+  const formatRange = (startISO, endISO) => {
+    if (!startISO && !endISO) return null;
+    const toK = (d) =>
+      new Date(d).toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' });
+    return startISO && endISO ? `${toK(startISO)} ~ ${toK(endISO)}` : toK(startISO || endISO);
+  };
+
+  // ✅ 공연 → PostItem 포맷 정규화 (이미지/날짜/장소 보강)
+  const toPostFromPerformance = (p) => {
+    const rawThumb =
+      p.poster_url ?? p.posterUrl ?? p.poster ??
+      p.image_url ?? p.imageUrl ?? p.image ??
+      p.thumbnail_url ?? p.thumbnailUrl ?? p.thumbnail ??
+      p.main_image ?? p.mainImage ?? null;
+
+    const start =
+      p.start_at ?? p.startAt ??
+      p.performance_start_at ?? p.performanceStartAt ??
+      p.open_date ?? p.openDate ??
+      p.performance_date ?? p.performanceDate ??
+      p.date ?? p.startDate ?? null;
+
+    const end =
+      p.end_at ?? p.endAt ??
+      p.performance_end_at ?? p.performanceEndAt ??
+      p.endDate ?? null;
+
+    return {
+      id: p.id,
+      title: p.title ?? p.performanceTitle ?? p.name ?? '제목 없음',
+      content: p.subtitle ?? p.description ?? '',
+      thumbnail: ensureHttp(rawThumb) || '/no-image.png',
+      dateText: formatRange(start, end),
+      author: p.venue_name ?? p.venueName ?? p.venue ?? '',
+    };
+  };
 
   const fetchSearchResults = useCallback(async (searchKeyword, currentTab) => {
     if (!searchKeyword) return;
@@ -158,13 +203,16 @@ function Search() {
         <div className="search-section">
           <div className="section">
             <h3>공연</h3>
-            {concerts.length > 0 ? concerts.map((item) => (
-              <PostItem
-                key={item.id}
-                performance={item}
-                onClick={() => navigate(`/performance/${item.id}`)}
-              />
-            )) : <p><strong>{keyword}</strong>와(과) 일치하는 공연이 없습니다.</p>}
+            {concerts.length > 0 ? concerts.map((item) => {
+              const postLike = toPostFromPerformance(item);
+              return (
+                <PostItem
+                  key={postLike.id}
+                  post={postLike}
+                  onClick={() => navigate(`/performance/${item.id}`)}
+                />
+              );
+            }) : <p><strong>{keyword}</strong>와(과) 일치하는 공연이 없습니다.</p>}
           </div>
 
           <div className="section">
