@@ -89,7 +89,10 @@ export default function PerformanceListCard({ performance, onToggleLike }) {
       </LeftSection>
       {location.pathname === '/favorite' && (
         <RightSectionWrapper onClick={(e) => e.stopPropagation()}>
-          <HeartButton isLiked={isLiked} onClick={() => onToggleLike(performance.id)} />
+          <HeartButton
+            isLiked={isLiked}
+            onClick={() => onToggleLike(performance.id)}
+          />
         </RightSectionWrapper>
       )}
     </Card>
