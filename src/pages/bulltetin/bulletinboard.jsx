@@ -19,24 +19,38 @@ function BulletinBoard() {
       let response;
 
       if (filter === 'myPosts') {
-        const response = await axios.get('http://localhost:8000/post', {
-          params: {
-            page: 1,
-            size: 50,
-            sort: 'recent',
-          },
+        const listRes = await axios.get('http://localhost:8000/post', {
+          params: { page: 1, size: 50, sort: 'recent' },
           withCredentials: true,
         });
 
-        const currentUserNickname = '야호'; // ✅ 실제 사용자 닉네임 (전역 상태에서 받아오는 게 이상적)
+        const all = listRes.data.posts || [];
 
-        console.log('📌 받아온 post:', response.data.posts);
-
-        const myPosts = (response.data.posts || []).filter(
-          (post) => post.author === currentUserNickname
+        // 각 글의 상세를 병렬 조회
+        const details = await Promise.allSettled(
+          all.map((p) =>
+            axios.get(`http://localhost:8000/post/${p.id}`, {
+              withCredentials: true,
+            })
+          )
         );
 
+        // 내 글(id 또는 isMine)만 추려서 목록 형태로 반환
+        const myIds = new Set(
+          details
+            .filter((r) => r.status === 'fulfilled')
+            .map((r) => r.value.data)
+            .filter((d) => {
+              const uid = Number(d?.user?.id ?? NaN);
+              const isMine = d?.isMine === true;
+              return isMine || uid === currentUserId;
+            })
+            .map((d) => d.id)
+        );
+
+        const myPosts = all.filter((p) => myIds.has(p.id));
         setPosts(myPosts);
+        return; // 아래 분기로 떨어지지 않도록 종료
       } else if (filter === 'myComments') {
         // 전체 글 불러오기
         const postResponse = await axios.get('http://localhost:8000/post', {
