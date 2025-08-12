@@ -185,3 +185,93 @@
     }
   }
 }
+/* 답글 버튼 */
+.reply-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  font-size: 12px;
+  border: 1px solid #d9d9d9;
+  border-radius: 999px;
+  background: #fff;
+  color: #6b7280; /* 회색 텍스트 */
+  cursor: pointer;
+}
+.reply-btn:hover {
+  background: #f5f5f5;
+}
+
+/* 답글 입력창 */
+.reply-input {
+  display: flex;
+  gap: 8px;
+  margin: 8px 0 0 36px; /* 프로필 아이콘 만큼 들여쓰기 */
+}
+.reply-input input {
+  flex: 1;
+  height: 36px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 0 10px;
+}
+.reply-input button {
+  height: 36px;
+  padding: 0 12px;
+  border-radius: 10px;
+  border: 1px solid #ef8354;
+  background: #fff;
+  color: #ef8354; /* 시안의 오렌지 라인 */
+}
+
+/* 답글 리스트 박스 */
+.reply-list {
+  margin-left: 36px; /* 부모 댓글 아이콘 라인만큼 들여쓰기 */
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* 답글 아이템 박스 (배경/테두리) */
+.reply-item {
+  position: relative;
+  margin-left: 24px;
+  background: #edd1c8; /* 연한 살구톤 배경 */
+  border: 1px solid #e5a88f;
+  border-radius: 12px;
+  padding: 12px;
+}
+
+/* 공통 - 우상단 메뉴 아이콘 그룹 */
+.comment .right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.reply-input {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0 0 36px;
+}
+
+.reply-arrow {
+  color: #ef8354; /* 포인트 컬러 */
+}
+
+/* reply-item 내부의 .left가 아이콘+이미지 정렬되도록 */
+.reply-item .comment-header .left {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.reply-item .reply-arrow {
+  position: absolute;
+  left: -18px; /* 카드 바깥으로 살짝 */
+  top: 14px; /* 카드 상단 라인 맞춤 */
+  width: 16px;
+  height: 16px;
+  color: #ef8354;
+  pointer-events: none; /* 클릭 방해 X */
+}
