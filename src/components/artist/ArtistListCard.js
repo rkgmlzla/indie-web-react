@@ -1,82 +1,98 @@
-import React, { useState } from 'react';
+// src/components/artist/ArtistListCard.js
+import React from 'react';
 import styled from 'styled-components';
-import ArtistProfileCard from './ArtistProfileCard';
-import HeartFilledIcon from '../../assets/icons/icon_heart_filled.svg';
-import HeartOutlineIcon from '../../assets/icons/icon_heart_outline.svg';
-import { likeArtist, unlikeArtist } from '../../api/likeApi';
+import HeartButton from '../common/HeartButton';
+import NotifyButton from '../common/NotifyButton';
 
-export default function ArtistListCard({ artist }) {
-  const [isLiked, setIsLiked] = useState(artist?.isLiked || false);
-  const authToken = 'user_token_here'; // 실제 토큰으로 교체
+export default function ArtistListCard({
+  artist,
+  onToggleLike,
+  onToggleAlarm,
+}) {
+  if (!artist) return null;
 
-  const toggleLike = async (e) => {
-    e.stopPropagation(); // 카드 클릭 방지
-    try {
-      if (isLiked) {
-        await unlikeArtist(artist.id, authToken);
-      } else {
-        await likeArtist(artist.id, authToken);
-      }
-      setIsLiked((prev) => !prev);
-    } catch (err) {
-      console.error('📛 아티스트 찜 토글 실패:', err);
-    }
-  };
+  const { id, name, profile_url, image_url, isLiked, isAlarmEnabled } = artist;
+  const avatar =
+    (profile_url && profile_url.trim()) ||
+    (image_url && image_url.trim()) ||
+    '/default_profile.png';
 
   return (
-    <CardContainer>
-      <ArtistProfileCard artist={artist} />
-      <Info>
-        <Name>{artist?.name || '이름 없음'}</Name>
-      </Info>
-      <LikeButton onClick={toggleLike}>
-        <HeartIcon $isLiked={isLiked} />
-      </LikeButton>
-    </CardContainer>
+    <Row>
+      {/* 왼쪽: 아바타 */}
+      <Left>
+        <Avatar
+          src={avatar}
+          alt={name ?? '아티스트'}
+          referrerPolicy="no-referrer"
+          onError={(e) => {
+            if (!e.currentTarget.src.endsWith('/default_profile.png')) {
+              e.currentTarget.src = '/default_profile.png';
+            }
+          }}
+        />
+      </Left>
+
+      {/* 가운데: 정보 */}
+      <Center>
+        <Name>{name ?? '이름 없음'}</Name>
+      </Center>
+
+      {/* 오른쪽: 알림 + 하트 */}
+      <Right onClick={(e) => e.stopPropagation()}>
+        <NotifyButton
+          isNotified={!!isAlarmEnabled}
+          onClick={() => onToggleAlarm?.(id, !!isAlarmEnabled)}
+          label="" // 텍스트 없이 아이콘만
+        />
+        <HeartButton
+          isLiked={isLiked ?? true} // 찜 목록이므로 기본 true
+          onClick={() => onToggleLike?.(id, isLiked ?? true)} // 언라이크용
+        />
+      </Right>
+    </Row>
   );
 }
 
-// ✅ 스타일
-const CardContainer = styled.div`
+/* ===== styles ===== */
+const Row = styled.div`
   display: flex;
   align-items: center;
-  padding: 0.5rem 1rem;
-  border-bottom: 1px solid #eee;
+  gap: 12px;
+  padding: 12px 16px;
+  background: ${({ theme }) => theme.colors.bgWhite};
+  border-bottom: 1px solid ${({ theme }) => theme.colors.outlineGray};
 `;
 
-const Info = styled.div`
-  margin-left: 1rem;
-  flex: 1;
+const Left = styled.div`
+  flex: 0 0 auto;
+`;
+
+const Avatar = styled.img`
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid ${({ theme }) => theme.colors.outlineGray};
+`;
+
+const Center = styled.div`
+  flex: 1 1 auto;
+  min-width: 0;
 `;
 
 const Name = styled.div`
-  font-size: 1rem;
-  font-weight: bold;
+  font-size: ${({ theme }) => theme.fontSizes.base};
+  font-weight: ${({ theme }) => theme.fontWeights.semibold};
+  color: ${({ theme }) => theme.colors.black};
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
-// ✅ 피그마 스타일 기반 하트 버튼
-const LikeButton = styled.button`
-  width: 2rem;
-  height: 2rem;
-  min-width: 2rem;
-  min-height: 2rem;
-  padding: 0.25rem;
-  background-color: ${({ theme }) => theme.colors.bgWhite};
-  border-radius: 50%;
-  border: 1px solid ${({ theme }) => theme.colors.outlineGray};
+const Right = styled.div`
   display: flex;
   align-items: center;
-  justify-content: center;
-  cursor: pointer;
-`;
-
-const HeartIcon = styled.span`
-  display: inline-block;
-  width: 1rem;
-  height: 1rem;
-  background-image: ${({ $isLiked }) =>
-    $isLiked ? `url(${HeartFilledIcon})` : `url(${HeartOutlineIcon})`};
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
+  gap: 10px;
+  margin-left: auto;
 `;
