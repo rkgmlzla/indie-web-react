@@ -4,69 +4,112 @@ import styled from 'styled-components';
 import Header from '../../components/layout/Header';
 import PerformanceListCard from '../../components/performance/PerformanceListCard';
 import ArtistListCard from '../../components/artist/ArtistListCard';
-import { fetchLikedPerformances, fetchLikedArtists } from '../../api/likeApi';
-import { likePerformance, unlikePerformance } from '../../api/likeApi';
-import { likeArtist, unlikeArtist } from '../../api/likeApi';
+import {
+  fetchLikedPerformances,
+  fetchLikedArtists,
+  likePerformance,
+  unlikePerformance,
+  likeArtist,
+  unlikeArtist,
+  registerArtistAlert,
+  cancelArtistAlert,
+} from '../../api/likeApi';
 
 export default function FavoritePage() {
-  const [selectedTab, setSelectedTab] = useState('performance');
-  const [likedPerformances, setLikedPerformances] = useState([]);
-  const [likedArtists, setLikedArtists] = useState([]);
-  const authToken = localStorage.getItem('accessToken'); // 🔹 토큰 가져오기
+  const [selectedTab, setSelectedTab] = useState('performance'); // 'performance' | 'artist'
 
-  // ✅ 찜한 공연 목록 API 호출
+  // 공연/아티스트 각각 응답 배열로 상태 분리
+  const [perfList, setPerfList] = useState([]);
+  const [perfPageInfo, setPerfPageInfo] = useState({ page: 1, totalPages: 1 });
+
+  const [artistList, setArtistList] = useState([]);
+  const [artistPageInfo, setArtistPageInfo] = useState({
+    page: 1,
+    totalPages: 1,
+  });
+
+  const authToken = localStorage.getItem('accessToken');
+
+  // 찜한 공연 목록
   useEffect(() => {
-    const loadLikedPerformances = async () => {
+    const load = async () => {
       try {
-        const data = await fetchLikedPerformances(1, 20, authToken);
-        setLikedPerformances(data);
-        console.log('🎯 찜한 공연 목록:', data);
-      } catch (err) {
-        console.error('📛 찜한 공연 목록 로딩 실패:', err);
+        const res = await fetchLikedPerformances(1, 20, authToken);
+        setPerfList(res.performances ?? []);
+        setPerfPageInfo({
+          page: res.page ?? 1,
+          totalPages: res.totalPages ?? 1,
+        });
+      } catch (e) {
+        console.error('📛 찜 공연 로딩 실패:', e);
       }
     };
-    loadLikedPerformances();
+    load();
   }, [authToken]);
 
-  // ✅ 찜한 아티스트 목록 API 호출
+  // 찜한 아티스트 목록
   useEffect(() => {
-    const loadLikedArtists = async () => {
+    const load = async () => {
       try {
-        const data = await fetchLikedArtists({ page: 1, size: 20, authToken });
-        setLikedArtists(data);
-        console.log('🎯 찜한 아티스트 목록:', data);
-      } catch (err) {
-        console.error('📛 찜한 아티스트 목록 로딩 실패:', err);
+        const res = await fetchLikedArtists({ page: 1, size: 20, authToken });
+        setArtistList(res.artists ?? []);
+        setArtistPageInfo({
+          page: res.page ?? 1,
+          totalPages: res.totalPages ?? 1,
+        });
+      } catch (e) {
+        console.error('📛 찜 아티스트 로딩 실패:', e);
       }
     };
-    loadLikedArtists();
+    load();
   }, [authToken]);
 
-  // ✅ 공연 찜 토글
+  // 공연 찜 토글
   const togglePerformanceLike = async (id, isLiked) => {
     try {
       if (isLiked) {
         await unlikePerformance(id, authToken);
-        setLikedPerformances(prev => prev.filter(p => p.id !== id));
+        setPerfList((prev) => prev.filter((p) => p.id !== id)); // 언라이크 → 목록 제거
       } else {
         await likePerformance(id, authToken);
+        // 필요 시 재조회
+        // const res = await fetchLikedPerformances(perfPageInfo.page, 20, authToken);
+        // setPerfList(res.performances ?? []);
       }
-    } catch (err) {
-      console.error('📛 공연 찜 토글 실패:', err);
+    } catch (e) {
+      console.error('📛 공연 찜 토글 실패:', e);
     }
   };
 
-  // ✅ 아티스트 찜 토글
+  // 아티스트 찜 토글
   const toggleArtistLike = async (id, isLiked) => {
     try {
       if (isLiked) {
         await unlikeArtist(id, authToken);
-        setLikedArtists(prev => prev.filter(a => a.id !== id));
+        setArtistList((prev) => prev.filter((a) => a.id !== id)); // 언라이크 → 목록 제거
       } else {
         await likeArtist(id, authToken);
+        // 필요 시 재조회
+        // const res = await fetchLikedArtists({ page: artistPageInfo.page, size: 20, authToken });
+        // setArtistList(res.artists ?? []);
       }
-    } catch (err) {
-      console.error('📛 아티스트 찜 토글 실패:', err);
+    } catch (e) {
+      console.error('📛 아티스트 찜 토글 실패:', e);
+    }
+  };
+
+  // 아티스트 알림 토글 (POST/DELETE /alert)
+  const toggleArtistAlarm = async (id, enabled) => {
+    try {
+      if (enabled) await cancelArtistAlert(id, authToken);
+      else await registerArtistAlert(id, authToken);
+
+      // 낙관적 업데이트
+      setArtistList((prev) =>
+        prev.map((a) => (a.id === id ? { ...a, isAlarmEnabled: !enabled } : a))
+      );
+    } catch (e) {
+      console.error('📛 아티스트 알림 토글 실패:', e);
     }
   };
 
@@ -76,34 +119,55 @@ export default function FavoritePage() {
       <div style={{ height: '30px' }} />
 
       <TabRow>
-        <TabButton active={selectedTab === 'performance'} onClick={() => setSelectedTab('performance')}>공연</TabButton>
-        <TabButton active={selectedTab === 'artist'} onClick={() => setSelectedTab('artist')}>아티스트</TabButton>
+        <TabButton
+          active={selectedTab === 'performance'}
+          onClick={() => setSelectedTab('performance')}>
+          공연
+        </TabButton>
+        <TabButton
+          active={selectedTab === 'artist'}
+          onClick={() => setSelectedTab('artist')}>
+          아티스트
+        </TabButton>
       </TabRow>
 
       <List>
         {selectedTab === 'performance' &&
-          likedPerformances.map(performance => (
-            <PerformanceListCard
-              key={performance.id}
-              performance={performance}
-              onToggleLike={(id) => togglePerformanceLike(id, performance.isLiked)}
-            />
+          (perfList.length ? (
+            perfList.map((performance) => (
+              <PerformanceListCard
+                key={performance.id}
+                performance={performance}
+                onToggleLike={(id) =>
+                  togglePerformanceLike(id, performance.isLiked ?? true)
+                }
+              />
+            ))
+          ) : (
+            <Empty>찜한 공연이 없어요.</Empty>
           ))}
 
         {selectedTab === 'artist' &&
-          likedArtists.map(artist => (
-            <ArtistListCard
-              key={artist.id}
-              artist={artist}
-              onToggleLike={(id) => toggleArtistLike(id, artist.isLiked)}
-            />
+          (artistList.length ? (
+            artistList.map((artist) => (
+              <ArtistListCard
+                key={artist.id}
+                artist={artist}
+                onToggleLike={(id) =>
+                  toggleArtistLike(id, artist.isLiked ?? true)
+                }
+                onToggleAlarm={(id, enabled) => toggleArtistAlarm(id, enabled)}
+              />
+            ))
+          ) : (
+            <Empty>찜한 아티스트가 없어요.</Empty>
           ))}
       </List>
     </Container>
   );
 }
 
-// ✅ 스타일 유지
+/* ===== styles ===== */
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -121,13 +185,20 @@ const TabButton = styled.button`
   padding: 0.75rem 1rem;
   font-size: ${({ theme }) => theme.fontSizes.base};
   font-weight: ${({ theme }) => theme.fontWeights.medium};
-  color: ${({ active, theme }) => (active ? theme.colors.textRed : theme.colors.darkGray)};
+  color: ${({ active, theme }) =>
+    active ? theme.colors.textRed : theme.colors.darkGray};
   border: none;
-  border-bottom: ${({ active, theme }) => (active ? `1.5px solid ${theme.colors.textRed}` : 'none')};
+  border-bottom: ${({ active, theme }) =>
+    active ? `1.5px solid ${theme.colors.textRed}` : 'none'};
   background-color: transparent;
 `;
 
 const List = styled.div`
   display: flex;
   flex-direction: column;
+`;
+
+const Empty = styled.div`
+  padding: 24px 16px;
+  color: ${({ theme }) => theme.colors.gray};
 `;
