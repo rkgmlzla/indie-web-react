@@ -5,7 +5,6 @@ import Toggle from '../../components/ui/toggle';
 import Header from '../../components/layout/Header';
 import axios from 'axios';
 import { fetchUserInfo, updateUserSettings } from '../../api/userApi';
-import api from '../../lib/api';
 export const baseUrl = 'http://localhost:8000';
 function MyPage() {
   const [profileImage, setProfileImage] = useState('');
