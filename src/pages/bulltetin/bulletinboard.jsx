@@ -5,7 +5,7 @@ import Header from '../../components/layout/Header';
 import { Pencil } from 'lucide-react';
 import './bulletinboard.css';
 import axios from 'axios';
-
+import { baseUrl } from '../../api/config';
 function BulletinBoard() {
   const navigate = useNavigate();
   const [filter, setFilter] = useState('all');
@@ -19,7 +19,7 @@ function BulletinBoard() {
       let response;
 
       if (filter === 'myPosts') {
-        const listRes = await axios.get('http://localhost:8000/post', {
+        const listRes = await axios.get(`${baseUrl}/post`, {
           params: { page: 1, size: 50, sort: 'recent' },
           withCredentials: true,
         });
@@ -29,7 +29,7 @@ function BulletinBoard() {
         // 각 글의 상세를 병렬 조회
         const details = await Promise.allSettled(
           all.map((p) =>
-            axios.get(`http://localhost:8000/post/${p.id}`, {
+            axios.get(`${baseUrl}/post/${p.id}`, {
               withCredentials: true,
             })
           )
@@ -53,7 +53,7 @@ function BulletinBoard() {
         return; // 아래 분기로 떨어지지 않도록 종료
       } else if (filter === 'myComments') {
         // 전체 글 불러오기
-        const postResponse = await axios.get('http://localhost:8000/post', {
+        const postResponse = await axios.get(`${baseUrl}/post`, {
           params: {
             page: 1,
             size: 50,
@@ -69,7 +69,7 @@ function BulletinBoard() {
           allPosts.map(async (post) => {
             try {
               const commentRes = await axios.get(
-                `http://localhost:8000/post/${post.id}/comment`,
+                `${baseUrl}/post/${post.id}/comment`,
                 {
                   withCredentials: true,
                 }
@@ -87,7 +87,7 @@ function BulletinBoard() {
 
         setPosts(postWithMyComments.filter(Boolean));
       } else {
-        response = await axios.get('http://localhost:8000/post', {
+        response = await axios.get(`${baseUrl}/post`, {
           params: {
             page: 1,
             size: 50,

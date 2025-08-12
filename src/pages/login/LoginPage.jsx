@@ -1,12 +1,12 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-
+import { baseUrl } from '../../api/config';
 function KakaoLogin() {
   const navigate = useNavigate();
 
   // ✅ 1. 로그인 버튼 → 백엔드가 주는 Kakao 로그인 URL로 이동
   const handleLogin = async () => {
-    const res = await fetch('http://localhost:8000/auth/kakao/login');
+    const res = await fetch(`${baseUrl}/auth/kakao/login`);
     const data = await res.json();
     window.location.href = data.loginUrl;
   };
@@ -18,7 +18,7 @@ function KakaoLogin() {
 
     if (code) {
       // 백엔드에 code 보내서 accessToken 받기
-      fetch(`http://localhost:8000/auth/kakao/callback?code=${code}`)
+      fetch(`${baseUrl}/auth/kakao/callback?code=${code}`)
         .then((res) => res.json())
         .then((data) => {
           const { accessToken } = data;

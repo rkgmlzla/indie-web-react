@@ -8,7 +8,7 @@ import MapTime from './components/MapTime';
 import MapGrid from './components/MapGrid';
 import styled from 'styled-components';
 import axios from 'axios';
-
+import { baseUrl } from '../../api/config';
 const PageWrapper = styled.div`
   height: 100vh;
   display: flex;
@@ -25,7 +25,7 @@ const MapPage = () => {
 
     try {
       const res = await axios.get(
-        `http://localhost:8000/nearby/venue/${venue.venue_id}/performance`,
+        `${baseUrl}/nearby/venue/${venue.venue_id}/performance`,
         {
           params: { after: now },
         }
@@ -57,12 +57,9 @@ const MapPage = () => {
         const { latitude, longitude } = position.coords;
         console.log('📍 현재 위치:', { latitude, longitude });
         try {
-          const venueRes = await axios.get(
-            'http://localhost:8000/nearby/venue',
-            {
-              params: { lat: latitude, lng: longitude, radius: 3 },
-            }
-          );
+          const venueRes = await axios.get(`${baseUrl}/nearby/venue`, {
+            params: { lat: latitude, lng: longitude, radius: 3 },
+          });
 
           const venueList = venueRes.data;
 
@@ -79,7 +76,7 @@ const MapPage = () => {
                   0
                 );
                 const performanceRes = await axios.get(
-                  `http://localhost:8000/nearby/venue/${venue.venue_id}/performance`,
+                  `${baseUrl}/nearby/venue/${venue.venue_id}/performance`,
                   {
                     params: {
                       after: kstMidnight.toISOString(), // 현재 시간 기준

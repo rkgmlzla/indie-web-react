@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import './bulletinwrite.css';
 import Header from '../../components/layout/Header';
-
+import { baseUrl } from '../../api/config';
 function BulletinWrite() {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
@@ -49,7 +49,7 @@ function BulletinWrite() {
       formData.append('content', content);
       images.forEach((img) => formData.append('images', img));
 
-      await axios.post('http://localhost:8000/post', formData, {
+      await axios.post(`${baseUrl}/post`, formData, {
         headers: {
           Authorization: `Bearer ${accessToken}`, // Content-Type 생략 → 자동 설정됨
         },

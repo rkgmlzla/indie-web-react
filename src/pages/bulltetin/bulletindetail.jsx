@@ -1,16 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import {
-  ChevronLeft,
-  Search,
-  MoreVertical,
-  MessageSquareMore,
-  CornerDownRight,
-} from 'lucide-react';
+import { MoreVertical, MessageSquareMore, CornerDownRight } from 'lucide-react';
 import './bulletindetail.css';
 import Header from '../../components/layout/Header';
 import api from '../../lib/api'; // axios 대신 api 인스턴스 사용
-
+import { baseUrl } from '../../api/config'; // baseUrl
 function Bulletindetail() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -29,7 +23,7 @@ function Bulletindetail() {
 
   // URL 보정 (상대경로 → 절대경로)
   const resolveUrl = (url) =>
-    url?.startsWith('http') ? url : `http://localhost:8000${url || ''}`;
+    url?.startsWith('http') ? url : `${baseUrl}${url || ''}`;
 
   // API
   const fetchPost = async () => {
