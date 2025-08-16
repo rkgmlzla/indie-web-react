@@ -1,117 +1,154 @@
-.page {
-  max-width: 512px;
+:root {
+  /* 앱 래퍼와 동일하게 맞추세요 */
+  --app-max-width: 512px;
+  --sidebar-width: 280px;
+}
+
+/* 전체 포털: 뷰포트 덮고 가운데 정렬 */
+.portal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  justify-content: center; /* 가운데 정렬 */
+  align-items: stretch;
+}
+
+/* 어두운 배경 (뒤 클릭 닫힘) */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* 앱과 동일한 폭으로 가운데 정렬되는 프레임 */
+.frame {
   position: relative;
-  .sidebarOverlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.3);
-    display: flex;
-    justify-content: flex-start;
-    z-index: 9999;
+  width: 100%;
+  max-width: var(--app-max-width);
+  margin: 0 auto;
+  height: 100dvh; /* 모바일 환경에서 안전 */
+}
 
-    .sidebar {
-      width: 280px;
-      height: 100%;
-      background-color: #fafafa;
-      box-shadow: 2px 0 6px rgba(0, 0, 0, 0.1);
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
+/* 사이드바: frame 기준으로 좌측부터 시작 */
+.sidebar {
+  position: absolute; /* frame 기준 */
+  top: 0;
+  left: 0;
+  width: min(var(--sidebar-width), 90vw);
+  height: 100dvh;
+  background-color: #fafafa;
+  box-shadow: 2px 0 6px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  border-right: 1px solid #e4e4e4;
 
-      .divider {
-        height: 1px;
-        background-color: #e4e4e4;
-        margin: 8px 0;
-      }
+  /* 슬라이드 인 애니(원하면 유지) */
+  transform: translateX(0);
+  transition: transform 240ms ease;
+}
 
-      .header {
-        background-color: #fafafa;
-        padding: 16px;
+/* 구분선 */
+.divider {
+  height: 1px;
+  background-color: #e4e4e4;
+  margin: 8px 0;
+}
 
-        .headerTop {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
+/* 헤더 */
+.header {
+  background-color: #fafafa;
+  padding: 16px;
+}
 
-          .iconBack,
-          .iconNotification {
-            width: 24px;
-            height: 24px;
-          }
-        }
+.headerTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 
-        .profileSection {
-          display: flex;
-          align-items: center;
-          margin-top: 48px;
+.iconBack,
+.iconNotification {
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+}
 
-          .profileImage {
-            width: 68px;
-            height: 68px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-right: 16px;
-            background-color: #ddd;
-          }
+/* 프로필 섹션 */
+.profileSection {
+  display: flex;
+  align-items: center;
+  margin-top: 48px;
+}
 
-          .nicknameArea {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
+.profileImage {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 16px;
+  background-color: #ddd;
+}
 
-            .nicknameRow {
-              display: flex;
-              align-items: center;
-              margin-bottom: 4px;
+.nicknameArea {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
 
-              .nickname {
-                font-size: 16px;
-                font-weight: bold;
-                color: #1c1c1e;
-              }
+.nicknameRow {
+  display: flex;
+  align-items: center;
+  margin-bottom: 4px;
+  cursor: pointer;
+}
 
-              .nicknameArrow {
-                width: 16px;
-                height: 16px;
-                margin-left: 6px;
-                filter: brightness(0) saturate(100%);
-              }
-            }
+.nickname {
+  font-size: 16px;
+  font-weight: bold;
+  color: #1c1c1e;
+}
 
-            .likeTag {
-              display: inline-block;
-              font-size: 12px;
-              color: #4b4b4b;
-              background-color: #e4e4e4;
-              padding: 2px 8px;
-              border-radius: 4px;
-            }
-          }
-        }
-      }
+.nicknameArrow {
+  width: 16px;
+  height: 16px;
+  margin-left: 6px;
+  filter: brightness(0) saturate(100%);
+}
+.likeTag {
+  display: inline-block;
+  align-self: flex-start; /* 부모의 stretch 해제 → 글자폭만큼 */
+  font-size: 12px;
+  color: #4b4b4b;
+  background-color: #e4e4e4;
+  padding: 2px 4px;
+  border-radius: 4px;
+  cursor: pointer;
+}
 
-      .menuItem {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 14px 16px;
-        cursor: pointer;
 
-        .menuLabel {
-          font-size: 16px;
-          font-weight: bold;
-          color: #1c1c1e;
-        }
+/* 메뉴 */
+.menuItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 16px;
+  cursor: pointer;
+}
 
-        .menuIcon {
-          width: 16px;
-          height: 16px;
-          filter: brightness(0) saturate(100%);
-        }
-      }
-    }
-  }
+.menuLabel {
+  font-size: 16px;
+  font-weight: bold;
+  color: #1c1c1e;
+}
+
+.menuIcon {
+  width: 16px;
+  height: 16px;
+  filter: brightness(0) saturate(100%);
+  display: flex;
+  align-items: center;
 }

@@ -35,6 +35,9 @@ function Search() {
   const [alarmState, setAlarmState] = useState({});
   const [likedState, setLikedState] = useState({});
 
+  // ✅ 다른 페이지들과 동일: 컴포넌트 상단에서 accessToken 한 번 읽음
+  const authToken = localStorage.getItem('accessToken');
+
   // ---- 헬퍼들 ----
   const ensureHttp = (u) => {
     if (!u) return null;
@@ -129,10 +132,9 @@ function Search() {
     if (keyword) fetchSearchResults(keyword, tab);
   }, [tab, keyword, fetchSearchResults]);
 
+  // ✅ 알림 토글: 다른 상세 페이지들과 동일하게 토큰 스킵 로직 제거
   const handleToggleAlarm = async (artistId) => {
-    const authToken = localStorage.getItem('accessToken');
     const isOn = alarmState[artistId];
-
     try {
       if (isOn) {
         await cancelArtistAlert(artistId, authToken);
@@ -149,10 +151,9 @@ function Search() {
     }
   };
 
+  // ✅ 찜 토글: 동일하게 스킵 로직 제거
   const handleToggleLike = async (artistId) => {
-    const authToken = localStorage.getItem('accessToken');
     const isOn = likedState[artistId];
-
     try {
       if (isOn) {
         await unlikeArtist(artistId, authToken);

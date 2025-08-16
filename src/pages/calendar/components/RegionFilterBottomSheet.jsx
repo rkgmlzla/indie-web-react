@@ -1,4 +1,3 @@
-// ✅ src/pages/calendar/components/RegionFilterBottomSheet.jsx
 import React, { useState } from 'react';
 import styles from './RegionFilter.module.css';
 
@@ -29,13 +28,11 @@ function RegionFilterBottomSheet({
 
   return (
     <div className={styles.bottomSheetOverlay}>
-      <div className={styles.bottomSheet}>
+      <div className={styles.bottomSheet} onClick={(e) => e.stopPropagation()}>
         <h3 className={styles.sheetTitle}>지역 선택</h3>
         <div className={styles.regionList}>
           <button
-            className={`${styles.regionButton} ${
-              tempSelected.length === 0 ? styles.selected : ''
-            }`}
+            className={`${styles.regionButton} ${tempSelected.length === 0 ? styles.selected : ''}`}
             onClick={() => setTempSelected([])}
           >
             전체
@@ -43,9 +40,7 @@ function RegionFilterBottomSheet({
           {regions.map((region) => (
             <button
               key={region}
-              className={`${styles.regionButton} ${
-                tempSelected.includes(region) ? styles.selected : ''
-              }`}
+              className={`${styles.regionButton} ${tempSelected.includes(region) ? styles.selected : ''}`}
               onClick={() => toggleRegion(region)}
             >
               {region}

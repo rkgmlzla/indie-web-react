@@ -1,3 +1,4 @@
+// src/pages/performance/PerformanceListPage.jsx
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
@@ -65,6 +66,19 @@ const List = styled.div`
   flex-direction: column;
 `;
 
+/* =========================
+   ✅ 헬퍼: 공연 날짜 파싱
+   - 백엔드가 date/time을 따로 주거나, ISO 하나로 주는 경우 모두 대응
+   ========================= */
+const getDateTime = (p) => {
+  const iso = p.datetime || p.dateTime || p.performanceDateTime || p.start_at;
+  if (iso) return new Date(iso);
+
+  if (p.date && p.time) return new Date(`${p.date}T${p.time}`);
+  if (p.date) return new Date(`${p.date}T00:00:00`);
+  return null;
+};
+
 export default function PerformanceListPage() {
   const navigate = useNavigate();
 
@@ -80,13 +94,29 @@ export default function PerformanceListPage() {
   const loadPerformances = async () => {
     try {
       const sortMapping = { latest: 'created_at', popular: 'likes', date: 'date' };
-const sortParam = sortMapping[sortOption] || 'created_at';
-const regionParam = selectedRegions.includes('전체') ? undefined : selectedRegions;
+      const sortParam = sortMapping[sortOption] || 'created_at';
+      const regionParam = selectedRegions.includes('전체') ? undefined : selectedRegions;
 
       const data = await fetchPerformances({ region: regionParam, sort: sortParam, page, size });
+      let list = Array.isArray(data) ? data : [];
 
-      console.log('🎯 [공연 목록] API 응답:', data);
-      setPerformances(data); // ✅ 배열 그대로 세팅
+      /* ✅ 공연임박순일 때만:
+         - 오늘 00:00 이전 공연 제외
+         - 가까운 날짜(오름차순)로 정렬
+         - 다른 정렬 옵션은 절대 변경하지 않음 */
+      if (sortOption === 'date') {
+        const startOfToday = new Date();
+        startOfToday.setHours(0, 0, 0, 0);
+
+        list = list
+          .map((p) => ({ ...p, __dt: getDateTime(p) }))
+          .filter((p) => p.__dt && p.__dt >= startOfToday)
+          .sort((a, b) => a.__dt - b.__dt)
+          .map(({ __dt, ...rest }) => rest);
+      }
+
+      console.log('🎯 [공연 목록] 최종 리스트:', list);
+      setPerformances(list);
     } catch (err) {
       console.error('📛 공연 목록 API 호출 실패:', err.response?.data || err.message);
       setPerformances([]);
@@ -95,6 +125,7 @@ const regionParam = selectedRegions.includes('전체') ? undefined : selectedReg
 
   useEffect(() => {
     loadPerformances();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sortOption, selectedRegions, page]);
 
   return (
@@ -104,13 +135,13 @@ const regionParam = selectedRegions.includes('전체') ? undefined : selectedReg
       <Container>
         <FilterBar>
           <FilterGroup>
-           <FilterButton onClick={() => setIsSortModalOpen(true)}>
-  {sortOption === 'latest'
-    ? '최근등록순'
-    : sortOption === 'date'
-    ? '공연임박순'
-    : '인기순'}
-</FilterButton>
+            <FilterButton onClick={() => setIsSortModalOpen(true)}>
+              {sortOption === 'latest'
+                ? '최근등록순'
+                : sortOption === 'date'
+                ? '공연임박순'
+                : '인기순'}
+            </FilterButton>
 
             <FilterButton onClick={() => setIsRegionModalOpen(true)}>
               {selectedRegions[0] === '전체' ? '지역 전체' : `지역: ${selectedRegions.join(', ')}`}
@@ -124,7 +155,11 @@ const regionParam = selectedRegions.includes('전체') ? undefined : selectedReg
         <List>
           {performances.length > 0 ? (
             performances.map((p) => (
-              <PerformanceListCard key={p.id} performance={p} onClick={() => navigate(`/performance/${p.id}`)} />
+              <PerformanceListCard
+                key={p.id}
+                performance={p}
+                onClick={() => navigate(`/performance/${p.id}`)}
+              />
             ))
           ) : (
             <p style={{ textAlign: 'center', padding: '20px' }}>공연이 없습니다.</p>
@@ -133,12 +168,20 @@ const regionParam = selectedRegions.includes('전체') ? undefined : selectedReg
 
         {isSortModalOpen && (
           <ModalBackground onClick={() => setIsSortModalOpen(false)}>
-            <SortModal selected={sortOption} onSelect={setSortOption} onClose={() => setIsSortModalOpen(false)} />
+            <SortModal
+              selected={sortOption}
+              onSelect={setSortOption}
+              onClose={() => setIsSortModalOpen(false)}
+            />
           </ModalBackground>
         )}
         {isRegionModalOpen && (
           <ModalBackground onClick={() => setIsRegionModalOpen(false)}>
-            <RegionModal selected={selectedRegions} onChange={setSelectedRegions} onClose={() => setIsRegionModalOpen(false)} />
+            <RegionModal
+              selected={selectedRegions}
+              onChange={setSelectedRegions}
+              onClose={() => setIsRegionModalOpen(false)}
+            />
           </ModalBackground>
         )}
       </Container>

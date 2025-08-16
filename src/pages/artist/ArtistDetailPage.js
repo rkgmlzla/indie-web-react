@@ -1,4 +1,4 @@
-// ArtistDetailPage.js
+// src/pages/artist/ArtistDetailPage.js
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
@@ -22,7 +22,8 @@ export default function ArtistDetailPage() {
   const [scheduledPerformances, setScheduledPerformances] = useState([]);
   const [pastPerformances, setPastPerformances] = useState([]);
 
-  const authToken = 'user_token_here'; // 🔑 로그인 시 토큰으로 교체
+  // 🔑 하드코딩 제거 → localStorage에서 토큰 가져오기 (변경된 한 줄)
+  const authToken = localStorage.getItem('accessToken');
 
   useEffect(() => {
     const loadArtist = async () => {
@@ -173,7 +174,6 @@ export default function ArtistDetailPage() {
   );
 }
 
-//스타일
 // ✅ 스타일
 const Container = styled.div`display: flex; flex-direction: column; gap: 1rem;`;
 const ProfileSection = styled.div`display: flex; align-items: center; gap: 1.25rem; padding: 1.25rem;`;
@@ -182,7 +182,7 @@ const ProfileWrapper = styled.div`
   position: relative;
   width: 5rem;
   height: 5rem;
-  aspect-ratio: 1 / 1;         /* ✅ 정사각형 비율 고정 */
+  aspect-ratio: 1 / 1;
   margin-right: 1rem;
   flex-shrink: 0;
 `;
@@ -190,7 +190,7 @@ const ProfileWrapper = styled.div`
 const ProfileImage = styled.img`
   width: 100%;
   height: 100%;
-  aspect-ratio: 1 / 1;         /* ✅ 이미지 비율 유지 */
+  aspect-ratio: 1 / 1;
   border-radius: 50%;
   object-fit: cover;
   border: 1px solid ${({ theme }) => theme.colors.outlineGray};
@@ -236,7 +236,5 @@ const HorizontalScroll = styled.div`
   display: flex;
   overflow-x: auto;
   gap: 1rem;
-  &::-webkit-scrollbar {
-    display: none;
-  }
+  &::-webkit-scrollbar { display: none; }
 `;

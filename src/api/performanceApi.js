@@ -44,10 +44,14 @@ export const fetchTicketOpeningPerformances = async (startDate, endDate) => {
 // 홈-4. 맞춤 추천 공연
 export const fetchRecommendedPerformances = async (authToken) => {
   try {
-    const response = await axios.get(`${baseUrl}/performance/home/recommendation`, {
-      headers: { Authorization: `Bearer ${authToken}` },
-    });
-    return safeArray(response.data);
+    // ✅ 토큰이 있을 때만 Authorization 헤더를 붙임
+    const headers = authToken ? { Authorization: `Bearer ${authToken}` } : {};
+    const response = await axios.get(`${baseUrl}/performance/home/recommendation`, { headers });
+
+    // ✅ 항상 배열을 반환 (응답은 { userId, recommendations: [...] })
+    return Array.isArray(response.data?.recommendations)
+      ? response.data.recommendations
+      : [];
   } catch (error) {
     console.error('❌ 맞춤 추천 공연 조회 실패:', error.response?.data || error.message);
     throw error;
