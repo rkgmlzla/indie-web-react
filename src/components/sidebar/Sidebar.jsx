@@ -1,4 +1,3 @@
-// src/components/layout/Sidebar.jsx
 import React, { useEffect, useState, useRef } from 'react';
 import styles from './Sidebar.module.css';
 import { ChevronLeft, Bell, ChevronRight, User } from 'lucide-react';
@@ -7,26 +6,21 @@ import { fetchUserInfo } from '../../api/userApi';
 
 function Sidebar({ onClose }) {
   const navigate = useNavigate();
-
-  // ✅ 마이페이지와 동일한 상태
   const [profileImage, setProfileImage] = useState('');
   const [nickname, setNickname] = useState('');
   const [imageError, setImageError] = useState(false);
-  const accessToken = useRef(localStorage.getItem('accessToken')); // ✅ MyPage와 완전 동일
+  const accessToken = useRef(localStorage.getItem('accessToken'));
 
-  // ✅ /user/me 로딩 (MyPage 로직 그대로 이식)
   useEffect(() => {
-    fetchUserInfo(accessToken) // ✅ MyPage처럼 ref 자체를 그대로 넘김
+    fetchUserInfo(accessToken)
       .then((user) => {
         const profileUrl = user.profile_url;
         setProfileImage(profileUrl ? `${profileUrl}?t=${Date.now()}` : '');
         setNickname(user.nickname || '');
         setImageError(!profileUrl);
       })
-      .catch((err) => {
-        console.error('[Sidebar] 유저 정보 불러오기 실패:', err);
-      });
-  }, [accessToken]); // ✅ MyPage와 동일한 deps
+      .catch((err) => console.error('[Sidebar] 유저 정보 불러오기 실패:', err));
+  }, [accessToken]);
 
   const menuItems = [
     { label: '공연', path: '/performance' },
@@ -46,10 +40,13 @@ function Sidebar({ onClose }) {
   };
 
   return (
-    <div className={styles.page}>
-      <div className={styles.sidebarOverlay}>
-        <div className={styles.sidebar}>
-          {/* 상단 뒤로가기 + 알림 */}
+    <div className={styles.portal}>
+      {/* 어두운 배경(클릭 시 닫힘) */}
+      <div className={styles.overlay} onClick={onClose} />
+
+      {/* 앱과 동일한 max-width로 가운데 정렬되는 프레임 */}
+      <div className={styles.frame}>
+        <aside className={styles.sidebar}>
           <div className={styles.header}>
             <div className={styles.headerTop}>
               <ChevronLeft
@@ -66,7 +63,6 @@ function Sidebar({ onClose }) {
               />
             </div>
 
-            {/* ✅ 프로필 (MyPage와 동일 폴백 로직) */}
             <div className={styles.profileSection}>
               {profileImage && !imageError ? (
                 <img
@@ -74,14 +70,10 @@ function Sidebar({ onClose }) {
                   alt="프로필 이미지"
                   className={styles.profileImage}
                   onError={(e) => {
-                    // MyPage와 동일: 서버 경로 에러 시 에러 플래그 세팅
-                    if (e.target.src.includes('/static/profiles/')) {
-                      setImageError(true);
-                    }
+                    if (e.target.src.includes('/static/profiles/')) setImageError(true);
                   }}
                 />
               ) : (
-                // ✅ MyPage와 동일하게 아이콘 표시
                 <User size={64} className="profile__left__img" />
               )}
 
@@ -93,11 +85,7 @@ function Sidebar({ onClose }) {
                     onClose();
                   }}>
                   <span className={styles.nickname}>{nickname}</span>
-                  <ChevronRight
-                    className={styles.nicknameArrow}
-                    color="#000000"
-                    size={20}
-                  />
+                  <ChevronRight className={styles.nicknameArrow} color="#000000" size={20} />
                 </div>
                 <div
                   className={styles.likeTag}
@@ -113,19 +101,15 @@ function Sidebar({ onClose }) {
 
           <div className={styles.divider} />
 
-          {/* 메뉴 리스트 */}
           {menuItems.map((item, index) => (
-            <div
-              key={index}
-              className={styles.menuItem}
-              onClick={() => handleMenuClick(item.path)}>
+            <div key={index} className={styles.menuItem} onClick={() => handleMenuClick(item.path)}>
               <span className={styles.menuLabel}>{item.label}</span>
               <span className={styles.menuIcon}>
                 <ChevronRight size={20} />
               </span>
             </div>
           ))}
-        </div>
+        </aside>
       </div>
     </div>
   );

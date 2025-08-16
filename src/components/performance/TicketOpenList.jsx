@@ -25,9 +25,10 @@ const TicketOpenList = ({ performances = [] }) => {
           <TicketOpenCard
             key={item.id}
             title={item.title}
-            posterUrl={item.posterUrl}
+            posterUrl={item.thumbnail}                         // ✅ 백엔드 thumbnail 매핑
             place={item.venue}
-            ticketOpenDate={item.ticket_open_date} // ✅ 필드명 정확하게 매칭
+            ticketOpenDate={item.ticket_open_date}             // ✅ 'YYYY-MM-DD'
+            ticketOpenTime={item.time ?? item.ticket_open_time ?? null} // ✅ 서버가 준 시간만 사용
             onClick={() => navigate(`/performance/${item.id}`)}
           />
         ))}

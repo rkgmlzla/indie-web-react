@@ -1,8 +1,7 @@
-// ✅ src/pages/artist/ArtistListPage.js
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Header from '../../components/layout/Header';
-import ArtistListCard from '../../components/artist/ArtistListCard';
+import ArtistListCardLikeOnly from '../../components/artist/ArtistListCardLike.js'; // ✅ 변경된 카드 컴포넌트 (.js 명시)
 import { fetchArtistList } from '../../api/artistApi';
 import { useNavigate } from 'react-router-dom';
 
@@ -14,19 +13,19 @@ export default function ArtistListPage() {
 
   // ✅ 아티스트 목록 불러오기
   const loadArtists = async () => {
-  try {
-    const data = await fetchArtistList({ page, size });
+    try {
+      const data = await fetchArtistList({ page, size });
 
-    // ✅ API 응답 구조를 자동으로 판별
-    const artistArray = Array.isArray(data) ? data : (data?.artists ?? []);
-    setArtists(artistArray);
+      // ✅ API 응답 구조를 자동으로 판별
+      const artistArray = Array.isArray(data) ? data : (data?.artists ?? []);
+      setArtists(artistArray);
 
-    console.log('🎯 최종 artists 배열:', artistArray);
-  } catch (err) {
-    console.error('📛 아티스트 목록 API 실패:', err);
-    setArtists([]);
-  }
-};
+      console.log('🎯 최종 artists 배열:', artistArray);
+    } catch (err) {
+      console.error('📛 아티스트 목록 API 실패:', err);
+      setArtists([]);
+    }
+  };
 
   useEffect(() => {
     loadArtists();
@@ -43,7 +42,7 @@ export default function ArtistListPage() {
               key={artist.id}
               onClick={() => navigate(`/artist/${artist.id}`)} // ✅ 상세 페이지 이동
             >
-              <ArtistListCard artist={artist} />
+              <ArtistListCardLikeOnly artist={artist} />
             </CardWrapper>
           ))
         ) : (

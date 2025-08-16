@@ -1,3 +1,4 @@
+// src/pages/performance/PerformanceDetailPage.js
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
@@ -24,7 +25,8 @@ export default function PerformanceDetailPage() {
   const [likeCount, setLikeCount] = useState(0);
   const [isAlarmed, setIsAlarmed] = useState(false); // ✅ 알림
 
-  const authToken = 'user_token_here'; // 실제 로그인 토큰으로 교체
+  // 🔑 하드코딩 제거 → localStorage에서 토큰 가져오기 (아티스트 상세페이지와 동일 패턴)
+  const authToken = localStorage.getItem('accessToken');
 
   useEffect(() => {
     const loadPerformance = async () => {
@@ -109,7 +111,7 @@ export default function PerformanceDetailPage() {
             <Label>출연진</Label>
             <ScrollContainer>
               {performance.artists?.map((artist) => (
-                <ArtistProfileCard key={artist.id} artist={artist} onClick={() => navigate(`/artist/${artist.id}`)} />
+                <ArtistProfileCard key={artist.id} artist={artist} onClick={() => navigate(`/artist/${artist.id}`)}  showName/>
               ))}
             </ScrollContainer>
           </LabelRow>

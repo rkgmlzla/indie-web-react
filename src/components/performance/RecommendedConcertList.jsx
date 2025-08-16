@@ -16,7 +16,7 @@ const RecommendedConcertList = ({ performances = [] }) => {
             key={item.id}
             id={item.id}
             title={item.title}
-            posterUrl={item.posterUrl}
+posterUrl={item.posterUrl || item.thumbnail || ''}
             place={item.venue}
             date={item.date}
             onClick={() => navigate(`/performance/${item.id}`)}

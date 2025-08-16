@@ -1,3 +1,4 @@
+/* 트리거 */
 .triggerWrapper {
   display: flex;
   justify-content: flex-end;
@@ -13,27 +14,31 @@
   cursor: pointer;
 }
 
+/* 오버레이: 하단 도킹 프레임 */
 .bottomSheetOverlay {
   position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  inset: 0;
   background-color: rgba(0, 0, 0, 0.3);
   display: flex;
-  justify-content: center;
-  align-items: flex-end;
+  justify-content: center;   /* 가로 중앙 */
+  align-items: flex-end;     /* 하단 정렬 */
   z-index: 999;
 }
 
+/* ✅ 실행 화면(앱 컨텐츠) 폭에 딱 맞는 바텀시트 */
 .bottomSheet {
   background: white;
   width: 100%;
-  max-width: 500px;
+  max-width: var(--app-max-width, 512px); /* 프로젝트 전역 변수 있으면 그 값 사용 */
+  margin: 0 auto;               /* 가로 중앙 */
+  box-sizing: border-box;
   border-top-left-radius: 16px;
   border-top-right-radius: 16px;
   padding: 20px;
+  padding-bottom: max(20px, env(safe-area-inset-bottom)); /* iOS 안전영역 */
 }
 
+/* 내용 */
 .sheetTitle {
   font-size: 16px;
   margin-bottom: 12px;

@@ -55,8 +55,19 @@ const HomePage = () => {
         const todayData = await fetchTodayPerformances();
         const recentData = await fetchRecentPerformances(6);
         const ticketOpeningData = await fetchTicketOpeningPerformances(today, sevenDaysLater);
-        const token = 'your_test_token_here';
-        const recommendedData = await fetchRecommendedPerformances(token);
+
+        // ✅ 하드코딩 제거: 동적 accessToken 사용 (없으면 추천 섹션만 스킵)
+const accessToken = localStorage.getItem('accessToken');
+    let recommendedData = [];
+    try {
+      // DEV: 토큰이 없어도 호출 → 백엔드가 dev fallback이면 user=1 기준 추천 반환
+      // (fetchRecommendedPerformances는 token이 있으면 Authorization 헤더를 붙이고,
+      // 없으면 헤더 없이 호출하도록 구현되어 있어야 합니다)
+      recommendedData = await fetchRecommendedPerformances(accessToken || undefined);
+    } catch (err) {
+      console.warn('[HomePage] 추천 공연 로딩 실패(무시 가능):', err);
+   }
+
 
         ticketOpeningData.forEach(item => {
           console.log('🎫 티켓 오픈 날짜 확인:', item.title, item.ticketOpenDate);

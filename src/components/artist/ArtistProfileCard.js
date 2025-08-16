@@ -1,8 +1,7 @@
 // ✅ components/artist/ArtistProfileCard.js
 import styled from 'styled-components';
 
-export default function ArtistProfileCard({ artist, onClick }) {
-  // ✅ 안전한 이미지 URL
+export default function ArtistProfileCard({ artist, onClick, showName = false }) {
   const safeImage =
     artist?.image_url && artist.image_url.trim() !== ''
       ? artist.image_url
@@ -21,6 +20,8 @@ export default function ArtistProfileCard({ artist, onClick }) {
           }}
         />
       </ImageWrapper>
+
+      {showName && <Name title={artist?.name || ''}>{artist?.name || '이름 없음'}</Name>}
     </Card>
   );
 }
@@ -46,4 +47,15 @@ const ProfileImage = styled.img`
   object-fit: cover;
   display: block;
   border: 1px solid ${({ theme }) => theme.colors.outlineGray};
+`;
+
+const Name = styled.div`
+  margin-top: 0.35rem;
+  font-size: ${({ theme }) => theme.fontSizes.sm};
+  color: ${({ theme }) => theme.colors.darkGray};
+  max-width: 4rem;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;

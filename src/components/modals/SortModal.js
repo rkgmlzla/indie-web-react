@@ -1,9 +1,6 @@
-// components/modals/SortModal.js
 import styled from 'styled-components';
-import ModalWrapper from './ModalWrapper';
 import OptionButton from '../common/OptionButton';
 
-// ✅ label(한글)과 value(영문 키) 분리 → PerformanceListPage.sortMapping과 일치
 const options = [
   { label: '최근등록순', value: 'latest' },
   { label: '공연임박순', value: 'date' },
@@ -12,25 +9,36 @@ const options = [
 
 export default function SortModal({ selected, onSelect, onClose, ...props }) {
   return (
-    <ModalWrapper onClick={(e) => e.stopPropagation()} {...props}>
+    <BottomSheet onClick={(e) => e.stopPropagation()} {...props}>
       <Title>정렬 선택</Title>
       <OptionRow>
         {options.map((opt) => (
           <OptionButton
             key={opt.value}
             label={opt.label}
-            // ✅ selected 값은 value 기준으로 비교
             isSelected={selected === opt.value}
             onClick={() => {
-              onSelect(opt.value); // ✅ 영문 키만 전달
+              onSelect(opt.value);
               onClose();
             }}
           />
         ))}
       </OptionRow>
-    </ModalWrapper>
+    </BottomSheet>
   );
 }
+
+/* ✅ 하단 도킹: align-self 제거, 가로 중앙은 margin으로 */
+const BottomSheet = styled.div`
+  width: 100%;
+  max-width: var(--app-max-width, ${({ theme }) => theme.layout.maxWidth});
+  margin: 0 auto;               /* 가로 중앙 정렬 */
+  box-sizing: border-box;
+  background: #fff;
+  border-radius: 12px 12px 0 0;
+  padding: 16px;
+  padding-bottom: max(16px, env(safe-area-inset-bottom));
+`;
 
 const Title = styled.div`
   font-size: ${({ theme }) => theme.fontSizes.base};
@@ -42,4 +50,5 @@ const Title = styled.div`
 const OptionRow = styled.div`
   display: flex;
   justify-content: space-between;
+  gap: 0.5rem;
 `;
