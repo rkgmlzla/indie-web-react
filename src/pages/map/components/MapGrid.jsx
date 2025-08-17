@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import styled from 'styled-components';
 import MapWideSelectCard from './MapWideSelectCard';
@@ -8,13 +8,11 @@ const Container = styled.div`
   position: relative;
   z-index: 1;
 `;
-
 const Row = styled.div`
   display: flex;
   justify-content: space-between;
   margin-top: 16px;
 `;
-
 const CardContainer = styled.div`
   width: 30%;
   display: flex;
@@ -22,7 +20,6 @@ const CardContainer = styled.div`
   margin: 0 8px;
   flex-direction: column;
 `;
-
 const CardWrapper = styled.div`
   width: 100%;
   aspect-ratio: 3 / 4;
@@ -36,14 +33,12 @@ const CardWrapper = styled.div`
     $isSelected ? '1px solid rgba(241, 79, 33, 0.8)' : 'none'};
   flex-shrink: 0;
 `;
-
 const Poster = styled.img`
   width: 100%;
   aspect-ratio: 3 / 4;
   border-radius: 5px;
   object-fit: cover;
 `;
-
 const Venue = styled.div`
   margin-top: 6px;
   font-weight: ${({ theme }) => theme.fontWeights.semibold};
@@ -54,7 +49,6 @@ const Venue = styled.div`
   overflow: hidden;
   text-overflow: ellipsis;
 `;
-
 const Time = styled.div`
   margin-top: 2px;
   font-weight: ${({ theme }) => theme.fontWeights.regular};
@@ -92,15 +86,18 @@ const formatKoreanDateTime = (isoString) => {
   return `${y}.${m}.${d} ${period} ${hour}:${min}`;
 };
 
-const MapGrid = ({ data = [], onSelectVenue }) => {
-  const [selectedCardId, setSelectedCardId] = useState(null);
-
+/** ✅ 이제 제어형: selectedCardId, onChangeSelected 을 부모로부터 받는다 */
+const MapGrid = ({
+  data = [],
+  selectedCardId,
+  onChangeSelected,
+  onSelectVenue,
+}) => {
+  // 3개 단위로 끊기
   const rows = [];
   for (let i = 0; i < data.length; i += 3) {
     const slice = data.slice(i, i + 3);
-    while (slice.length < 3) {
-      slice.push(null);
-    }
+    while (slice.length < 3) slice.push(null);
     rows.push(slice);
   }
 
@@ -110,7 +107,6 @@ const MapGrid = ({ data = [], onSelectVenue }) => {
         const selectedItem = data.find(
           (item) => item?.venue_id === selectedCardId
         );
-
         const isSelectedInThisRow = rowItems.some(
           (item) => item?.venue_id === selectedCardId
         );
@@ -122,8 +118,8 @@ const MapGrid = ({ data = [], onSelectVenue }) => {
                 if (!item) return <CardContainer key={colIndex} />;
 
                 const firstUpcoming = item.upcomingPerformance?.[0];
-
                 const isSelected = item.venue_id === selectedCardId;
+
                 return (
                   <CardContainer key={colIndex}>
                     <MapCard
@@ -135,10 +131,9 @@ const MapGrid = ({ data = [], onSelectVenue }) => {
                           : '예정 공연 없음'
                       }
                       onClick={() => {
-                        setSelectedCardId((prevId) =>
-                          prevId === item.venue_id ? null : item.venue_id
-                        );
-                        onSelectVenue?.(item);
+                        const next = isSelected ? null : item.venue_id;
+                        onChangeSelected?.(next); // ✅ 선택 토글은 부모에 위임
+                        onSelectVenue?.(item); // ✅ 지도 이동/InfoWindow
                       }}
                       isSelected={isSelected}
                     />
@@ -153,7 +148,6 @@ const MapGrid = ({ data = [], onSelectVenue }) => {
                 (() => {
                   const firstUpcoming =
                     selectedItem.upcomingPerformance?.[0] ?? null;
-
                   return (
                     <motion.div
                       key={`wide-${selectedItem.venue_id}`}
@@ -205,14 +199,12 @@ const MapGrid = ({ data = [], onSelectVenue }) => {
   );
 };
 
-const MapCard = ({ poster, venue, time, onClick, isSelected }) => {
-  return (
-    <CardWrapper onClick={onClick} $isSelected={isSelected}>
-      <Poster src={poster} alt={venue} />
-      <Venue>{venue}</Venue>
-      <Time>{time}</Time>
-    </CardWrapper>
-  );
-};
+const MapCard = ({ poster, venue, time, onClick, isSelected }) => (
+  <CardWrapper onClick={onClick} $isSelected={isSelected}>
+    <Poster src={poster} alt={venue} />
+    <Venue>{venue}</Venue>
+    <Time>{time}</Time>
+  </CardWrapper>
+);
 
 export default MapGrid;

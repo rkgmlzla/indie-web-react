@@ -1,10 +1,9 @@
 import axios from 'axios';
 import { baseUrl } from './config';
 
-
 //마이페이지-로그인/로그아웃-1.로그인url요청
 
-/** 
+/**
  *  카카오 로그인 URL 요청
  * GET /auth/kakao/login
  * 인증 필요 없음
@@ -18,10 +17,6 @@ export const getKakaoLoginUrl = async () => {
     throw error;
   }
 };
-
-
-
-
 
 // 마이페이지-로그인/로그아웃-2.로그인 콜백
 
@@ -42,7 +37,6 @@ export const kakaoLoginCallback = async (authCode) => {
   }
 };
 
-
 // 마이페이지-로그인/로그아웃-4.로그아웃
 /**
  *  로그아웃 API
@@ -56,7 +50,7 @@ export const logoutUser = async (authToken) => {
       {}, // Body 없음
       {
         headers: {
-          Authorization: `Bearer ${authToken}`, 
+          Authorization: `Bearer ${authToken}`,
         },
       }
     );
