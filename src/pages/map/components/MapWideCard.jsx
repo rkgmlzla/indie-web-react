@@ -120,7 +120,7 @@ const MapWideCard = ({ data, noTopPadding = false }) => {
   const navigate = useNavigate();
   const { name, address, upcomingPerformance = [] } = data;
   console.log('🔥 upcomingPerformance:', data.upcomingPerformance);
-  const perf = upcomingPerformance[0]; // ✅ 그냥 이거 하나만 씀
+  const perf = upcomingPerformance[0];
 
   const handleVenueClick = () => {
     if (data?.venue_id || data?.id) {

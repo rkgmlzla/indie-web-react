@@ -1,96 +1,88 @@
+// src/api/alertApi.js
 import axios from 'axios';
 import { baseUrl } from './config';
+console.log('[alertApi] baseUrl =', baseUrl);
+// 공통 config 헬퍼
+const buildConfig = (authToken) => ({
+  withCredentials: true,
+  headers: authToken ? { Authorization: `Bearer ${authToken}` } : undefined,
+});
 
-//공연=알림-알림onoff
-/**
- * 🎯 공연 예매 알림 등록 (ON)
- * Method: POST
- * Endpoint: /alert
- * Body: { type: "performance", refId }
- * 인증 필요: ✅
- */
-export const registerPerformanceAlert = async (refId, authToken) => {
+// 내부 공통 헬퍼
+const _postAlert = async (type, refId, authToken) => {
   try {
-    const response = await axios.post(
+    const { data } = await axios.post(
       `${baseUrl}/alert`,
-      { type: 'performance', refId }, // ✅ 명세서 Body 적용
-      { headers: { Authorization: `Bearer ${authToken}` } }
+      { type, refId },
+      buildConfig(authToken)
     );
-    return response.data;
+    return data;
   } catch (error) {
-    console.error('📛 공연 예매 알림 등록 실패:', error);
+    console.error(
+      `📛 알림 등록 실패 [${type}]:`,
+      error.response?.data ?? error
+    );
     throw error;
   }
 };
 
-/**
- * 🎯 공연 예매 알림 해제 (OFF)
- * Method: DELETE
- * Endpoint: /alert/{refId}?type=performance
- * Query: type=performance
- * 인증 필요: ✅
- */
-export const cancelPerformanceAlert = async (refId, authToken) => {
+const _deleteAlert = async (type, refId, authToken) => {
   try {
-    const response = await axios.delete(
-      `${baseUrl}/alert/${refId}`,
-      {
-        headers: { Authorization: `Bearer ${authToken}` },
-        params: { type: 'performance' }, // ✅ Query Param 추가
-      }
-    );
-    return response.data;
+    const { data } = await axios.delete(`${baseUrl}/alert/${refId}`, {
+      ...buildConfig(authToken),
+      params: { type },
+    });
+    return data;
   } catch (error) {
-    console.error('📛 공연 예매 알림 해제 실패:', error);
+    console.error(
+      `📛 알림 해제 실패 [${type}]:`,
+      error.response?.data ?? error
+    );
     throw error;
   }
 };
 
+/** =======================
+ *  구독형 알림 ON/OFF
+ *  - ticket_open: 예매 오픈
+ *  - performance: 공연 D-1
+ *  - artist: 아티스트 새 공연
+ *  ======================= */
+export const registerTicketOpenAlert = (refId, authToken) =>
+  _postAlert('ticket_open', refId, authToken);
+export const cancelTicketOpenAlert = (refId, authToken) =>
+  _deleteAlert('ticket_open', refId, authToken);
 
+export const registerPerformanceAlert = (refId, authToken) =>
+  _postAlert('performance', refId, authToken);
+export const cancelPerformanceAlert = (refId, authToken) =>
+  _deleteAlert('performance', refId, authToken);
 
+export const registerArtistAlert = (artistId, authToken) =>
+  _postAlert('artist', artistId, authToken);
+export const cancelArtistAlert = (artistId, authToken) =>
+  _deleteAlert('artist', artistId, authToken);
 
-//아티스트-알림-알림 onoff
-/**
- * 🎯 아티스트 알림 ON
- * Method: POST
- * Endpoint: /alert
- * Body: { type: "artist", refId }
- * 인증 필요: ✅
- */
-export const registerArtistAlert = async (artistId, authToken) => {
-  try {
-    const response = await axios.post(
-      `${baseUrl}/alert`,
-      { type: 'artist', refId: artistId }, // ✅ 이걸로 돌려놓자
-      { headers: { Authorization: `Bearer ${authToken}` } }
-    );
-    return response.data;
-  } catch (error) {
-    console.error('📛 아티스트 알림 등록 실패:', error.response?.data || error);
-    throw error;
-  }
+/** =======================
+ *  알림 리스트 / 읽음 / 삭제
+ *  (알림 페이지용)
+ *  ======================= */
+export const fetchNotifications = async (authToken) => {
+  const { data } = await axios.get(
+    `${baseUrl}/notifications`,
+    buildConfig(authToken)
+  );
+  return data; // [{id,title,body,link_url,is_read,created_at}, ...]
 };
 
-/**
- * 🎯 아티스트 알림 OFF
- * Method: DELETE
- * Endpoint: /alert/{artistId}?type=artist
- * Query: type=artist
- * 인증 필요: ✅
- */
-export const cancelArtistAlert = async (artistId, authToken) => {
-  try {
-    const response = await axios.delete(
-      `${baseUrl}/alert/${artistId}`,
-      {
-        headers: { Authorization: `Bearer ${authToken}` },
-        params: { type: 'artist' } // ✅ Query Param 추가
-      }
-    );
-    return response.data;
-  } catch (error) {
-    console.error('📛 아티스트 알림 해제 실패:', error);
-    throw error;
-  }
+export const markNotificationRead = async (id, authToken) => {
+  await axios.patch(
+    `${baseUrl}/notifications/${id}/read`,
+    null,
+    buildConfig(authToken)
+  );
 };
 
+export const removeNotification = async (id, authToken) => {
+  await axios.delete(`${baseUrl}/notifications/${id}`, buildConfig(authToken));
+};

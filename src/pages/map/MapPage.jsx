@@ -9,6 +9,7 @@ import MapGrid from './components/MapGrid';
 import styled from 'styled-components';
 import axios from 'axios';
 import { baseUrl } from '../../api/config';
+
 const PageWrapper = styled.div`
   height: 100vh;
   display: flex;
@@ -20,27 +21,53 @@ const MapPage = () => {
   const [venues, setVenues] = useState([]);
   const [selectedVenue, setSelectedVenue] = useState(null);
   const [selectedCardId, setSelectedCardId] = useState(null);
-  const handleMarkerClick = async (venue) => {
-    const now = new Date().toISOString();
 
-    try {
-      const res = await axios.get(
-        `${baseUrl}/nearby/venue/${venue.venue_id}/performance`,
-        {
-          params: { after: now },
+  // 각 공연장에 "오늘 0시 이후 첫 공연 1개" 붙여주는 헬퍼
+  const attachFirstUpcoming = async (venueList) => {
+    const now = new Date();
+    const kstMidnight = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate(),
+      0,
+      0,
+      0
+    );
+
+    const withPerf = await Promise.all(
+      (venueList || []).map(async (venue) => {
+        try {
+          const { data: perfs } = await axios.get(
+            `${baseUrl}/nearby/venue/${venue.venue_id}/performance`,
+            { params: { after: kstMidnight.toISOString() } }
+          );
+          return { ...venue, upcomingPerformance: (perfs || []).slice(0, 1) };
+        } catch (e) {
+          console.error(`공연 불러오기 실패 (venue_id: ${venue.venue_id})`, e);
+          return { ...venue, upcomingPerformance: [] };
         }
-      );
+      })
+    );
+    return withPerf;
+  };
 
-      const performances = res.data;
+  // 핀(마커) 클릭 시: 해당 장소만 공연 갱신 + 선택 동기화
+  const handleMarkerClick = async (venue) => {
+    try {
+      const now = new Date().toISOString();
+      const { data: performances } = await axios.get(
+        `${baseUrl}/nearby/venue/${venue.venue_id}/performance`,
+        { params: { after: now } }
+      );
 
       const updatedVenue = {
         ...venue,
-        upcomingPerformance: performances.slice(0, 1),
+        upcomingPerformance: (performances || []).slice(0, 1),
       };
 
-      setSelectedVenue(updatedVenue);
+      setSelectedVenue(updatedVenue); // 지도 이동 + InfoWindow
+      setSelectedCardId(updatedVenue.venue_id); // 그리드 선택 동기화
 
-      // 📌 venues 배열도 업데이트
       setVenues((prev) =>
         prev.map((v) =>
           v.venue_id === updatedVenue.venue_id ? updatedVenue : v
@@ -51,55 +78,22 @@ const MapPage = () => {
     }
   };
 
+  // 최초 로딩: 내 위치 기준 3km
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        const { latitude, longitude } = position.coords;
-        console.log('📍 현재 위치:', { latitude, longitude });
+      async ({ coords }) => {
         try {
-          const venueRes = await axios.get(`${baseUrl}/nearby/venue`, {
-            params: { lat: latitude, lng: longitude, radius: 3 },
-          });
-
-          const venueList = venueRes.data;
-
-          const venuesWithPerformance = await Promise.all(
-            venueList.map(async (venue) => {
-              try {
-                const now = new Date();
-                const kstMidnight = new Date(
-                  now.getFullYear(),
-                  now.getMonth(),
-                  now.getDate(),
-                  0,
-                  0,
-                  0
-                );
-                const performanceRes = await axios.get(
-                  `${baseUrl}/nearby/venue/${venue.venue_id}/performance`,
-                  {
-                    params: {
-                      after: kstMidnight.toISOString(), // 현재 시간 기준
-                    },
-                  }
-                );
-
-                const performances = performanceRes.data;
-                return {
-                  ...venue,
-                  upcomingPerformance: performances.slice(0, 1), // 가장 첫 공연 하나만
-                };
-              } catch (e) {
-                console.error(
-                  `공연 불러오기 실패 (venue_id: ${venue.venue_id})`,
-                  e
-                );
-                return { ...venue, upcomingPerformance: [] };
-              }
-            })
+          const { data: venueList } = await axios.get(
+            `${baseUrl}/nearby/venue`,
+            {
+              params: {
+                lat: coords.latitude,
+                lng: coords.longitude,
+                radius: 3,
+              },
+            }
           );
-
-          setVenues(venuesWithPerformance);
+          setVenues(await attachFirstUpcoming(venueList));
         } catch (error) {
           console.error('🎯 근처 공연장 불러오기 실패:', error);
         }
@@ -109,29 +103,51 @@ const MapPage = () => {
       }
     );
   }, []);
-  useEffect(() => {
-    console.log('📦 venue list from API:', venues);
-  }, [venues]);
 
   return (
     <PageWrapper>
       <Header title="가까운 공연" />
-      <div style={{ height: '56px' }} />
+      <div style={{ height: '30px' }} />
+
       <MapView
         data={venues}
         selectedVenue={selectedVenue}
         setSelectedVenue={setSelectedVenue}
         setSelectedCardId={setSelectedCardId}
         handleMarkerClick={handleMarkerClick}
+        // “현 지도에서 검색”: 지도 중심 기준 반경 3km 재조회
+        onSearchInMap={async ({ center }) => {
+          try {
+            const { lat, lng } = center;
+            const { data: venueList } = await axios.get(
+              `${baseUrl}/nearby/venue`,
+              {
+                params: { lat, lng, radius: 3 },
+              }
+            );
+            setVenues(await attachFirstUpcoming(venueList));
+            setSelectedVenue(null); // 선택 초기화 (원하면 유지하도록 변경 가능)
+            setSelectedCardId(null);
+          } catch (error) {
+            console.error('🎯 지도 내 공연장 불러오기 실패:', error);
+          }
+        }}
       />
+
       <MapTime />
       <Divider />
 
       <ScrollableContainer>
         <MapGrid
           data={venues}
-          onSelectVenue={setSelectedVenue}
-          selectedCardId={selectedCardId}
+          selectedCardId={selectedCardId} // ✅ 제어형으로 전달
+          onChangeSelected={(id) => {
+            // ✅ 카드 클릭 시 동기화
+            setSelectedCardId(id);
+            const found = venues.find((v) => v.venue_id === id) || null;
+            setSelectedVenue(found); // 지도 이동 + InfoWindow
+          }}
+          onSelectVenue={setSelectedVenue} // (선택 유지용, MapGrid 내부 호출 시)
         />
       </ScrollableContainer>
     </PageWrapper>

@@ -49,7 +49,6 @@
             font-size: 14px;
             color: #222;
           }
-
           .time {
             font-size: 12px;
             color: #999;
@@ -58,10 +57,8 @@
         }
       }
 
-      .post-menu {
-        .menu-icon {
-          cursor: pointer;
-        }
+      .post-menu .menu-icon {
+        cursor: pointer;
       }
     }
 
@@ -120,7 +117,6 @@
           display: flex;
           align-items: center;
           flex: 1;
-
           .profile-img {
             width: 32px;
             height: 32px;
@@ -128,11 +124,9 @@
             object-fit: cover;
             margin-right: 8px;
           }
-
           .comment-info {
             display: flex;
             flex-direction: column;
-
             .comment-author {
               font-weight: bold;
               font-size: 14px;
@@ -152,7 +146,6 @@
         color: #333;
         margin: 8px 0 4px 0;
       }
-
       .comment-time {
         font-size: 12px;
         color: #999;
@@ -165,7 +158,6 @@
     padding: 12px;
     border-top: 1px solid #ddd;
     background: #fff;
-
     input {
       flex: 1;
       padding: 8px;
@@ -173,7 +165,6 @@
       border-radius: 20px;
       font-size: 14px;
     }
-
     button {
       margin-left: 8px;
       background: #f4511e;
@@ -185,7 +176,8 @@
     }
   }
 }
-/* 답글 버튼 */
+
+/* ===== 답글/화살표 UI ===== */
 .reply-btn {
   display: inline-flex;
   align-items: center;
@@ -195,7 +187,7 @@
   border: 1px solid #d9d9d9;
   border-radius: 999px;
   background: #fff;
-  color: #6b7280; /* 회색 텍스트 */
+  color: #6b7280;
   cursor: pointer;
 }
 .reply-btn:hover {
@@ -205,8 +197,9 @@
 /* 답글 입력창 */
 .reply-input {
   display: flex;
+  align-items: center;
   gap: 8px;
-  margin: 8px 0 0 36px; /* 프로필 아이콘 만큼 들여쓰기 */
+  margin: 8px 0 0 0px; /* 부모 프로필 라인 들여쓰기 */
 }
 .reply-input input {
   flex: 1;
@@ -221,57 +214,130 @@
   border-radius: 10px;
   border: 1px solid #ef8354;
   background: #fff;
-  color: #ef8354; /* 시안의 오렌지 라인 */
+  color: #ef8354;
 }
 
-/* 답글 리스트 박스 */
-.reply-list {
-  margin-left: 36px; /* 부모 댓글 아이콘 라인만큼 들여쓰기 */
+/* 🔑 화살표 + 대댓글 공통 래퍼(기준 컨테이너) */
+.replies-wrap {
+  position: relative; /* 화살표 기준 */
+  margin-left: 36px; /* 부모 프로필 라인 들여쓰기 */
   margin-top: 8px;
+}
+
+/* ↘ 화살표 위치(왼쪽 바깥) */
+.reply-arrow-wrap {
+  position: absolute;
+  left: -36px;
+  top: 6px;
+  width: 28px;
+  height: 28px;
+  z-index: 1;
+  pointer-events: none;
+}
+.reply-arrow {
+  width: 28px;
+  height: 28px;
+  color: #a1a1a1;
+  stroke-width: 2.5px;
+}
+
+/* 대댓글 리스트/카드 */
+.reply-list {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
-
-/* 답글 아이템 박스 (배경/테두리) */
 .reply-item {
   position: relative;
-  margin-left: 24px;
-  background: #edd1c8; /* 연한 살구톤 배경 */
+  margin-left: 1px; /* 화살표 통로 확보 */
+  background: #edd1c8;
   border: 1px solid #e5a88f;
   border-radius: 12px;
-  padding: 12px;
+  padding: 8px;
 }
-
-/* 공통 - 우상단 메뉴 아이콘 그룹 */
-.comment .right {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.reply-input {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin: 8px 0 0 36px;
-}
-
-.reply-arrow {
-  color: #ef8354; /* 포인트 컬러 */
-}
-
-/* reply-item 내부의 .left가 아이콘+이미지 정렬되도록 */
 .reply-item .comment-header .left {
   display: inline-flex;
   align-items: center;
   gap: 6px;
 }
-.reply-item .reply-arrow {
-  position: absolute;
-  left: -18px; /* 카드 바깥으로 살짝 */
-  top: 14px; /* 카드 상단 라인 맞춤 */
-  width: 16px;
-  height: 16px;
-  color: #ef8354;
-  pointer-events: none; /* 클릭 방해 X */
+
+/* 부모 댓글 본문/시간 들여쓰기 보정 */
+.comment .comment-content {
+  margin: 8px 0 4px 36px;
+}
+
+/* ===== 게시물/댓글 공통 아이콘 칩 ===== */
+.post-detail .icon-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.post-detail .icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #fff;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.15s ease, border-color 0.15s ease,
+    transform 0.05s ease;
+}
+.post-detail .icon-btn:hover {
+  background: #f7f7f7;
+  border-color: #dfe3e6;
+}
+.post-detail .icon-btn:active {
+  transform: translateY(1px);
+}
+.post-detail .icon-btn:focus-visible {
+  outline: 0;
+  box-shadow: 0 0 0 3px rgba(244, 81, 30, 0.15);
+}
+.post-detail .icon-btn svg {
+  width: 18px;
+  height: 18px;
+  stroke-width: 2;
+}
+
+/* 댓글 우측 액션 영역 정렬 */
+.post-detail .comment .right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 게시물 편집 폼 */
+.post-detail .post-edit {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 6px;
+}
+.post-detail .post-title-input {
+  font-size: 18px;
+  padding: 8px 10px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+}
+.post-detail .post-content-input {
+  font-size: 15px;
+  line-height: 1.5;
+  padding: 10px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  resize: vertical;
+}
+
+/* 댓글 인라인 편집 입력창 */
+.post-detail .comment-edit-input {
+  width: calc(100% - 36px);
+  margin-left: 36px; /* 아바타 라인 맞춤 */
+  height: 36px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 0 10px;
 }

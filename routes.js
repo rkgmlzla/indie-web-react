@@ -7,8 +7,8 @@ import ArtistListPage from './pages/artist/ArtistListPage';
 import ArtistDetailPage from './pages/artist/ArtistDetailPage';
 import FavoritePage from './pages/favorite/FavoritePage';
 import React from 'react';
-import MyPage from './pages/mypage/MyPage'; // ✅ 마이페이지
-import Search from './pages/search/Search'; // ✅ 검색 페이지
+import MyPage from './pages/mypage/MyPage';
+import Search from './pages/search/Search';
 import Search2 from './pages/search/Search2';
 import Search3 from './pages/search/Search3';
 import Search4 from './pages/search/Search4';
@@ -16,6 +16,7 @@ import BulletinBoard from './pages/bulltetin/bulletinboard';
 import BulletinWrite from './pages/bulltetin/bulletinwrite';
 import Bulletindetail from './pages/bulltetin/bulletindetail';
 import MapPage from './pages/map/MapPage';
+
 import KakaoLogin from './src/pages/login/LoginPage';
 const routes = [
   { path: '/', element: <HomePage /> },

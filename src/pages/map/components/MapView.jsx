@@ -1,5 +1,27 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { LocateFixed } from 'lucide-react';
+import { LocateFixed, RotateCcw } from 'lucide-react';
+import { MapPin as LucideMapPin } from 'lucide-react';
+import ReactDOMServer from 'react-dom/server';
+
+const PIN_COLOR = '#d55a1f';
+const PIN_SIZE = 28;
+
+function svgPin(color = PIN_COLOR, size = PIN_SIZE) {
+  const svg = ReactDOMServer.renderToStaticMarkup(
+    <LucideMapPin
+      size={size}
+      stroke={color}
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  );
+  return {
+    content: svg,
+    size: new window.naver.maps.Size(size, size),
+    anchor: new window.naver.maps.Point(size / 2, size),
+  };
+}
 
 const MapView = ({
   data,
@@ -7,102 +29,111 @@ const MapView = ({
   setSelectedCardId,
   setSelectedVenue,
   handleMarkerClick,
+  /** “현 지도에서 검색” 눌렀을 때 호출 */
+  onSearchInMap, // ({center:{lat,lng}, ne, sw}) => void
 }) => {
   const mapRef = useRef(null);
   const markersRef = useRef([]);
   const [currentMarker, setCurrentMarker] = useState(null);
 
+  /** 1) 지도는 마운트 시 딱 한 번만 생성 */
   useEffect(() => {
-    if (window.naver && window.naver.maps) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
+    if (!window.naver?.maps) return;
 
-          const map = new window.naver.maps.Map('map', {
-            center: new window.naver.maps.LatLng(latitude, longitude),
-            zoom: 13,
-          });
-          mapRef.current = map;
-
-          const markers = data
-            .map((item) => {
-              if (item.latitude && item.longitude) {
-                const position = new window.naver.maps.LatLng(
-                  item.latitude,
-                  item.longitude
-                );
-                const marker = new window.naver.maps.Marker({
-                  position,
-                  map,
-                  title: item.name,
-                });
-
-                // ✅ 마커 클릭 시 venue 전체 상태 업데이트
-                window.naver.maps.Event.addListener(marker, 'click', () => {
-                  if (handleMarkerClick) {
-                    handleMarkerClick(item);
-                  }
-                });
-
-                return marker;
-              }
-              return null;
-            })
-            .filter(Boolean);
-
-          markersRef.current = markers;
-        },
-        (error) => {
-          console.error('❌ 위치 정보를 가져오지 못했습니다:', error);
-        }
-      );
-    }
-
-    return () => {
-      markersRef.current.forEach((marker) => marker.setMap(null));
-      markersRef.current = [];
-      if (mapRef.current) {
-        mapRef.current.destroy?.();
-      }
+    const initMap = (lat, lng) => {
+      mapRef.current = new window.naver.maps.Map('map', {
+        center: new window.naver.maps.LatLng(lat, lng),
+        zoom: 13, // 대략 3km
+      });
     };
-  }, [data]);
 
+    navigator.geolocation.getCurrentPosition(
+      ({ coords }) => initMap(coords.latitude, coords.longitude),
+      () => initMap(37.5665, 126.978) // 실패 시 서울 시청
+    );
+
+    // 언마운트 시에만 지도 파괴
+    return () => {
+      // 마커 정리
+      markersRef.current.forEach((m) => m.setMap(null));
+      markersRef.current = [];
+      mapRef.current?.destroy?.();
+    };
+  }, []);
+
+  /** 2) data 변경 시 마커만 업데이트 (지도는 유지) */
   useEffect(() => {
-    if (selectedVenue && mapRef.current) {
-      const { latitude, longitude } = selectedVenue;
-      if (latitude && longitude) {
-        const latLng = new window.naver.maps.LatLng(latitude, longitude);
-        mapRef.current.panTo(latLng);
+    if (!mapRef.current || !window.naver?.maps) return;
 
-        const selectedMarker = markersRef.current.find(
-          (marker) =>
-            marker.getTitle() === selectedVenue.name &&
-            marker.getPosition().lat() === latitude &&
-            marker.getPosition().lng() === longitude
-        );
+    // 기존 마커 제거
+    markersRef.current.forEach((m) => m.setMap(null));
+    markersRef.current = [];
 
-        if (selectedMarker) {
-          new window.naver.maps.InfoWindow({
-            content: `<div style="padding:6px 12px; font-size:14px;">${selectedVenue.name}</div>`,
-          }).open(mapRef.current, selectedMarker);
-        }
-      }
+    const map = mapRef.current;
+
+    const markers = (data || [])
+      .map((item) => {
+        if (
+          typeof item?.latitude !== 'number' ||
+          typeof item?.longitude !== 'number'
+        )
+          return null;
+
+        const marker = new window.naver.maps.Marker({
+          position: new window.naver.maps.LatLng(item.latitude, item.longitude),
+          map,
+          title: item.name,
+          icon: svgPin(PIN_COLOR, PIN_SIZE),
+        });
+
+        window.naver.maps.Event.addListener(marker, 'click', () => {
+          handleMarkerClick?.(item);
+        });
+
+        return marker;
+      })
+      .filter(Boolean);
+
+    markersRef.current = markers;
+  }, [data, handleMarkerClick]);
+
+  /** 3) 외부에서 공연장 선택 시 지도만 이동 */
+  useEffect(() => {
+    if (!selectedVenue || !mapRef.current) return;
+
+    const { latitude, longitude, name } = selectedVenue;
+    if (typeof latitude !== 'number' || typeof longitude !== 'number') return;
+
+    const latLng = new window.naver.maps.LatLng(latitude, longitude);
+    mapRef.current.panTo(latLng);
+
+    const selectedMarker = markersRef.current.find(
+      (marker) =>
+        marker.getTitle() === name &&
+        marker.getPosition().lat() === latitude &&
+        marker.getPosition().lng() === longitude
+    );
+
+    if (selectedMarker) {
+      new window.naver.maps.InfoWindow({
+        content: `<div style="padding:6px 12px; font-size:14px;">${name}</div>`,
+      }).open(mapRef.current, selectedMarker);
     }
   }, [selectedVenue]);
 
+  /** 내 위치로 이동 버튼 */
   const handleLocateMe = () => {
     if (!mapRef.current || !window.naver?.maps) return;
 
     navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords;
-        const latLng = new window.naver.maps.LatLng(latitude, longitude);
-
+      ({ coords }) => {
+        const latLng = new window.naver.maps.LatLng(
+          coords.latitude,
+          coords.longitude
+        );
         mapRef.current.panTo(latLng);
 
-        if (currentMarker) {
-          currentMarker.setMap(null);
-        }
+        if (currentMarker) currentMarker.setMap(null);
 
         const marker = new window.naver.maps.Marker({
           position: latLng,
@@ -117,10 +148,23 @@ const MapView = ({
 
         setCurrentMarker(marker);
       },
-      (err) => {
-        console.error('❌ 현재 위치를 찾을 수 없습니다:', err);
-      }
+      (err) => console.error('❌ 현재 위치를 찾을 수 없습니다:', err)
     );
+  };
+
+  /** 현 지도에서 검색 버튼 */
+  const handleSearchHere = () => {
+    if (!mapRef.current || !onSearchInMap) return;
+    const bounds = mapRef.current.getBounds();
+    const ne = bounds.getNE();
+    const sw = bounds.getSW();
+    const center = mapRef.current.getCenter();
+
+    onSearchInMap({
+      ne: { lat: ne.lat(), lng: ne.lng() },
+      sw: { lat: sw.lat(), lng: sw.lng() },
+      center: { lat: center.lat(), lng: center.lng() },
+    });
   };
 
   return (
@@ -134,8 +178,35 @@ const MapView = ({
           marginBottom: '16px',
           boxSizing: 'border-box',
           borderRadius: '5px',
-        }}></div>
+        }}
+      />
 
+      {/* 상단 중앙: 현 지도에서 검색 */}
+      <button
+        onClick={handleSearchHere}
+        style={{
+          position: 'absolute',
+          top: '20px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          display: 'flex',
+          alignItems: 'center',
+          gap: 8,
+          padding: '4px 8px',
+          borderRadius: 24,
+          border: '1px solid #ff7a3d',
+          background: '#fff5ef',
+          color: '#d55a1f',
+          fontWeight: 500,
+          boxShadow: '0 2px 6px rgba(0,0,0,0.08)',
+          cursor: 'pointer',
+          zIndex: 2,
+        }}
+        aria-label="현 지도에서 검색">
+        <RotateCcw size={16} />현 지도에서 검색
+      </button>
+
+      {/* 우하단: 내 위치로 이동 */}
       <button
         onClick={handleLocateMe}
         style={{
@@ -148,7 +219,8 @@ const MapView = ({
           padding: '10px',
           cursor: 'pointer',
           boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
-        }}>
+        }}
+        aria-label="현재 위치로 이동">
         <LocateFixed size={20} color="#000" />
       </button>
     </div>
