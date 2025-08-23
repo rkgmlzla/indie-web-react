@@ -8,6 +8,7 @@
   font-weight: 700;
   color: #1c1c1e;
   margin-bottom: 8px;
+  cursor: default;
 }
 
 .listContainer {
@@ -16,4 +17,5 @@
   padding-bottom: 8px;
   scrollbar-width: none;
   -ms-overflow-style: none;
+  caret-color: transparent;
 }

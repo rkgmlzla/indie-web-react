@@ -20,8 +20,8 @@
   inset: 0;
   background-color: rgba(0, 0, 0, 0.3);
   display: flex;
-  justify-content: center;   /* 가로 중앙 */
-  align-items: flex-end;     /* 하단 정렬 */
+  justify-content: center; /* 가로 중앙 */
+  align-items: flex-end; /* 하단 정렬 */
   z-index: 999;
 }
 
@@ -29,8 +29,11 @@
 .bottomSheet {
   background: white;
   width: 100%;
-  max-width: var(--app-max-width, 512px); /* 프로젝트 전역 변수 있으면 그 값 사용 */
-  margin: 0 auto;               /* 가로 중앙 */
+  max-width: var(
+    --app-max-width,
+    512px
+  ); /* 프로젝트 전역 변수 있으면 그 값 사용 */
+  margin: 0 auto; /* 가로 중앙 */
   box-sizing: border-box;
   border-top-left-radius: 16px;
   border-top-right-radius: 16px;

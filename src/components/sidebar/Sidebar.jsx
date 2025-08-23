@@ -51,7 +51,7 @@ function Sidebar({ onClose }) {
             <div className={styles.headerTop}>
               <ChevronLeft
                 size={50}
-                color="#FF6B00"
+                color="#d55a1f"
                 className={styles.iconBack}
                 onClick={onClose}
               />
@@ -70,7 +70,8 @@ function Sidebar({ onClose }) {
                   alt="프로필 이미지"
                   className={styles.profileImage}
                   onError={(e) => {
-                    if (e.target.src.includes('/static/profiles/')) setImageError(true);
+                    if (e.target.src.includes('/static/profiles/'))
+                      setImageError(true);
                   }}
                 />
               ) : (
@@ -85,7 +86,11 @@ function Sidebar({ onClose }) {
                     onClose();
                   }}>
                   <span className={styles.nickname}>{nickname}</span>
-                  <ChevronRight className={styles.nicknameArrow} color="#000000" size={20} />
+                  <ChevronRight
+                    className={styles.nicknameArrow}
+                    color="#000000"
+                    size={20}
+                  />
                 </div>
                 <div
                   className={styles.likeTag}
@@ -102,7 +107,10 @@ function Sidebar({ onClose }) {
           <div className={styles.divider} />
 
           {menuItems.map((item, index) => (
-            <div key={index} className={styles.menuItem} onClick={() => handleMenuClick(item.path)}>
+            <div
+              key={index}
+              className={styles.menuItem}
+              onClick={() => handleMenuClick(item.path)}>
               <span className={styles.menuLabel}>{item.label}</span>
               <span className={styles.menuIcon}>
                 <ChevronRight size={20} />

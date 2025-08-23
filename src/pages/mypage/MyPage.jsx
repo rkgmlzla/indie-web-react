@@ -62,7 +62,6 @@ function MyPage() {
 
         console.log('[MyPage] PATCH 성공:', res.data);
 
-        // ✅ 이 한 줄이 핵심
         setProfileImage(`${res.data.profileImageUrl}?t=${Date.now()}`);
         setImageError(false);
       } catch (err) {
@@ -110,7 +109,7 @@ function MyPage() {
       console.log('[MyPage] 설정 성공:', result);
     } catch (err) {
       console.error('[MyPage] 설정 실패:', err);
-      setAlarmEnabled(alarmEnabled); // 실패 시 롤백
+      setAlarmEnabled(alarmEnabled);
       setLocationEnabled(locationEnabled);
     }
   };
@@ -122,7 +121,7 @@ function MyPage() {
 
       <div className="profile">
         <div className="profile__container">
-          {/* ✅ 프로필 사진 */}
+          {/* 프로필 사진 */}
           <div className="profile__left">
             {profileImage && !imageError ? (
               <img
@@ -152,7 +151,7 @@ function MyPage() {
             />
           </div>
 
-          {/* ✅ 닉네임 */}
+          {/* 닉네임 */}
           <div className="profile__name">
             {editingNickname ? (
               <div className="edit-nickname">

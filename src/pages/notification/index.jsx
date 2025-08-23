@@ -41,12 +41,33 @@ function NotificationPage() {
   };
 
   const handleClick = async (n) => {
+    // 1) 읽음 처리(낙관적 업데이트)
+    setNotifications((prev) =>
+      prev.map((x) => (x.id === n.id ? { ...x, is_read: true } : x))
+    );
     try {
       if (!n.is_read) await markNotificationRead(n.id);
     } catch (e) {
       console.warn('읽음 처리 실패(무시 가능):', e);
     }
-    if (n.link_url) navigate(n.link_url);
+
+    // 2) 이동 경로 계산: link_url 우선, 없으면 payload.performance_id 사용
+    let href = n?.link_url;
+
+    // payload 기반 폴백
+    if (!href) {
+      const perfId = n?.payload?.performance_id;
+      if (perfId) href = `/performance/${perfId}`;
+    }
+
+    if (!href) return; // 이동할 곳 없으면 종료
+
+    // 절대 URL이면 풀 리로드, 상대경로면 SPA navigate
+    if (/^https?:\/\//i.test(href)) {
+      window.location.href = href;
+    } else {
+      navigate(href);
+    }
   };
 
   return (

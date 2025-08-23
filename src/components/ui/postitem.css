@@ -10,7 +10,8 @@
   cursor: pointer;
   overflow: hidden;
   border-radius: 10px;
-
+  caret-color: transparent;
+  cursor: default;
   .thumbnail {
     flex-shrink: 0;
     width: 70px;
@@ -68,5 +69,3 @@
   background: #fff;
   gap: 12px;
 }
-
-

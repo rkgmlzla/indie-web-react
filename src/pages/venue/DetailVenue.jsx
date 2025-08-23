@@ -214,14 +214,14 @@ const DetailVenue = () => {
                 <CopyIcon
                   src={IconCopy}
                   alt="복사 아이콘"
-                  onClick={() =>
-                    navigator.clipboard.writeText(venue.address || '')
-                  }
+                  onClick={() => {
+                    navigator.clipboard.writeText(venue.address || '');
+                    alert('주소가 복사되었습니다');
+                  }}
                 />
               </AddressLabelWrapper>
             </AddressContentWrapper>
           </Row>
-
           <MapView2
             data={
               venue.latitude && venue.longitude
