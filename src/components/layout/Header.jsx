@@ -35,6 +35,8 @@ const Title = styled.h1`
   font-size: ${({ theme }) => theme.fontSizes.lg};
   font-weight: ${({ theme }) => theme.fontWeights.semibold};
   color: ${({ theme }) => theme.colors.black};
+  caret-color: transparent;
+  cursor: default;
 `;
 
 const IconButton = styled.button`

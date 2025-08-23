@@ -19,6 +19,7 @@ const CardContainer = styled.div`
   justify-content: center;
   margin: 0 8px;
   flex-direction: column;
+  caret-color: transparent;
 `;
 const CardWrapper = styled.div`
   width: 100%;

@@ -4,16 +4,15 @@
   background: #ffffff;
   border: 1px solid #cccccc;
   border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   padding: 12px;
   margin-right: 8px;
   min-width: 320px;
-
+  cursor: pointer;
   /* ✅ 핵심 추가 */
-  height: 180px;               /* 고정 높이 지정 */
-  box-sizing: border-box;      /* padding 포함 계산 */
+  height: 180px; /* 고정 높이 지정 */
+  box-sizing: border-box; /* padding 포함 계산 */
 }
-
 
 .poster {
   width: 120px;
@@ -30,24 +29,23 @@
 .title {
   font-size: 16px;
   font-weight: 700;
-  color: #1C1C1E;
+  color: #1c1c1e;
   margin: 0;
 }
 
 .place {
   font-size: 14px;
-  color: #FF4B4B4B;
+  color: #ff4b4b4b;
   margin-top: 6px;
 }
 
 .date {
   font-size: 14px;
-  color: #FF4B4B4B;
+  color: #ff4b4b4b;
   margin-top: 6px;
 }
 
 .goIcon {
   width: 20px;
   height: 20px;
-  cursor: pointer;
 }

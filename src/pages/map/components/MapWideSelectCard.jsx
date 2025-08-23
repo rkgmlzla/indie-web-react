@@ -8,6 +8,8 @@ const Wrapper = styled.div`
   max-width: 100%;
   border-radius: 13px;
   box-sizing: border-box;
+  caret-color: transparent;
+  cursor: default;
 `;
 
 const MapWideSelectCard = ({

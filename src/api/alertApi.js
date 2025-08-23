@@ -1,12 +1,18 @@
 // src/api/alertApi.js
 import axios from 'axios';
 import { baseUrl } from './config';
+
 console.log('[alertApi] baseUrl =', baseUrl);
-// 공통 config 헬퍼
-const buildConfig = (authToken) => ({
-  withCredentials: true,
-  headers: authToken ? { Authorization: `Bearer ${authToken}` } : undefined,
-});
+
+// 공통 config 헬퍼 (항상 headers 객체 생성 + 병합)
+const buildConfig = (authToken, extra = {}) => {
+  const authHeader = authToken ? { Authorization: `Bearer ${authToken}` } : {};
+  return {
+    withCredentials: true,
+    headers: { ...authHeader, ...(extra.headers || {}) },
+    params: extra.params, // 필요시 병합용
+  };
+};
 
 // 내부 공통 헬퍼
 const _postAlert = async (type, refId, authToken) => {
@@ -44,9 +50,6 @@ const _deleteAlert = async (type, refId, authToken) => {
 
 /** =======================
  *  구독형 알림 ON/OFF
- *  - ticket_open: 예매 오픈
- *  - performance: 공연 D-1
- *  - artist: 아티스트 새 공연
  *  ======================= */
 export const registerTicketOpenAlert = (refId, authToken) =>
   _postAlert('ticket_open', refId, authToken);
@@ -61,18 +64,24 @@ export const cancelPerformanceAlert = (refId, authToken) =>
 export const registerArtistAlert = (artistId, authToken) =>
   _postAlert('artist', artistId, authToken);
 export const cancelArtistAlert = (artistId, authToken) =>
-  _deleteAlert('artist', artistId, authToken);
+  _deleteAlert('artist', authToken);
 
 /** =======================
  *  알림 리스트 / 읽음 / 삭제
- *  (알림 페이지용)
  *  ======================= */
 export const fetchNotifications = async (authToken) => {
   const { data } = await axios.get(
     `${baseUrl}/notifications`,
-    buildConfig(authToken)
+    buildConfig(authToken, {
+      // ✅ 캐시 버스터 & 캐시 억제
+      params: { _t: Date.now() },
+      headers: {
+        'Cache-Control': 'no-cache',
+        Pragma: 'no-cache',
+      },
+    })
   );
-  return data; // [{id,title,body,link_url,is_read,created_at}, ...]
+  return data; // [{ id, title, body, link_url, is_read, created_at, payload }, ...]
 };
 
 export const markNotificationRead = async (id, authToken) => {

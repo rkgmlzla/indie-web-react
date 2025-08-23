@@ -17,7 +17,7 @@ export default function ArtistListPage() {
       const data = await fetchArtistList({ page, size });
 
       // ✅ API 응답 구조를 자동으로 판별
-      const artistArray = Array.isArray(data) ? data : (data?.artists ?? []);
+      const artistArray = Array.isArray(data) ? data : data?.artists ?? [];
       setArtists(artistArray);
 
       console.log('🎯 최종 artists 배열:', artistArray);
@@ -65,4 +65,5 @@ const Container = styled.div`
 
 const CardWrapper = styled.div`
   cursor: pointer;
+  caret-color: transparent;
 `;

@@ -4,7 +4,7 @@
   gap: 8px;
 }
 
-.dayLabel { 
+.dayLabel {
   text-align: center;
   font-weight: bold;
 }
@@ -69,4 +69,5 @@
 .dayNumber {
   display: block;
   z-index: 2;
+  caret-color: transparent;
 }

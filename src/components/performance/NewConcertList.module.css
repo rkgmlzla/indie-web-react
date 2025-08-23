@@ -1,5 +1,6 @@
 .sectionContainer {
   margin-top: 24px;
+  caret-color: transparent;
 }
 
 .titleRow {
@@ -11,6 +12,7 @@
   font-size: 16px;
   font-weight: 700;
   color: #1c1c1e;
+  cursor: default;
 }
 
 .goIcon {
@@ -26,4 +28,5 @@
   padding-bottom: 8px;
   scrollbar-width: none;
   -ms-overflow-style: none;
+  caret-color: transparent;
 }
