@@ -4,98 +4,91 @@ import PostItem from '../../components/ui/postitem';
 import Header from '../../components/layout/Header';
 import { Pencil } from 'lucide-react';
 import './bulletinboard.css';
-import axios from 'axios';
-import { baseUrl } from '../../api/config';
+
+import http from '../../api/http';
+import { fetchUserInfo } from '../../api/userApi';
+
 function BulletinBoard() {
   const navigate = useNavigate();
-  const [filter, setFilter] = useState('all');
+  const [filter, setFilter] = useState('all');           // 'all' | 'myPosts' | 'myComments'
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const currentUserId = 1; // ✅ 추후 전역 상태에서 관리
+  const [meId, setMeId] = useState(null);                // 로그인 유저 id (없으면 null)
+  const [meReady, setMeReady] = useState(false);         // meId 로딩 완료 여부
+
+  // 내 정보 로딩
+  useEffect(() => {
+    (async () => {
+      try {
+        const me = await fetchUserInfo();                // /user/me (쿠키 인증)
+        setMeId(me?.id ?? null);
+      } catch {
+        setMeId(null);
+      } finally {
+        setMeReady(true);
+      }
+    })();
+  }, []);
+
+  // 숫자 비교 보조
+  const toNum = (v) => Number(v ?? NaN);
+  const isMine = (ownerId, flag) => flag === true || (meId != null && toNum(ownerId) === toNum(meId));
 
   const fetchPosts = async () => {
     try {
       setLoading(true);
-      let response;
 
+      // 1) 전체 목록
+      const listRes = await http.get('/post', {
+        params: { page: 1, size: 50, sort: 'recent' },
+      });
+      const all = Array.isArray(listRes.data?.posts) ? listRes.data.posts : [];
+
+      // 'all' 은 바로 끝
+      if (filter === 'all') {
+        setPosts(all);
+        return;
+      }
+
+      // me 정보 아직 없으면 계산 못함
+      if (!meReady) return;
+
+      // 2) 내 글 필터
       if (filter === 'myPosts') {
-        const listRes = await axios.get(`${baseUrl}/post`, {
-          params: { page: 1, size: 50, sort: 'recent' },
-          withCredentials: true,
-        });
-
-        const all = listRes.data.posts || [];
-
-        // 각 글의 상세를 병렬 조회
+        // 상세에서 isMine 또는 user.id 확인
         const details = await Promise.allSettled(
-          all.map((p) =>
-            axios.get(`${baseUrl}/post/${p.id}`, {
-              withCredentials: true,
-            })
-          )
+          all.map((p) => http.get(`/post/${p.id}`))
         );
 
-        // 내 글(id 또는 isMine)만 추려서 목록 형태로 반환
-        const myIds = new Set(
+        const myIdSet = new Set(
           details
             .filter((r) => r.status === 'fulfilled')
             .map((r) => r.value.data)
-            .filter((d) => {
-              const uid = Number(d?.user?.id ?? NaN);
-              const isMine = d?.isMine === true;
-              return isMine || uid === currentUserId;
-            })
+            .filter((d) => isMine(d?.user?.id, d?.isMine))
             .map((d) => d.id)
         );
 
-        const myPosts = all.filter((p) => myIds.has(p.id));
-        setPosts(myPosts);
-        return; // 아래 분기로 떨어지지 않도록 종료
-      } else if (filter === 'myComments') {
-        // 전체 글 불러오기
-        const postResponse = await axios.get(`${baseUrl}/post`, {
-          params: {
-            page: 1,
-            size: 50,
-            sort: 'recent',
-          },
-          withCredentials: true,
-        });
+        setPosts(all.filter((p) => myIdSet.has(p.id)));
+        return;
+      }
 
-        const allPosts = postResponse.data.posts;
-
-        // 각 게시물에 대해 댓글 요청 보내기 (Promise.all로 병렬 처리)
-        const postWithMyComments = await Promise.all(
-          allPosts.map(async (post) => {
-            try {
-              const commentRes = await axios.get(
-                `${baseUrl}/post/${post.id}/comment`,
-                {
-                  withCredentials: true,
-                }
-              );
-              const hasMyComment = commentRes.data.comment.some(
-                (c) => c.user.id === currentUserId
-              );
-              return hasMyComment ? post : null;
-            } catch (e) {
-              console.warn('댓글 가져오기 실패:', e);
-              return null;
-            }
+      // 3) 내가 댓글 단 글
+      if (filter === 'myComments') {
+        const withMine = await Promise.allSettled(
+          all.map(async (post) => {
+            const res = await http.get(`/post/${post.id}/comment`);
+            const list = Array.isArray(res.data?.comment) ? res.data.comment : [];
+            const mineExists = list.some((c) => isMine(c?.user?.id, c?.isMine));
+            return mineExists ? post : null;
           })
         );
 
-        setPosts(postWithMyComments.filter(Boolean));
-      } else {
-        response = await axios.get(`${baseUrl}/post`, {
-          params: {
-            page: 1,
-            size: 50,
-            sort: 'recent',
-          },
-          withCredentials: true,
-        });
-        setPosts(response.data.posts);
+        setPosts(
+          withMine
+            .filter((r) => r.status === 'fulfilled' && r.value)
+            .map((r) => r.value)
+        );
+        return;
       }
     } catch (err) {
       console.error('❌ 게시글 불러오기 실패:', err);
@@ -105,45 +98,37 @@ function BulletinBoard() {
   };
 
   useEffect(() => {
-    fetchPosts();
-  }, [filter]);
-
-  const filteredPosts = posts.filter((post) => {
-    if (filter === 'myPosts') return post.user_id === currentUserId;
-    if (filter === 'myComments') {
-      // ⭐️ API 확장 전까진 이건 비워두는 구조
-      return false;
+    // meReady 가 false일 땐 기다렸다가 실행
+    if (filter === 'all') {
+      fetchPosts();
+    } else if (meReady) {
+      fetchPosts();
     }
-    return true;
-  });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filter, meReady]);
+
   return (
     <div className="board">
       <Header title="자유게시판" initialSearchTab="자유게시판" />
       <div style={{ height: '30px' }} />
+
       <div className="board__tabs">
-        <button
-          className={filter === 'all' ? 'active' : ''}
-          onClick={() => setFilter('all')}>
+        <button className={filter === 'all' ? 'active' : ''} onClick={() => setFilter('all')}>
           전체
         </button>
-        <button
-          className={filter === 'myPosts' ? 'active' : ''}
-          onClick={() => setFilter('myPosts')}>
+        <button className={filter === 'myPosts' ? 'active' : ''} onClick={() => setFilter('myPosts')}>
           내가 쓴 글
         </button>
-        <button
-          className={filter === 'myComments' ? 'active' : ''}
-          onClick={() => setFilter('myComments')}>
+        <button className={filter === 'myComments' ? 'active' : ''} onClick={() => setFilter('myComments')}>
           내가 댓글 단 글
         </button>
       </div>
+
+      {loading && <div className="board__loading">불러오는 중…</div>}
+
       <ul className="board__list">
         {posts.map((post) => (
-          <PostItem
-            key={post.id}
-            post={post}
-            onClick={() => navigate(`/freeboard/${post.id}`)}
-          />
+          <PostItem key={post.id} post={post} onClick={() => navigate(`/freeboard/${post.id}`)} />
         ))}
       </ul>
 
