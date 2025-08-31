@@ -1,9 +1,9 @@
 import React, { useRef, useState } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import './bulletinwrite.css';
 import Header from '../../components/layout/Header';
-import { baseUrl } from '../../api/config';
+import http from '../../api/http';  // ✅ 쿠키 포함 인스턴스
+
 function BulletinWrite() {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
@@ -15,7 +15,6 @@ function BulletinWrite() {
 
   const handleChange = (e) => {
     setContent(e.target.value);
-
     const textarea = textareaRef.current;
     if (textarea) {
       textarea.style.height = 'auto';
@@ -26,22 +25,17 @@ function BulletinWrite() {
   const handleImageUpload = (e) => {
     const selected = Array.from(e.target.files);
     const filtered = selected.filter((file) => file.type.startsWith('image/'));
-
     if (images.length + filtered.length > 5) {
       alert('사진은 최대 5장까지 업로드 가능합니다.');
       return;
     }
-
     setImages((prev) => [...prev, ...filtered]);
   };
 
-  const removeImage = (index) => {
-    setImages(images.filter((_, i) => i !== index));
-  };
+  const removeImage = (index) => setImages(images.filter((_, i) => i !== index));
+
   const handleSubmit = async () => {
     if (!isValid) return;
-
-    const accessToken = localStorage.getItem('accessToken');
 
     try {
       const formData = new FormData();
@@ -49,13 +43,8 @@ function BulletinWrite() {
       formData.append('content', content);
       images.forEach((img) => formData.append('images', img));
 
-      await axios.post(`${baseUrl}/post`, formData, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`, // Content-Type 생략 → 자동 설정됨
-        },
-      });
-
-      navigate('/bulletinboard'); // 성공 시 이동
+      await http.post('/post', formData);  // ✅ Authorization 헤더 불필요(쿠키 인증)
+      navigate('/bulletinboard');
     } catch (error) {
       console.error('게시글 작성 실패:', error);
       alert('게시글 작성에 실패했습니다.');
@@ -66,6 +55,7 @@ function BulletinWrite() {
     <div className="freeboard__write">
       <Header title="자유게시판" showBack showSearch={false} showMenu={false} />
       <div style={{ height: '30px' }} />
+
       <input
         className="title-input"
         placeholder="제목을 입력해주세요."
@@ -91,21 +81,12 @@ function BulletinWrite() {
         {images.length < 5 && (
           <label className="upload-btn">
             + 이미지 업로드
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleImageUpload}
-              hidden
-              multiple
-            />
+            <input type="file" accept="image/*" onChange={handleImageUpload} hidden multiple />
           </label>
         )}
       </div>
 
-      <button
-        disabled={!isValid}
-        className={isValid ? 'submit active' : 'submit'}
-        onClick={handleSubmit}>
+      <button disabled={!isValid} className={isValid ? 'submit active' : 'submit'} onClick={handleSubmit}>
         완료
       </button>
     </div>

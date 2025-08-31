@@ -1,49 +1,48 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import {
-  MessageSquareMore,
-  CornerDownRight,
-  Pencil,
-  Check,
-  X,
-  Trash2,
-} from 'lucide-react';
+import { MessageSquareMore, CornerDownRight, Pencil, Check, X, Trash2 } from 'lucide-react';
 import './bulletindetail.css';
 import Header from '../../components/layout/Header';
-import api from '../../lib/api';
+import http from '../../api/http';
+import { fetchUserInfo } from '../../api/userApi';
 import { baseUrl } from '../../api/config';
 
 function Bulletindetail() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  // 데이터
   const [post, setPost] = useState(null);
   const [comments, setComments] = useState([]);
+  const [meId, setMeId] = useState(null);
 
-  // 입력
   const [comment, setComment] = useState('');
   const [replyOpenFor, setReplyOpenFor] = useState(null);
   const [replyText, setReplyText] = useState('');
-
-  // 수정 상태 (게시물/댓글)
   const [isEditingPost, setIsEditingPost] = useState(false);
   const [editTitle, setEditTitle] = useState('');
   const [editContent, setEditContent] = useState('');
   const [editingCommentId, setEditingCommentId] = useState(null);
   const [editingText, setEditingText] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmittingReply, setIsSubmittingReply] = useState(false);
 
-  // 로그인 유저 (임시)
-  const currentUserId = 1;
+  // 로그인 유저
+  useEffect(() => {
+    (async () => {
+      try {
+        const me = await fetchUserInfo();
+        setMeId(me?.id ?? null);
+      } catch {
+        setMeId(null);
+      }
+    })();
+  }, []);
 
-  // URL 보정 (상대경로 → 절대경로)
-  const resolveUrl = (url) =>
-    url?.startsWith?.('http') ? url : `${baseUrl}${url || ''}`;
+  const resolveUrl = (url) => (url?.startsWith?.('http') ? url : `${baseUrl}${url || ''}`);
 
-  // API
   const fetchPost = async () => {
     try {
-      const res = await api.get(`/post/${id}`);
+      const res = await http.get(`/post/${id}`);
       setPost(res.data);
       return true;
     } catch (error) {
@@ -59,7 +58,7 @@ function Bulletindetail() {
 
   const fetchComments = async () => {
     try {
-      const res = await api.get(`/post/${id}/comment`);
+      const res = await http.get(`/post/${id}/comment`);
       setComments(res.data.comment || []);
     } catch (error) {
       if (error?.response?.status !== 404) {
@@ -69,20 +68,26 @@ function Bulletindetail() {
   };
 
   const handleCommentSubmit = async () => {
-    if (!comment.trim()) return;
+    if (isSubmitting) return;
+    const text = comment.trim();
+    if (!text) return;
+
+    setIsSubmitting(true);
     try {
-      await api.post(`/post/${id}/comment`, { content: comment });
+      await http.post(`/post/${id}/comment`, { content: text });
       setComment('');
       fetchComments();
     } catch (error) {
       console.error('댓글 등록 실패:', error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   const handleDeletePost = async () => {
     if (!window.confirm('정말 이 게시물을 삭제하시겠습니까?')) return;
     try {
-      await api.delete(`/post/${id}`);
+      await http.delete(`/post/${id}`);
       alert('게시물이 삭제되었습니다.');
       navigate('/bulletinboard', { replace: true });
     } catch (error) {
@@ -93,14 +98,13 @@ function Bulletindetail() {
   const handleDeleteComment = async (commentId) => {
     if (!window.confirm('정말 이 댓글을 삭제하시겠습니까?')) return;
     try {
-      await api.delete(`/post/${id}/comment/${commentId}`);
+      await http.delete(`/post/${id}/comment/${commentId}`);
       fetchComments();
     } catch (error) {
       console.error('댓글 삭제 실패:', error);
     }
   };
 
-  // 답글
   const toggleReply = (commentId) => {
     setReplyOpenFor((prev) => (prev === commentId ? null : commentId));
     setReplyText('');
@@ -109,25 +113,22 @@ function Bulletindetail() {
   const handleReplySubmit = async (parentId) => {
     const text = replyText.trim();
     if (!text) return;
+    if (isSubmittingReply) return;
+
+    setIsSubmittingReply(true);
     try {
-      await api.post(`/post/${id}/comment/${parentId}`, { content: text });
+      await http.post(`/post/${id}/comment/${parentId}`, { content: text });
       setReplyText('');
       setReplyOpenFor(null);
       fetchComments();
     } catch (err) {
-      console.log('[reply FAIL]', {
-        status: err?.response?.status,
-        data: err?.response?.data,
-      });
-      alert(
-        err?.response?.data?.message ||
-          err?.response?.data?.detail ||
-          '답글 등록에 실패했습니다.'
-      );
+      console.log('[reply FAIL]', { status: err?.response?.status, data: err?.response?.data });
+      alert(err?.response?.data?.message || '답글 등록에 실패했습니다.');
+    } finally {
+      setIsSubmittingReply(false);
     }
   };
 
-  // 게시물 수정
   const beginEditPost = () => {
     if (!post) return;
     setEditTitle(post.title || '');
@@ -141,7 +142,7 @@ function Bulletindetail() {
   };
   const savePost = async () => {
     try {
-      await api.put(`/post/${id}`, { title: editTitle, content: editContent });
+      await http.put(`/post/${id}`, { title: editTitle, content: editContent });
       setIsEditingPost(false);
       await fetchPost();
     } catch (e) {
@@ -150,7 +151,6 @@ function Bulletindetail() {
     }
   };
 
-  // 댓글 수정
   const beginEditComment = (c) => {
     setEditingCommentId(c.id);
     setEditingText(c.content || '');
@@ -161,7 +161,7 @@ function Bulletindetail() {
   };
   const saveComment = async (cid) => {
     try {
-      await api.patch(`/post/${id}/comment/${cid}`, { content: editingText });
+      await http.patch(`/post/${id}/comment/${cid}`, { content: editingText });
       setEditingCommentId(null);
       setEditingText('');
       await fetchComments();
@@ -171,33 +171,29 @@ function Bulletindetail() {
     }
   };
 
-  // 초기 로드 (게시물 성공 시 댓글 로드)
   useEffect(() => {
     let alive = true;
     (async () => {
       const ok = await fetchPost();
       if (alive && ok) await fetchComments();
     })();
-    return () => {
-      alive = false;
-    };
+    return () => { alive = false; };
   }, [id]);
 
-  // 부모/자식 분리
   const parentComments = comments.filter((c) => !c.parentCommentId);
   const childrenMap = comments.reduce((acc, c) => {
-    if (c.parentCommentId) {
-      (acc[c.parentCommentId] ||= []).push(c);
-    }
+    if (c.parentCommentId) (acc[c.parentCommentId] ||= []).push(c);
     return acc;
   }, {});
   const topLevelCount = parentComments.length;
 
-  const getImageSrc = (item) => {
-    const raw =
-      typeof item === 'string' ? item : item?.image_url || item?.url || '';
-    return resolveUrl(raw);
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') { e.preventDefault(); handleCommentSubmit(); }
   };
+
+  // 공통: “내 것인지” 판단자
+  const isMine = (ownerId, flagIsMine) =>
+    flagIsMine === true || Number(ownerId) === Number(meId);
 
   return (
     <div className="post-detail">
@@ -210,51 +206,25 @@ function Bulletindetail() {
           <div className="post-header">
             <div className="author">
               {post.user?.profile_url && (
-                <img
-                  src={resolveUrl(post.user.profile_url)}
-                  alt="작성자 프로필"
-                  className="profile-img"
-                />
+                <img src={resolveUrl(post.user.profile_url)} alt="작성자 프로필" className="profile-img" />
               )}
               <div className="author-name-time">
                 <span className="name">{post.user?.nickname}</span>
-                <span className="time">
-                  {new Date(post.created_at).toLocaleString()}
-                </span>
+                <span className="time">{new Date(post.created_at).toLocaleString()}</span>
               </div>
             </div>
 
-            {post.user?.id === currentUserId && (
+            {isMine(post?.user?.id, post?.isMine) && (
               <div className="post-menu">
                 {isEditingPost ? (
                   <div className="icon-group">
-                    <button
-                      className="icon-btn"
-                      title="저장"
-                      onClick={savePost}>
-                      <Check />
-                    </button>
-                    <button
-                      className="icon-btn"
-                      title="취소"
-                      onClick={cancelEditPost}>
-                      <X />
-                    </button>
+                    <button className="icon-btn" title="저장" onClick={savePost}><Check /></button>
+                    <button className="icon-btn" title="취소" onClick={cancelEditPost}><X /></button>
                   </div>
                 ) : (
                   <div className="icon-group">
-                    <button
-                      className="icon-btn"
-                      title="수정"
-                      onClick={beginEditPost}>
-                      <Pencil />
-                    </button>
-                    <button
-                      className="icon-btn"
-                      title="삭제"
-                      onClick={handleDeletePost}>
-                      <Trash2 />
-                    </button>
+                    <button className="icon-btn" title="수정" onClick={beginEditPost}><Pencil /></button>
+                    <button className="icon-btn" title="삭제" onClick={handleDeletePost}><Trash2 /></button>
                   </div>
                 )}
               </div>
@@ -289,7 +259,7 @@ function Bulletindetail() {
               {post.images.map((img, idx) => (
                 <img
                   key={idx}
-                  src={getImageSrc(img)}
+                  src={resolveUrl(typeof img === 'string' ? img : img?.image_url)}
                   alt={`첨부 이미지 ${idx + 1}`}
                   className="post-image"
                 />
@@ -299,7 +269,7 @@ function Bulletindetail() {
         </div>
       )}
 
-      {/* 댓글 영역 */}
+      {/* 댓글 */}
       <div className="comment-area">
         <h4>댓글 {topLevelCount}</h4>
 
@@ -307,11 +277,7 @@ function Bulletindetail() {
           <div key={c.id} className="comment">
             <div className="comment-header">
               <div className="left">
-                <img
-                  src={resolveUrl(c.user?.profile_url)}
-                  alt="댓글 작성자 프로필"
-                  className="profile-img"
-                />
+                <img src={resolveUrl(c.user?.profile_url)} alt="댓글 작성자 프로필" className="profile-img" />
                 <div className="comment-info">
                   <span className="comment-author">{c.user?.nickname}</span>
                 </div>
@@ -319,41 +285,20 @@ function Bulletindetail() {
 
               <div className="right">
                 <button className="reply-btn" onClick={() => toggleReply(c.id)}>
-                  <MessageSquareMore size={16} />
-                  <span>답글</span>
+                  <MessageSquareMore size={16} /><span>답글</span>
                 </button>
 
-                {c.user?.id === currentUserId && (
+                {isMine(c?.user?.id, c?.isMine) && (
                   <div className="icon-group">
                     {editingCommentId === c.id ? (
                       <>
-                        <button
-                          className="icon-btn"
-                          onClick={() => saveComment(c.id)}
-                          aria-label="저장">
-                          <Check />
-                        </button>
-                        <button
-                          className="icon-btn"
-                          onClick={cancelEditComment}
-                          aria-label="취소">
-                          <X />
-                        </button>
+                        <button className="icon-btn" onClick={() => saveComment(c.id)} aria-label="저장"><Check /></button>
+                        <button className="icon-btn" onClick={cancelEditComment} aria-label="취소"><X /></button>
                       </>
                     ) : (
                       <>
-                        <button
-                          className="icon-btn"
-                          onClick={() => beginEditComment(c)}
-                          aria-label="수정">
-                          <Pencil />
-                        </button>
-                        <button
-                          className="icon-btn"
-                          onClick={() => handleDeleteComment(c.id)}
-                          aria-label="삭제">
-                          <Trash2 />
-                        </button>
+                        <button className="icon-btn" onClick={() => beginEditComment(c)} aria-label="수정"><Pencil /></button>
+                        <button className="icon-btn" onClick={() => handleDeleteComment(c.id)} aria-label="삭제"><Trash2 /></button>
                       </>
                     )}
                   </div>
@@ -375,70 +320,35 @@ function Bulletindetail() {
 
             <span className="comment-time">
               {new Date(c.created_at).toLocaleString('ko-KR', {
-                month: 'numeric',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: false,
+                month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false,
               })}
             </span>
 
-            {/* 부모 댓글 밑: 화살표 + 대댓글 */}
+            {/* 대댓글 */}
             {childrenMap[c.id]?.length > 0 && (
               <div className="replies-wrap">
-                <div className="reply-arrow-wrap">
-                  <CornerDownRight className="reply-arrow" />
-                </div>
-
+                <div className="reply-arrow-wrap"><CornerDownRight className="reply-arrow" /></div>
                 <div className="reply-list">
                   {childrenMap[c.id].map((rc) => (
                     <div key={rc.id} className="reply-item">
                       <div className="comment-header">
                         <div className="left">
-                          <img
-                            src={resolveUrl(rc.user?.profile_url)}
-                            alt="답글 작성자 프로필"
-                            className="profile-img"
-                          />
-                          <div className="comment-info">
-                            <span className="comment-author">
-                              {rc.user?.nickname}
-                            </span>
-                          </div>
+                          <img src={resolveUrl(rc.user?.profile_url)} alt="답글 작성자 프로필" className="profile-img" />
+                          <div className="comment-info"><span className="comment-author">{rc.user?.nickname}</span></div>
                         </div>
 
-                        {rc.user?.id === currentUserId && (
+                        {isMine(rc?.user?.id, rc?.isMine) && (
                           <div className="right">
                             <div className="icon-group">
                               {editingCommentId === rc.id ? (
                                 <>
-                                  <button
-                                    className="icon-btn"
-                                    onClick={() => saveComment(rc.id)}
-                                    aria-label="저장">
-                                    <Check />
-                                  </button>
-                                  <button
-                                    className="icon-btn"
-                                    onClick={cancelEditComment}
-                                    aria-label="취소">
-                                    <X />
-                                  </button>
+                                  <button className="icon-btn" onClick={() => saveComment(rc.id)} aria-label="저장"><Check /></button>
+                                  <button className="icon-btn" onClick={cancelEditComment} aria-label="취소"><X /></button>
                                 </>
                               ) : (
                                 <>
-                                  <button
-                                    className="icon-btn"
-                                    onClick={() => beginEditComment(rc)}
-                                    aria-label="수정">
-                                    <Pencil />
-                                  </button>
-                                  <button
-                                    className="icon-btn"
-                                    onClick={() => handleDeleteComment(rc.id)}
-                                    aria-label="삭제">
-                                    <Trash2 />
-                                  </button>
+                                  <button className="icon-btn" onClick={() => beginEditComment(rc)} aria-label="수정"><Pencil /></button>
+                                  <button className="icon-btn" onClick={() => handleDeleteComment(rc.id)} aria-label="삭제"><Trash2 /></button>
                                 </>
                               )}
                             </div>
@@ -451,9 +361,7 @@ function Bulletindetail() {
                           className="comment-edit-input"
                           value={editingText}
                           onChange={(e) => setEditingText(e.target.value)}
-                          onKeyDown={(e) =>
-                            e.key === 'Enter' && saveComment(rc.id)
-                          }
+                          onKeyDown={(e) => e.key === 'Enter' && saveComment(rc.id)}
                           autoFocus
                         />
                       ) : (
@@ -462,11 +370,7 @@ function Bulletindetail() {
 
                       <span className="comment-time">
                         {new Date(rc.created_at).toLocaleString('ko-KR', {
-                          month: 'numeric',
-                          day: 'numeric',
-                          hour: '2-digit',
-                          minute: '2-digit',
-                          hour12: false,
+                          month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false,
                         })}
                       </span>
                     </div>
@@ -474,6 +378,7 @@ function Bulletindetail() {
                 </div>
               </div>
             )}
+
             {/* 답글 입력창 */}
             {replyOpenFor === c.id && (
               <div className="reply-input">
@@ -483,15 +388,9 @@ function Bulletindetail() {
                   placeholder="답글을 입력하세요."
                   value={replyText}
                   onChange={(e) => setReplyText(e.target.value)}
-                  onKeyDown={(e) =>
-                    e.key === 'Enter' && handleReplySubmit(c.id)
-                  }
+                  onKeyDown={(e) => e.key === 'Enter' && handleReplySubmit(c.id)}
                 />
-                <button
-                  disabled={!replyText.trim()}
-                  onClick={() => handleReplySubmit(c.id)}>
-                  등록
-                </button>
+                <button disabled={!replyText.trim()} onClick={() => handleReplySubmit(c.id)}>등록</button>
               </div>
             )}
           </div>
@@ -505,6 +404,7 @@ function Bulletindetail() {
           placeholder="댓글을 입력하세요."
           value={comment}
           onChange={(e) => setComment(e.target.value)}
+          onKeyDown={handleKeyDown}
         />
         <button onClick={handleCommentSubmit}>등록</button>
       </div>
