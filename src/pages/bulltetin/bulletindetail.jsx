@@ -1,3 +1,4 @@
+// src/pages/bulletin/Bulletindetail.jsx
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { MessageSquareMore, CornerDownRight, Pencil, Check, X, Trash2 } from 'lucide-react';
@@ -5,7 +6,6 @@ import './bulletindetail.css';
 import Header from '../../components/layout/Header';
 import http from '../../api/http';
 import { fetchUserInfo } from '../../api/userApi';
-import { baseUrl } from '../../api/config';
 
 function Bulletindetail() {
   const { id } = useParams();
@@ -38,11 +38,23 @@ function Bulletindetail() {
     })();
   }, []);
 
-  const resolveUrl = (url) => (url?.startsWith?.('http') ? url : `${baseUrl}${url || ''}`);
+  // 이미지/파일 URL 보정: 절대 URL은 그대로, 서버 상대 경로는 그대로(프록시 타게)
+  const resolveUrl = (url) => {
+    if (!url) return '';
+    if (typeof url !== 'string') return '';
+    if (url.startsWith('http')) return url;
+    if (url.startsWith('/')) return url;
+    return `/${url}`;
+  };
 
   const fetchPost = async () => {
     try {
       const res = await http.get(`/post/${id}`);
+      if (res.status === 401) {
+        alert('로그인이 필요합니다.');
+        navigate('/login');
+        return false;
+      }
       setPost(res.data);
       return true;
     } catch (error) {
@@ -59,7 +71,14 @@ function Bulletindetail() {
   const fetchComments = async () => {
     try {
       const res = await http.get(`/post/${id}/comment`);
-      setComments(res.data.comment || []);
+      if (res.status === 401) {
+        // 댓글은 공개일 수도 있으니 굳이 튕기진 않고 빈 배열 처리해도 됨
+        setComments([]);
+        return;
+      }
+      // 서버가 comment 또는 comments로 줄 수 있으니 유연 처리
+      const list = res.data?.comment ?? res.data?.comments ?? [];
+      setComments(Array.isArray(list) ? list : []);
     } catch (error) {
       if (error?.response?.status !== 404) {
         console.error('댓글 불러오기 실패:', error);
@@ -74,7 +93,12 @@ function Bulletindetail() {
 
     setIsSubmitting(true);
     try {
-      await http.post(`/post/${id}/comment`, { content: text });
+      const r = await http.post(`/post/${id}/comment`, { content: text });
+      if (r.status === 401) {
+        alert('로그인이 필요합니다.');
+        navigate('/login');
+        return;
+      }
       setComment('');
       fetchComments();
     } catch (error) {
@@ -87,7 +111,12 @@ function Bulletindetail() {
   const handleDeletePost = async () => {
     if (!window.confirm('정말 이 게시물을 삭제하시겠습니까?')) return;
     try {
-      await http.delete(`/post/${id}`);
+      const r = await http.delete(`/post/${id}`);
+      if (r.status === 401) {
+        alert('로그인이 필요합니다.');
+        navigate('/login');
+        return;
+      }
       alert('게시물이 삭제되었습니다.');
       navigate('/bulletinboard', { replace: true });
     } catch (error) {
@@ -98,7 +127,12 @@ function Bulletindetail() {
   const handleDeleteComment = async (commentId) => {
     if (!window.confirm('정말 이 댓글을 삭제하시겠습니까?')) return;
     try {
-      await http.delete(`/post/${id}/comment/${commentId}`);
+      const r = await http.delete(`/post/${id}/comment/${commentId}`);
+      if (r.status === 401) {
+        alert('로그인이 필요합니다.');
+        navigate('/login');
+        return;
+      }
       fetchComments();
     } catch (error) {
       console.error('댓글 삭제 실패:', error);
@@ -112,12 +146,16 @@ function Bulletindetail() {
 
   const handleReplySubmit = async (parentId) => {
     const text = replyText.trim();
-    if (!text) return;
-    if (isSubmittingReply) return;
+    if (!text || isSubmittingReply) return;
 
     setIsSubmittingReply(true);
     try {
-      await http.post(`/post/${id}/comment/${parentId}`, { content: text });
+      const r = await http.post(`/post/${id}/comment/${parentId}`, { content: text });
+      if (r.status === 401) {
+        alert('로그인이 필요합니다.');
+        navigate('/login');
+        return;
+      }
       setReplyText('');
       setReplyOpenFor(null);
       fetchComments();
@@ -142,7 +180,12 @@ function Bulletindetail() {
   };
   const savePost = async () => {
     try {
-      await http.put(`/post/${id}`, { title: editTitle, content: editContent });
+      const r = await http.put(`/post/${id}`, { title: editTitle, content: editContent });
+      if (r.status === 401) {
+        alert('로그인이 필요합니다.');
+        navigate('/login');
+        return;
+      }
       setIsEditingPost(false);
       await fetchPost();
     } catch (e) {
@@ -161,7 +204,12 @@ function Bulletindetail() {
   };
   const saveComment = async (cid) => {
     try {
-      await http.patch(`/post/${id}/comment/${cid}`, { content: editingText });
+      const r = await http.patch(`/post/${id}/comment/${cid}`, { content: editingText });
+      if (r.status === 401) {
+        alert('로그인이 필요합니다.');
+        navigate('/login');
+        return;
+      }
       setEditingCommentId(null);
       setEditingText('');
       await fetchComments();
@@ -205,9 +253,12 @@ function Bulletindetail() {
         <div className="post">
           <div className="post-header">
             <div className="author">
-              {post.user?.profile_url && (
-                <img src={resolveUrl(post.user.profile_url)} alt="작성자 프로필" className="profile-img" />
-              )}
+              <img
+                src={resolveUrl(post.user?.profile_url) || '/default_profile.png'}
+                onError={(e) => { e.currentTarget.src = '/default_profile.png'; }}
+                alt="작성자 프로필"
+                className="profile-img"
+              />
               <div className="author-name-time">
                 <span className="name">{post.user?.nickname}</span>
                 <span className="time">{new Date(post.created_at).toLocaleString()}</span>
@@ -256,14 +307,18 @@ function Bulletindetail() {
 
           {post.images?.length > 0 && (
             <div className="post-image-grid">
-              {post.images.map((img, idx) => (
-                <img
-                  key={idx}
-                  src={resolveUrl(typeof img === 'string' ? img : img?.image_url)}
-                  alt={`첨부 이미지 ${idx + 1}`}
-                  className="post-image"
-                />
-              ))}
+              {post.images.map((img, idx) => {
+                const src = resolveUrl(typeof img === 'string' ? img : img?.image_url);
+                return (
+                  <img
+                    key={idx}
+                    src={src || '/default_profile.png'}
+                    onError={(e) => { e.currentTarget.src = '/default_profile.png'; }}
+                    alt={`첨부 이미지 ${idx + 1}`}
+                    className="post-image"
+                  />
+                );
+              })}
             </div>
           )}
         </div>
@@ -277,7 +332,12 @@ function Bulletindetail() {
           <div key={c.id} className="comment">
             <div className="comment-header">
               <div className="left">
-                <img src={resolveUrl(c.user?.profile_url)} alt="댓글 작성자 프로필" className="profile-img" />
+                <img
+                  src={resolveUrl(c.user?.profile_url) || '/default_profile.png'}
+                  onError={(e) => { e.currentTarget.src = '/default_profile.png'; }}
+                  alt="댓글 작성자 프로필"
+                  className="profile-img"
+                />
                 <div className="comment-info">
                   <span className="comment-author">{c.user?.nickname}</span>
                 </div>
@@ -333,7 +393,12 @@ function Bulletindetail() {
                     <div key={rc.id} className="reply-item">
                       <div className="comment-header">
                         <div className="left">
-                          <img src={resolveUrl(rc.user?.profile_url)} alt="답글 작성자 프로필" className="profile-img" />
+                          <img
+                            src={resolveUrl(rc.user?.profile_url) || '/default_profile.png'}
+                            onError={(e) => { e.currentTarget.src = '/default_profile.png'; }}
+                            alt="답글 작성자 프로필"
+                            className="profile-img"
+                          />
                           <div className="comment-info"><span className="comment-author">{rc.user?.nickname}</span></div>
                         </div>
 

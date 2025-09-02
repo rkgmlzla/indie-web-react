@@ -152,3 +152,31 @@
   display: flex;
   align-items: center;
 }
+
+.profileFallbackIcon {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background: #ddd;
+}
+
+/* 맨 아래 회색 로그인하기 */
+.loginFooter {
+  margin-top: auto;           /* 사이드바 맨 하단으로 밀기 */
+  padding: 16px;
+  display: flex;
+  justify-content: center;
+}
+
+.loginButtonGray {
+  background: transparent;
+  border: none;
+  color: #8e8e93;             /* 회색 텍스트 */
+  font-size: 14px;
+  cursor: pointer;
+  padding: 8px 12px;
+}
+
+.loginButtonGray:hover {
+  text-decoration: underline;
+}
