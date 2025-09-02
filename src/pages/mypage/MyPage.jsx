@@ -8,6 +8,7 @@ import {
   updateNickname,
   updateUserSettings,
   updateProfileImage,
+  logout,
 } from '../../api/userApi';
 
 function MyPage() {
@@ -80,6 +81,15 @@ function MyPage() {
       console.error('[MyPage] 설정 실패:', err);
       setAlarmEnabled(alarmEnabled);
       setLocationEnabled(locationEnabled);
+    }
+  };
+
+  // ✅ 로그아웃
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } finally {
+      window.location.href = '/';
     }
   };
 
@@ -161,6 +171,18 @@ function MyPage() {
           />
         </div>
       </div>
+
+      {/* ✅ 회색 글씨 로그아웃 */}
+      <div className="logout" style={{width:'100%', display:'flex', justifyContent:'center', padding:'24px 8px 40px'}}>
+  <button
+    className="logout__button"
+    style={{background:'transparent', border:'none', color:'#8e8e93', fontSize:14, cursor:'pointer', padding:'8px 12px'}}
+    onClick={handleLogout}
+  >
+    로그아웃
+  </button>
+</div>
+
     </div>
   );
 }

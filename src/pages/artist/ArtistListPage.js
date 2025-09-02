@@ -81,8 +81,6 @@ export default function ArtistListPage() {
         {/* 로딩/끝 표시 + 관찰용 센티넬 */}
         {!done && <Loader>불러오는 중…</Loader>}
         <Sentinel ref={sentinelRef} />
-        {done && artists.length === 0 && <Empty>아티스트가 없어요.</Empty>}
-        {done && artists.length > 0 && <End>끝까지 봤어요 👋</End>}
       </Container>
     </>
   );

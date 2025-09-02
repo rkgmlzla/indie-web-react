@@ -1,16 +1,14 @@
-// src/api/userApi.js
-import http from './http';           // ✅ axios 인스턴스 (withCredentials: true)
-import { baseUrl } from './config';  // (다른 곳에서 쓸 거면 남겨두고, 여기선 안 써도 됨)
+import http from './http';
 
 // 1) 로그인 후 사용자 정보 조회
 export const fetchUserInfo = async () => {
-  const { data } = await http.get('/user/me');  // ✅ 쿠키로 인증
+  const { data } = await http.get('/user/me');  
   return data;
 };
 
 // 2) 닉네임 수정
 export const updateNickname = async (nickname) => {
-  const { data } = await http.patch('/user/me', { nickname }); // ✅ 헤더 불필요
+  const { data } = await http.patch('/user/me', { nickname }); 
   return data;
 };
 
@@ -43,4 +41,20 @@ export const updateUserSettings = async (alarmEnabled, locationEnabled) => {
   };
   const { data } = await http.patch('/user/me/setting', body); // ✅ 헤더 불필요
   return data;
+};
+
+export const logout = async () => {
+  try {
+    const res = await http.post('/auth/logout'); // 쿠키 포함해서 요청됨
+    return res.data;
+  } catch (e) {
+    // 이미 만료/401이어도 어차피 클라이언트에 남은 건 없애고 넘어가면 됨
+    return { message: '이미 로그아웃 상태입니다.' };
+  }
+};
+
+export const fetchUserInfoOptional = async () => {
+  const res = await http.get('/user/me');   // validateStatus로 401도 throw 안 함
+  if (res.status === 200) return res.data;
+  return null;
 };

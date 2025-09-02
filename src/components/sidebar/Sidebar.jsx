@@ -1,26 +1,41 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './Sidebar.module.css';
 import { ChevronLeft, Bell, ChevronRight, User } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { fetchUserInfo } from '../../api/userApi';
+import { fetchUserInfoOptional } from '../../api/userApi';
 
 function Sidebar({ onClose }) {
   const navigate = useNavigate();
-  const [profileImage, setProfileImage] = useState('');
-  const [nickname, setNickname] = useState('');
+
+  // undefined: 로딩 / null: 비로그인 / object: 로그인
+  const [me, setMe] = useState(undefined);
   const [imageError, setImageError] = useState(false);
-  const accessToken = useRef(localStorage.getItem('accessToken'));
 
   useEffect(() => {
-    fetchUserInfo(accessToken)
-      .then((user) => {
-        const profileUrl = user.profile_url;
-        setProfileImage(profileUrl ? `${profileUrl}?t=${Date.now()}` : '');
-        setNickname(user.nickname || '');
-        setImageError(!profileUrl);
-      })
-      .catch((err) => console.error('[Sidebar] 유저 정보 불러오기 실패:', err));
-  }, [accessToken]);
+    let alive = true;
+    (async () => {
+      try {
+        const user = await fetchUserInfoOptional(); // 로그인 안 했으면 null
+        if (!alive) return;
+
+        if (user) {
+          setMe({
+            nickname: user.nickname ?? '',
+            profile_url: user.profile_url ?? '',
+          });
+          setImageError(!user.profile_url);
+        } else {
+          setMe(null);        // 비로그인
+          setImageError(true);
+        }
+      } catch {
+        if (!alive) return;
+        setMe(null);          // 에러도 비로그인 취급
+        setImageError(true);
+      }
+    })();
+    return () => { alive = false; };
+  }, []);
 
   const menuItems = [
     { label: '공연', path: '/performance' },
@@ -30,14 +45,11 @@ function Sidebar({ onClose }) {
     { label: '가까운 공연 찾기', path: '/map' },
   ];
 
-  const handleBellClick = () => {
-    navigate('/notification');
-    onClose();
-  };
-  const handleMenuClick = (path) => {
-    navigate(path);
-    onClose();
-  };
+  const go = (path) => { navigate(path); onClose?.(); };
+  const goLogin = () => { navigate('/login'); onClose?.(); };
+
+  const nickname = me?.nickname ?? '게스트';
+  const profile = me?.profile_url;
 
   return (
     <div className={styles.portal}>
@@ -59,45 +71,35 @@ function Sidebar({ onClose }) {
                 size={22}
                 color="#000000"
                 className={styles.iconNotification}
-                onClick={handleBellClick}
+                onClick={() => go('/notification')}
               />
             </div>
 
             <div className={styles.profileSection}>
-              {profileImage && !imageError ? (
+              {profile && !imageError ? (
                 <img
-                  src={profileImage}
+                  src={`${profile}?t=${Date.now()}`}
                   alt="프로필 이미지"
                   className={styles.profileImage}
                   onError={(e) => {
-                    if (e.target.src.includes('/static/profiles/'))
+                    if (e.target.src.includes('/static/profiles/')) {
                       setImageError(true);
+                    }
                   }}
                 />
               ) : (
-                <User size={64} className="profile__left__img" />
+                <User size={64} className={styles.profileFallbackIcon} />
               )}
 
               <div className={styles.nicknameArea}>
                 <div
                   className={styles.nicknameRow}
-                  onClick={() => {
-                    navigate('/mypage');
-                    onClose();
-                  }}>
+                  onClick={() => go('/mypage')}
+                >
                   <span className={styles.nickname}>{nickname}</span>
-                  <ChevronRight
-                    className={styles.nicknameArrow}
-                    color="#000000"
-                    size={20}
-                  />
+                  <ChevronRight className={styles.nicknameArrow} color="#000" size={20} />
                 </div>
-                <div
-                  className={styles.likeTag}
-                  onClick={() => {
-                    navigate('/favorite');
-                    onClose();
-                  }}>
+                <div className={styles.likeTag} onClick={() => go('/favorite')}>
                   ♡ 찜 목록
                 </div>
               </div>
@@ -106,17 +108,27 @@ function Sidebar({ onClose }) {
 
           <div className={styles.divider} />
 
-          {menuItems.map((item, index) => (
+          {menuItems.map((item) => (
             <div
-              key={index}
+              key={item.path}
               className={styles.menuItem}
-              onClick={() => handleMenuClick(item.path)}>
+              onClick={() => go(item.path)}
+            >
               <span className={styles.menuLabel}>{item.label}</span>
               <span className={styles.menuIcon}>
                 <ChevronRight size={20} />
               </span>
             </div>
           ))}
+
+          {/* ⬇️ 비로그인 전용 하단 로그인 버튼 */}
+          {me === null && (
+            <div className={styles.loginFooter}>
+              <button className={styles.loginButtonGray} onClick={goLogin}>
+                로그인하기
+              </button>
+            </div>
+          )}
         </aside>
       </div>
     </div>
