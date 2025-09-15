@@ -10,6 +10,9 @@ import styles from './CalendarPage.module.css';
 import Header from '../../components/layout/Header';
 import { useNavigate } from 'react-router-dom';
 
+// ✅ theme에서 주황/아웃라인 색 호출
+import { theme } from '../../styles/theme';
+
 // ✅ API Import
 import { fetchMonthlyPerformanceDates, fetchPerformancesByDate } from '../../api/calendarApi';
 
@@ -61,6 +64,7 @@ function CalendarPage() {
   useEffect(() => {
     const formatted = format(selectedDate, 'yyyy-MM-dd');
     loadDailyConcerts(formatted);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // ✅ 날짜 클릭 시 공연 로딩
@@ -81,14 +85,32 @@ function CalendarPage() {
   return (
     <>
       <Header title="공연 캘린더" showBack onBackClick={() => navigate(-1)} />
-      <div className={styles.calendarPage}>
-        <div style={{ height: '56px' }} />
+      {/* CSS Module에서 사용할 커스텀 CSS 변수로 theme 색 주입 */}
+      <div
+        className={styles.calendarPage}
+        style={{
+          '--accent': theme.colors.maybethemeOrange,
+          '--outlineGray': theme.colors.outlineGray,
+        }}
+      >
+        {/* 🔻 헤더와 거의 맞닿도록 상단 간격 축소 */}
+        <div style={{ height: '4px' }} />
 
         {/* 월 이동 UI */}
         <div className={styles.header}>
-          <img src={IconGo} alt="이전" onClick={() => setCurrentMonth(subMonths(currentMonth, 1))} className={`${styles.navIcon} ${styles.leftIcon}`} />
+          <img
+            src={IconGo}
+            alt="이전"
+            onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}
+            className={`${styles.navIcon} ${styles.leftIcon}`}
+          />
           <h2 className={styles.monthTitle}>{format(currentMonth, 'M월')}</h2>
-          <img src={IconGo} alt="다음" onClick={() => setCurrentMonth(addMonths(currentMonth, 1))} className={styles.navIcon} />
+          <img
+            src={IconGo}
+            alt="다음"
+            onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}
+            className={styles.navIcon}
+          />
         </div>
 
         {/* 지역 필터 */}
@@ -108,6 +130,9 @@ function CalendarPage() {
           onDateClick={handleDateClick}
           concerts={monthConcertDates}
         />
+
+        {/* 구분선 */}
+        <div className={styles.divider} />
 
         {/* 날짜별 공연 리스트 */}
         <h3 className={styles.dailyTitle}>{format(selectedDate, 'M월 d일')} 공연</h3>

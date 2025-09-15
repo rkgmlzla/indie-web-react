@@ -35,17 +35,30 @@
 
 .place {
   font-size: 14px;
-  color: #ff4b4b4b;
+  color: #4B4B4B;
   margin-top: 6px;
 }
 
 .date {
   font-size: 14px;
-  color: #ff4b4b4b;
+  color: #B0B0B0;
   margin-top: 6px;
 }
 
+/* ✅ go 아이콘: 클릭/포커스 가능한 버튼처럼 */
 .goIcon {
   width: 20px;
   height: 20px;
+  flex: 0 0 auto;
+  cursor: pointer;
+  user-select: none;
+}
+
+.goIcon:active {
+  transform: scale(0.96);
+}
+
+.goIcon:focus {
+  outline: 2px solid #f68b4d; /* 원하면 다른 색으로 변경 */
+  outline-offset: 2px;
 }

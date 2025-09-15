@@ -1,0 +1,49 @@
+/* ✅ src/pages/pick/pickDetail.module.css */
+
+.page {
+  padding: 20px 16px 40px;
+  background: #ffffff;
+}
+
+.title {
+  font-size: 16px;
+  font-weight: 700;
+  text-align: center;  /* 제목은 가운데 */
+  line-height: 1.5;
+  margin: 8px 0 6px 0;
+  color: #1c1c1e;
+}
+
+.meta {
+  text-align: right;    /* 날짜/작성자는 왼쪽 정렬 */
+  font-size: 12px;
+  color: #b0b0b0;
+  margin-bottom: 12px;
+}
+
+.hr {
+  height: 1px;
+  background: #ededed;
+  margin: 0 0 16px 0;
+  border: 0;
+}
+
+.hero {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  margin: 8px 0 16px 0;
+}
+
+.content p {
+  font-size: 13px;
+  line-height: 1.6;
+  color: #4a4a4a;
+  margin: 0 0 14px 0;
+  white-space: pre-wrap;
+}
+
+.spacer {
+  height: 10px;
+}

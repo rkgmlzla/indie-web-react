@@ -13,14 +13,26 @@
 .day {
   width: 36px;
   height: 36px;
-  line-height: 36px;
   text-align: center;
   border-radius: 50%;
   cursor: pointer;
   margin: auto;
   position: relative;
   font-size: 14px;
+
+  /* 클릭 시 border 생겨도 흔들림 없게 */
+  border: 2px solid transparent;
+  box-sizing: border-box;
+
+  /* ✅ 세로/가로 완전 중앙 정렬 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* line-height 제거 */
+  line-height: normal;
 }
+
 
 /* 빈 칸 */
 .blank {
@@ -31,24 +43,24 @@
 
 /* ✅ ○ 공연 있는 날짜 (테두리만) */
 .concert {
-  border: 2px solid orange;
+  border: 2px solid var(--accent);
 }
 
 /* ✅ ● 선택된 날짜 (공연 없음) */
 .selectedOnly {
-  background: orange;
+  background: var(--accent);
   color: white;
-  border: 2px solid orange;
+  border: 2px solid var(--accent);
 }
 
 /* ✅ ● 선택된 날짜 (공연 있음) */
 .selectedAndHasConcert {
-  background: orange;
+  background: var(--accent);
   color: white;
-  border: 2px solid orange;
+  border: 2px solid var(--accent);
 }
 
-/* ✅ 오늘 날짜 (공연 유무 무관): 빨간 점만 표시, border는 concert로 통일 */
+/* ✅ 오늘 날짜 (공연 유무 무관): 빨간 점만 표시, border는 concert와 동일 */
 .today {
   font-weight: bold;
 }

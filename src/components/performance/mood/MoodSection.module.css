@@ -1,0 +1,54 @@
+/* ✅ src/components/performance/mood/MoodSection.module.css */
+/* - 섹션, 타이틀, 버튼, 리스트(가로 스크롤) 스타일 */
+/* - 기존 NewConcertList의 리스트 스타일과 톤을 맞춤 */
+
+.section {
+  margin: 16px 0; /* 안전 기본값 (Home에서 inline으로도 16px 지정 예정) */
+}
+
+.titleWrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 16px; /* 타이틀 → 버튼 간격 */
+}
+
+.title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1c1c1e;
+  margin: 0;
+  user-select: none;
+}
+
+.pillRow {
+  display: flex;
+  justify-content: center; /* 좌우로 넓게 퍼지게 */
+  gap: 12px;
+  flex-wrap: nowrap;
+  margin-bottom: 16px; /* 버튼 → 리스트 간격 */
+ width: 100%;
+}
+
+.pill {
+  padding: 8px 12px;
+  border-radius: 20px;
+  border: 1px solid transparent;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+}
+
+.listContainer {
+  display: flex;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  scrollbar-width: none;      /* Firefox */
+  -ms-overflow-style: none;   /* IE/Edge */
+  caret-color: transparent;
+}
+
+/* Chrome/Safari */
+.listContainer::-webkit-scrollbar {
+  display: none;
+}
