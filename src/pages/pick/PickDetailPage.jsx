@@ -1,9 +1,12 @@
 // ✅ src/pages/pick/PickDetailPage.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import Header from '../../components/layout/Header';
 import Sidebar from '../../components/sidebar/Sidebar';
 import styles from './pickDetail.module.css';
+
+// ✅ 매거진 API 연결
+import { fetchMagazineDetail } from '../../api/magazineApi';
 
 // ───────────────────────────────────────────────────────────────
 // [FAKE] 홈에서 넘어온 state가 없을 때를 대비한 폴백 데이터
@@ -32,15 +35,53 @@ const PickDetailPage = () => {
   const { state } = useLocation();
   const { id } = useParams();
 
-  // Home → navigate(..., { state }) 로 넘어온 값 우선 사용
-  const pick = state ?? FAKE_PICK_BY_ID[String(id)] ?? {
-    id,
-    title: '제목이 없습니다',
-    author: '김삼문관리자',
-    createdAt: new Date().toISOString(),
-    imageUrl: '',
-    content: '내용이 없습니다.',
-  };
+  // ✅ API에서 가져온 실제 데이터
+  const [pick, setPick] = useState(
+    state ?? FAKE_PICK_BY_ID[String(id)] ?? {
+      id,
+      title: '제목이 없습니다',
+      author: '김삼문관리자',
+      createdAt: new Date().toISOString(),
+      imageUrl: '',
+      content: '내용이 없습니다.',
+    }
+  );
+
+  useEffect(() => {
+    // state가 없으면 id로 서버에서 재조회
+    if (!state && id) {
+      (async () => {
+        try {
+          const data = await fetchMagazineDetail(id);
+          setPick({
+            id: data.id,
+            title: data.title ?? '',
+            author: data.author ?? '관리자',
+            createdAt: data.createdAt ?? data.created_at ?? '',
+            imageUrl:
+              data.coverImageUrl ??
+              data.cover_image_url ??
+              data.image_url ??
+              '',
+            // 블록 데이터를 단순 텍스트로 합쳐 임시 렌더 (블록 렌더는 추후 확장)
+            content: Array.isArray(data.blocks)
+              ? data.blocks
+                  .map((b) => {
+                    if (b.type === 'text') return b.text;
+                    if (b.type === 'quote') return `“${b.text}”`;
+                    // image/embed/divider는 여기서는 단순히 무시하거나 필요 시 처리
+                    return '';
+                  })
+                  .filter(Boolean)
+                  .join('\n\n')
+              : data.content ?? '',
+          });
+        } catch (err) {
+          console.error('📛 매거진 상세 조회 실패:', err);
+        }
+      })();
+    }
+  }, [id, state]);
 
   const formatKST = (d) => {
     try {

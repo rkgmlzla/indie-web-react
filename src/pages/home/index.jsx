@@ -8,7 +8,13 @@ import styles from './home.module.css';
 // import iconCalendar from '../../assets/icons/icon_calendar_hyunjin.svg'; // [DISABLED] 캘린더 아이콘 임포트 (렌더 비활성화)
 import Sidebar from '../../components/sidebar/Sidebar';
 import { useNavigate } from 'react-router-dom';
-import Header from '../../components/layout/Header';
+//import Header from '../../components/layout/Header';
+
+///헤더 아이코이녕
+// ✅ SVG를 React 컴포넌트로 임포트해서 색상을 theme처럼 제어
+import { ReactComponent as IconWeb } from '../../assets/icons/icon_heart_outline.svg';   // ← 좌측 웹아이콘(임시)
+import { ReactComponent as IconSearch } from '../../assets/icons/icon_y_search.svg';      // ← 검색
+import { ReactComponent as IconNotify } from '../../assets/icons/icon_notify_on.svg';     // ← 알림
 
 // [PICK] pick 카드 컴포넌트 추가 임포트 (기존 코드 보존)
 import PickCard from '../../components/performance/Pick/PickCard';
@@ -35,6 +41,12 @@ import {
   fetchPopularPerformances,
 } from '../../api/performanceApi';
 
+// ✅ [PICK] 매거진 API (신규) - 기존 스타일 준수
+import { fetchMagazineList } from '../../api/magazineApi';
+
+// ⬇️ theme 최대폭 사용
+import { theme } from '../../styles/theme';
+
 const HomePage = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const navigate = useNavigate();
@@ -47,6 +59,9 @@ const HomePage = () => {
   // const [recommendedPerformances, setRecommendedPerformances] = useState([]);
   // ✅ [POPULAR] 인기 많은 공연 상태
   const [popularPerformances, setPopularPerformances] = useState([]);
+
+  // ✅ [PICK] 매거진 카드를 API로 채움 (더미 제거)
+  const [pickItem, setPickItem] = useState(null);
 
   const fetchedRef = useRef(false);
 
@@ -122,8 +137,8 @@ const HomePage = () => {
     return toArray(res.data);
   };
 
-  // [PICK] 임시 pick 데이터(항상 1개). API 붙이면 이 객체만 교체하면 됨.
-  const pickItem = {
+  // ✅ [PICK] 더미 폴백 (API가 비었을 때만 사용)
+  const PICK_FALLBACK = {
     id: 1,
     title: 'Wow, Rich한 자신감으로 돌아온 aespa의 [Rich Man]',
     content:
@@ -165,24 +180,37 @@ const HomePage = () => {
         // ✅ 4) 인기 많은 공연 (6개)
         const popularData = await fetchPopularPerformances(6);
 
-        // 4) [DISABLED] 추천 공연 로딩 중단
-        // const accessToken = localStorage.getItem('accessToken');
-        // let recommendedData = [];
-        // try {
-        //   recommendedData = await fetchRecommendedPerformances(accessToken || undefined);
-        // } catch (err) {
-        //   console.warn('[HomePage] 추천 공연 로딩 실패(무시 가능):', err);
-        // }
-
         // ✅ 여기서만 표준화해서 섹션에 내려줌
         setTodayPerformances(toArray(todayData).map(normalizePerf));
         setRecentPerformances(toArray(recentData).map(normalizePerf));
-        // 티켓오픈 섹션은 기존 키(thumbnail, ticket_open_date/time 등)를 쓰므로 그대로 전달
         setTicketOpenPerformances(toArray(ticketOpeningData));
-        // ✅ 인기 많은 공연
         setPopularPerformances(toArray(popularData).map(normalizePerf));
-        // [DISABLED]
-        // setRecommendedPerformances(toArray(recommendedData).map(normalizePerf));
+
+        // ✅ [PICK] 매거진 최신 1건 로드 (빈 배열이면 더미 사용)
+        try {
+          const magazines = await fetchMagazineList({ limit: 1 });
+          const arr = toArray(magazines);
+          if (arr.length > 0) {
+            const first = arr[0];
+            setPickItem({
+              id: first.id,
+              title: first.title ?? '',
+              content: first.excerpt ?? '',
+              imageUrl:
+                first.coverImageUrl ??
+                first.cover_image_url ??
+                first.image_url ??
+                null,
+              author: first.author ?? '관리자',
+              createdAt: first.createdAt ?? null,
+            });
+          } else {
+            setPickItem(PICK_FALLBACK); // ✅ 폴백
+          }
+        } catch (err) {
+          console.warn('[HomePage] 매거진 로딩 실패(폴백 사용):', err);
+          setPickItem(PICK_FALLBACK); // ✅ 폴백
+        }
       } catch (err) {
         console.error('📛 홈 API 호출 중 오류 발생:', err);
       }
@@ -194,15 +222,46 @@ const HomePage = () => {
 
   return (
     <>
-      <Header title="김삼문" onMenuClick={() => setIsSidebarOpen(true)} />
+      {/* <Header title="김삼문" onMenuClick={() => setIsSidebarOpen(true)} /> */}
       {isSidebarOpen && <Sidebar onClose={() => setIsSidebarOpen(false)} />}
+
+      {/* ✅ 커스텀 헤더: 가로 한 줄, 구분선 없음, 회색 아이콘, 가운데 텍스트 제거 */}
+      <div className={styles.headerOuter}>
+        <div className={styles.headerInner} style={{ maxWidth: theme.layout.maxWidth }}>
+          {/* 좌측 아이콘 (클릭 불가) */}
+          <span className={styles.iconButton} style={{ pointerEvents: 'none' }} aria-hidden>
+            <IconWeb className={`${styles.iconSvg} ${styles.iconGray}`} />
+          </span>
+
+          {/* <div className={styles.title} aria-hidden>김삼문</div> */} {/* ← 요구: 텍스트 제거 */}
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <button
+              type="button"
+              className={styles.iconButton}
+              aria-label="검색"
+              onClick={() => navigate('/search')}
+            >
+              <IconSearch className={`${styles.iconSvg} ${styles.iconGray}`} />
+            </button>
+            <button
+              type="button"
+              className={styles.iconButton}
+              aria-label="알림"
+              onClick={() => navigate('/notification')}
+            >
+              <IconNotify className={`${styles.iconSvg} ${styles.iconGray}`} />
+            </button>
+          </div>
+        </div>
+      </div>
 
       <div className={styles.pageContainer}>
         {/* 섹션 간격: 기본은 위 32 / 아래 32 */}
         <section
           className={styles.todaySection}
-          /* ⬇️ 헤더와 더 붙게: 위 8px / 아래 16px (네비바와의 간격 절반) */
-          style={{ margin: '8px 0 16px 0', display: 'flow-root' }}
+          /* ⬇️ 헤더와 거의 붙게: 4px */
+          style={{ margin: '4px 0 16px 0', display: 'flow-root' }}
         >
           {/* 섹션 제목과 콘텐츠 간 간격: 16 */}
           <div className={styles.todayHeader} style={{ marginBottom: 16 }}>
@@ -217,7 +276,7 @@ const HomePage = () => {
         </section>
 
         {/* ✅ [NAV] 홈 간이 이동 메뉴: 캘린더 섹션 대신 노출 */}
-        {/* 
+        {/*
         <section style={{ margin: '32px 0' }}>
           <HomeNaviBar />
         </section>
@@ -270,16 +329,18 @@ const HomePage = () => {
               김삼문 pick !
             </h2>
           </div>
-          <PickCard
-            id={pickItem.id}
-            title={pickItem.title}
-            content={pickItem.content}
-            imageUrl={pickItem.imageUrl}
-            onClick={() => {
-              // 상세 페이지 연결 예정: navigate(`/pick/${pickItem.id}`, { state: pickItem })
-              navigate(`/pick/${pickItem.id}`, { state: pickItem });
-            }}
-          />
+          {pickItem && (
+            <PickCard
+              id={pickItem.id}
+              title={pickItem.title}
+              content={pickItem.content}
+              imageUrl={pickItem.imageUrl}
+              onClick={() => {
+                // 상세 페이지 연결 예정: navigate(`/pick/${pickItem.id}`, { state: pickItem })
+                navigate(`/pick/${pickItem.id}`, { state: pickItem });
+              }}
+            />
+          )}
         </section>
 
         {/* ✅ [MOOD] 무드별 공연 섹션: 김삼문 pick! 바로 아래, 섹션 간격 32 */}

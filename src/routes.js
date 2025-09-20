@@ -29,6 +29,7 @@ import PickDetailPage from './pages/pick/PickDetailPage'; // [PICK] 상세 페�
 const routes = [
   { path: '/', element: <HomePage /> },
   { path: '/notification', element: <NotificationPage /> },
+  { path: '/notifications', element: <NotificationPage /> }, // 호환용 별칭
   { path: '/calendar', element: <CalendarPage /> },
   { path: '/performance', element: <PerformanceListPage /> },
   { path: '/performance/:id', element: <PerformanceDetailPage /> },
