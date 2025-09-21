@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Menu, Search, ChevronLeft } from 'lucide-react';
+import { Menu, Search, ChevronLeft, Bell } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useState } from 'react';
 import Sidebar from '../sidebar/Sidebar';
@@ -24,6 +24,12 @@ const HeaderWrapper = styled.header`
 
 const LeftArea = styled.div`
   display: flex;
+  align-items: center;
+  gap: 8px;
+`;
+
+const RightArea = styled.div`
+  display: flex;3
   align-items: center;
   gap: 8px;
 `;
@@ -70,6 +76,12 @@ function Header({
       state: { initialTab: initialSearchTab },
     });
   };
+  
+  const handleAlarm = () => {
+    navigate(`/alarm?keyword=${encodeURIComponent(keyword)}`, {
+      state: { initialTab: initialSearchTab },
+    });
+  };
 
   return (
     <>
@@ -88,11 +100,17 @@ function Header({
         </LeftArea>
 
         <Title>{title}</Title>
-        {showSearch && (
-          <IconButton onClick={handleSearch}>
-            <Search size={22} color="#d55a1f" />
+        <RightArea>
+          {showSearch && (
+            <IconButton onClick={handleSearch}>
+              <Search size={22} color="#d55a1f" />
+            </IconButton>
+          )}
+          <IconButton onClick={handleAlarm}>
+            <Bell size={22} color="#d55a1f" />
           </IconButton>
-        )}
+        </RightArea>
+
       </HeaderWrapper>
 
       {isSidebarOpen && <Sidebar onClose={handleSidebarClose} />}

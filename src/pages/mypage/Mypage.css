@@ -1,101 +1,261 @@
 .page {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  height: 100vh;
+
+  min-height: 100vh;
   width: 100%;
+  background: #fff;
 
-  .profile {
-    position: relative;
-    width: 100%;
-    padding: 0 8px;
-    .profile__container {
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
-      gap: 20px;
-      position: relative;
+  display: flex;
+  flex-direction: column;
+}
 
-      .profile__left {
-        position: relative;
-        .profile__left__img {
-          width: 80px;
-          height: 80px;
-          border-radius: 50%;
-          border: 1px solid #e4e4e4;
-          object-fit: cover;
-          background-size: cover;
-          background-position: center;
-        }
-        /* 설정 아이콘 (이미지 우상단) */
-        .profile__left__settings {
-          position: absolute;
-          width: 20px;
-          height: 20px;
-          top: 52px;
-          right: -4px;
-          color: #1c1c1e;
-          background-color: white;
-          border: 1px solid #ccc;
-          border-radius: 50%;
-          padding: 1px;
-        }
-      }
-      .profile__name {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        font-size: 16px;
-        font-weight: 600;
-        color: #1c1c1e;
-        .edit-nickname input {
-          font-size: 14px;
-          padding: 4px 8px;
-          border: 1px solid #ccc;
-          border-radius: 6px;
-          margin-right: 6px;
-        }
+/* 헤더 아래 여백 */
+.header-spacer {
+  height: 32px;
+}
 
-        .edit-nickname button {
-          background-color: #f4511e;
-          color: #fff;
-          border: none;
-          border-radius: 4px;
-          padding: 4px 8px;
-          cursor: pointer;
-        }
-        .profile__name__edit {
-          width: 14px;
-          height: 14px;
-          color: #1c1c1e;
-        }
-      }
-    }
-  }
-  .devider {
-    width: 100%;
-    border: none;
-    height: 1px;
-    background-color: #e4e4e4;
-    margin: 16px 0;
-  }
-  .settings {
-    padding: 0 8px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    caret-color: transparent;
-    cursor: default;
-    .settings__toggle {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      width: 100%;
+/* ============== 게스트(비로그인) 레이아웃 ============== */
+.guest {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 0 16px;
+}
 
-      margin-bottom: 12px;
-    }
-  }
+.guest__header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.guest__avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #e6e6ea;
+  border: 1px solid #e4e4e4;
+  flex-shrink: 0;
+}
+
+.guest__cta {
+  margin-left: 4px;
+  padding: 8px 12px;
+  font-size: 14px;
+  line-height: 1;
+  border: 1px solid #7e57c2;      /* 보라색 라인 */
+  color: #7e57c2;
+  background: transparent;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.guest__message {
+  margin-top: 250px;
+  text-align: center;
+  color: #9b9ba1;
+  font-size: 14px;
+}
+
+.footer {
+  margin-top: auto;
+  padding: 24px 0 32px;
+  text-align: center;
+  color: #c4c4c6;
+  font-size: 12px;
+}
+
+/* ============== 로그인 상태 레이아웃 ============== */
+
+.profile {
+  width: 100%;
+  padding: 0 16px;
+}
+
+.profile__container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 16px;
+  position: relative;
+}
+
+.profile__left {
+  position: relative;
+}
+
+.profile__left__img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 1px solid #e4e4e4;
+  object-fit: cover;
+  background: #e6e6ea;
+}
+
+.profile__left__settings {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  top: 52px;
+  right: -4px;
+  color: #1c1c1e;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 50%;
+  padding: 1px;
+  cursor: pointer;
+}
+
+.profile__name {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1c1c1e;
+}
+
+.profile__name .edit-nickname input {
+  font-size: 14px;
+  padding: 4px 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  margin-right: 6px;
+}
+
+.profile__name .edit-nickname button {
+  background-color: #f4511e;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 4px 8px;
+  cursor: pointer;
+}
+
+.profile__name__edit {
+  width: 14px;
+  height: 14px;
+  color: #1c1c1e;
+  cursor: pointer;
+}
+
+/* 공통 토큰 */
+:root {
+  --row-height: 52px;            /* 행 높이(둘 다 통일) */
+  --row-padding-x: 16px;         /* 좌우 여백 */
+  --row-font-size: 15px;         /* 글자 크기 통일 */
+  --row-color: #1c1c1e;          /* 글자 색 통일 */
+  --divider: #f0f0f2;            /* 경계선 색 */
+}
+
+/* --- 설정 섹션(알림/위치) --- */
+.settings {
+  padding: 0 var(--row-padding-x) 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;                        /* 행 간격은 보더로 구분 */
+}
+
+.settings__toggle {
+  height: var(--row-height);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.settings__toggle p {
+  margin: 0;                     /* 기본 p 마진 제거 */
+  font-size: var(--row-font-size);
+  color: var(--row-color);
+  font-weight: 400;
+}
+
+/* --- 리스트 섹션(공지/고객센터) --- */
+.list {
+  padding: 0 var(--row-padding-x) 24px;
+  display: flex;
+  flex-direction: column;
+}
+.list-item {
+  height: var(--row-height);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: transparent;
+}
+
+.list-item__label {
+  font-size: var(--row-font-size);
+  color: var(--row-color);
+  font-weight: 400;
+}
+.list-item--link {
+  border: none;
+  padding: 0;
+  text-align: left;
+  cursor: pointer;
+}
+.list-item--link .chev {
+  width: 18px;
+  height: 18px;
+  color: #c1c1c7;
+}
+
+/* (선택) 퀵메뉴 아래 살짝 간격 */
+.quick { padding: 12px 16px 8px; }
+
+.quick__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  text-align: center;
+}
+.quick__item {
+  appearance: none;
+  border: none;
+  background: transparent;
+  padding: 8px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+.quick__icon { width: 28px; height: 28px; }
+.quick__label { font-size: 13px; color: #222; }
+
+/* 리스트 섹션 (공지/고객센터) */
+.list { padding: 0 16px 24px; display: flex; flex-direction: column; }
+.list-item {
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: transparent;
+}
+
+.list-item__label { font-size: 15px; color: #1c1c1e; }
+.list-item--link { border: none; text-align: left; padding: 0; cursor: pointer; }
+.list-item--link .chev { width: 18px; height: 18px; color: #c1c1c7; }
+
+.logout {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 24px 8px 40px;
+}
+
+.logout__button {
+  all: unset;                 /* ✅ 다른 button 스타일 전부 제거 (최신 브라우저) */
+  display: inline-block;
+  cursor: pointer;
+  color: #8e8e93;
+  font-size: 14px;
+  line-height: 1;
+  padding: 8px 12px;
+  border-radius: 4px;
 }

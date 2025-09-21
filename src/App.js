@@ -1,6 +1,7 @@
 import { Routes, Route } from 'react-router-dom';
 import routes from './routes';
 import ScrollToTop from './components/layout/ScrollToTop';
+import BottomNav from "./components/layout/BottomNav";
 
 function App() {
   return (
@@ -11,6 +12,7 @@ function App() {
           <Route key={idx} path={path} element={element} />
         ))}
       </Routes>
+      <BottomNav />
     </>
   );
 }

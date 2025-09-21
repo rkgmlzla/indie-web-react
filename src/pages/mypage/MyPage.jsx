@@ -1,5 +1,6 @@
 import { useRef, useState, useEffect } from 'react';
-import { Settings, Pencil, User } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Settings, Pencil, User, Heart, Stamp, ChevronRight } from 'lucide-react';
 import './Mypage.css';
 import Toggle from '../../components/ui/toggle';
 import Header from '../../components/layout/Header';
@@ -12,79 +13,85 @@ import {
 } from '../../api/userApi';
 
 function MyPage() {
+  const navigate = useNavigate(); // ✅ 추가
+
   const [profileImage, setProfileImage] = useState('');
   const [nickname, setNickname] = useState('');
   const [editingNickname, setEditingNickname] = useState(false);
   const [alarmEnabled, setAlarmEnabled] = useState(false);
   const [locationEnabled, setLocationEnabled] = useState(false);
   const [imageError, setImageError] = useState(false);
+
+  const [loading, setLoading] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
   const fileInputRef = useRef(null);
 
-  // ✅ 유저 정보 불러오기
   useEffect(() => {
-    fetchUserInfo()
-      .then((user) => {
+    (async () => {
+      try {
+        const user = await fetchUserInfo();
+        if (!user) {
+          setIsLoggedIn(false);
+          setLoading(false);
+          return;
+        }
+        setIsLoggedIn(true);
         const profileUrl = user.profile_url;
         setProfileImage(profileUrl ? `${profileUrl}?t=${Date.now()}` : '');
-        setNickname(user.nickname);
-        setAlarmEnabled(user.alarm_enabled);
-        setLocationEnabled(user.location_enabled);
+        setNickname(user.nickname || '');
+        setAlarmEnabled(Boolean(user.alarm_enabled));
+        setLocationEnabled(Boolean(user.location_enabled));
         setImageError(!profileUrl);
-      })
-      .catch((err) => {
-        console.error('[MyPage] 유저 정보 불러오기 실패:', err);
-      });
+      } catch {
+        setIsLoggedIn(false);
+      } finally {
+        setLoading(false);
+      }
+    })();
   }, []);
 
-  // ✅ 프로필 이미지 클릭 -> 파일창 열기
-  const handleProfileClick = () => {
-    fileInputRef.current.click();
-  };
+  const handleProfileClick = () => fileInputRef.current?.click();
 
-  // ✅ 이미지 변경 시 서버 업로드
   const handleImageChange = async (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      try {
-        const res = await updateProfileImage(file);
-        setProfileImage(`${res.profileImageUrl}?t=${Date.now()}`);
-        setImageError(false);
-      } catch (err) {
-        console.error('[MyPage] 프로필 이미지 업로드 오류:', err);
-      }
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      const res = await updateProfileImage(file);
+      setProfileImage(`${res.profileImageUrl}?t=${Date.now()}`);
+      setImageError(false);
+    } catch (err) {
+      console.error('[MyPage] 프로필 이미지 업로드 오류:', err);
     }
   };
 
-  // ✅ 닉네임 저장
   const handleNicknameSave = async () => {
     setEditingNickname(false);
     try {
-      const res = await updateNickname(nickname);
-      console.log('[MyPage] PATCH /user/me 성공:', res);
+      await updateNickname(nickname);
     } catch (err) {
       console.error('[MyPage] 닉네임 수정 오류:', err);
     }
   };
 
-  // ✅ 알림/위치 설정 변경
   const handleSettingChange = async (key, value) => {
-    const newAlarm = key === 'alarm' ? value : alarmEnabled;
-    const newLocation = key === 'location' ? value : locationEnabled;
+    const prevAlarm = alarmEnabled;
+    const prevLoc = locationEnabled;
 
-    setAlarmEnabled(newAlarm);
-    setLocationEnabled(newLocation);
+    const nextAlarm = key === 'alarm' ? value : alarmEnabled;
+    const nextLoc = key === 'location' ? value : locationEnabled;
 
+    setAlarmEnabled(nextAlarm);
+    setLocationEnabled(nextLoc);
     try {
-      const result = await updateUserSettings(newAlarm, newLocation);
-      console.log('[MyPage] 설정 성공:', result);
+      await updateUserSettings(nextAlarm, nextLoc);
     } catch (err) {
       console.error('[MyPage] 설정 실패:', err);
-      setAlarmEnabled(alarmEnabled);
-      setLocationEnabled(locationEnabled);
+      setAlarmEnabled(prevAlarm);
+      setLocationEnabled(prevLoc);
     }
   };
 
-  // ✅ 로그아웃
   const handleLogout = async () => {
     try {
       await logout();
@@ -93,96 +100,133 @@ function MyPage() {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="page">
+        <Header title="마이페이지" showBack showSearch={false} showMenu={false} />
+        <div className="header-spacer" />
+      </div>
+    );
+  }
+
   return (
     <div className="page">
       <Header title="마이페이지" showBack showSearch={false} showMenu={false} />
-      <div style={{ height: '30px' }} />
+      <div className="header-spacer" />
 
-      <div className="profile">
-        <div className="profile__container">
-          {/* 프로필 사진 */}
-          <div className="profile__left">
-            {profileImage && !imageError ? (
-              <img
-                src={profileImage}
-                alt="프로필"
-                className="profile__left__img"
-                onError={(e) => {
-                  if (e.target.src.includes('/static/profiles/')) {
-                    setImageError(true);
-                  }
-                }}
-              />
-            ) : (
-              <User size={64} className="profile__left__img" />
-            )}
-            <Settings
-              className="profile__left__settings"
-              onClick={handleProfileClick}
-            />
-            <input
-              type="file"
-              accept="image/*"
-              ref={fileInputRef}
-              onChange={handleImageChange}
-              style={{ display: 'none' }}
-            />
+      {!isLoggedIn ? (
+        <>
+          <div className="guest">
+            <div className="guest__header">
+              <div className="guest__avatar" />
+              <button className="guest__cta" onClick={() => (window.location.href = '/login')}>
+                로그인 / 회원가입
+              </button>
+            </div>
+            <p className="guest__message">로그인 후 이용 가능합니다.</p>
+            <div className="footer">© Kimthreemun Corp.</div>
           </div>
+        </>
+      ) : (
+        <>
+          {/* 상단 프로필 */}
+          <div className="profile">
+            <div className="profile__container">
+              <div className="profile__left">
+                {profileImage && !imageError ? (
+                  <img
+                    src={profileImage}
+                    alt="프로필"
+                    className="profile__left__img"
+                    onError={(e) => {
+                      if (e.currentTarget.src.includes('/static/profiles/')) setImageError(true);
+                    }}
+                  />
+                ) : (
+                  <User size={64} className="profile__left__img" />
+                )}
 
-          {/* 닉네임 */}
-          <div className="profile__name">
-            {editingNickname ? (
-              <div className="edit-nickname">
+                <Settings className="profile__left__settings" onClick={handleProfileClick} />
                 <input
-                  type="text"
-                  value={nickname}
-                  onChange={(e) => setNickname(e.target.value)}
+                  type="file"
+                  accept="image/*"
+                  ref={fileInputRef}
+                  onChange={handleImageChange}
+                  style={{ display: 'none' }}
                 />
-                <button onClick={handleNicknameSave}>저장</button>
               </div>
-            ) : (
-              <>
-                <p>{nickname}</p>
-                <Pencil
-                  className="profile__name__edit"
-                  onClick={() => setEditingNickname(true)}
-                />
-              </>
-            )}
+
+              <div className="profile__name">
+                {editingNickname ? (
+                  <div className="edit-nickname">
+                    <input
+                      type="text"
+                      value={nickname}
+                      onChange={(e) => setNickname(e.target.value)}
+                    />
+                    <button onClick={handleNicknameSave}>저장</button>
+                  </div>
+                ) : (
+                  <>
+                    <p>{nickname}</p>
+                    <Pencil className="profile__name__edit" onClick={() => setEditingNickname(true)} />
+                  </>
+                )}
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
 
-      <hr className="divider" />
+          {/* 🔹 퀵 메뉴 3개 */}
+          <div className="quick">
+            <div className="quick__grid">
+              <button className="quick__item" onClick={() => navigate('/favorite')}>
+                <Heart className="quick__icon" />
+                <span className="quick__label">찜</span>
+              </button>
+              <button className="quick__item" onClick={() => navigate('/my/reviews')}>
+                <Pencil className="quick__icon" />
+                <span className="quick__label">내가 쓴 리뷰</span>
+              </button>
+              <button className="quick__item" onClick={() => navigate('/my/stamps')}>
+                <Stamp className="quick__icon" />
+                <span className="quick__label">스탬프 리스트</span>
+              </button>
+            </div>
+          </div>
 
-      <div className="settings">
-        <div className="settings__toggle">
-          <p>알림 설정</p>
-          <Toggle
-            value={alarmEnabled}
-            onChange={(v) => handleSettingChange('alarm', v)}
-          />
-        </div>
-        <div className="settings__toggle">
-          <p>위치정보 사용</p>
-          <Toggle
-            value={locationEnabled}
-            onChange={(v) => handleSettingChange('location', v)}
-          />
-        </div>
-      </div>
+          <hr className="divider" />
 
-      {/* ✅ 회색 글씨 로그아웃 */}
-      <div className="logout" style={{width:'100%', display:'flex', justifyContent:'center', padding:'24px 8px 40px'}}>
-  <button
-    className="logout__button"
-    style={{background:'transparent', border:'none', color:'#8e8e93', fontSize:14, cursor:'pointer', padding:'8px 12px'}}
-    onClick={handleLogout}
-  >
-    로그아웃
-  </button>
-</div>
+          {/* 🔹 설정 + 링크 리스트 */}
+          <div className="settings">
+            <div className="settings__toggle">
+              <p>알림 설정</p>
+              <Toggle value={alarmEnabled} onChange={(v) => handleSettingChange('alarm', v)} />
+            </div>
+            <div className="settings__toggle">
+              <p>위치정보 사용</p>
+              <Toggle value={locationEnabled} onChange={(v) => handleSettingChange('location', v)} />
+            </div>
+          </div>
 
+          <div className="list">
+            <button className="list-item list-item--link" onClick={() => navigate('/notice')}>
+              <span className="list-item__label">공지사항</span>
+              <ChevronRight className="chev" />
+            </button>
+
+            <button className="list-item list-item--link" onClick={() => navigate('/support')}>
+              <span className="list-item__label">고객센터</span>
+              <ChevronRight className="chev" />
+            </button>
+          </div>
+
+          <div className="logout">
+            <button className="logout__button" onClick={handleLogout}>
+              로그아웃
+            </button>
+          </div>
+        </>
+      )}
     </div>
   );
 }
