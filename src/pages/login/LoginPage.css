@@ -1,0 +1,42 @@
+/* 화면 전체 가운데 정렬 */
+.login-page {
+  min-height: 100svh;           /* 모바일 안전 높이 */
+  display: flex;
+  align-items: center;          /* 세로 가운데 */
+  justify-content: center;      /* 가로 가운데 */
+  padding: 24px;
+  background: #fff;
+}
+
+/* 카드 래퍼 */
+.login-box {
+  width: 100%;
+  max-width: 360px;
+  text-align: center;           /* 텍스트/버튼 중앙 정렬 */
+}
+
+/* 제목 */
+.login-title {
+  margin: 0 0 10px;
+  font-size: 24px;
+  font-weight: 700;
+  color: #111;
+}
+
+/* 카카오 버튼 이미지 */
+.kakao-btn {
+  display: block;
+  margin: 0 auto;
+  width: 100%;
+  max-width: 300px;             /* 필요하면 조절 */
+  height: auto;
+  cursor: pointer;
+  border-radius: 10px;          /* 이미지 모서리가 둥글면 자연스럽게 */
+  user-select: none;
+}
+
+/* 접근성: 포커스 링 */
+.kakao-btn:focus-visible {
+  outline: 3px solid rgba(0,0,0,.4);
+  outline-offset: 3px;
+}

@@ -1,4 +1,4 @@
-// src/components/performance/StampCard.jsx
+// src/components/stamp/StampCard.jsx
 // 스탬프 팝업 공연 카드
 
 import React from 'react';
@@ -11,7 +11,7 @@ const StampCard = ({ id, posterUrl, place, onClick }) => {
     if (onClick) {
       onClick(); 
     } else {
-      navigate(`/performance/${id}`); 
+      navigate(`/stamp/${id}`); 
     }
   };
   return (
