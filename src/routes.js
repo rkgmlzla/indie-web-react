@@ -1,8 +1,8 @@
 // ✅ src/routes.js
 import React from 'react';
 
-import HomePage from './pages/home'; // ✅ index.jsx로 변경됨 (폴더 임포트)
-import CalendarPage from './pages/calendar'; // ✅ index.jsx (폴더 임포트)
+import HomePage from './pages/home';
+import CalendarPage from './pages/calendar';
 import NotificationPage from './pages/notification';
 
 import PerformanceListPage from './pages/performance/PerformanceListPage';
@@ -24,17 +24,19 @@ import ListVenue from './pages/venue/ListVenue';
 import DetailVenue from './pages/venue/DetailVenue';
 
 import LoginSuccess from './pages/login/LoginSuccess';
-import PickDetailPage from './pages/pick/PickDetailPage'; // [PICK] 상세 페이지
+import PickDetailPage from './pages/pick/PickDetailPage';
+
+// ⬇️ 추가
+import StampPage from './pages/stamp/StampPage';
 
 const routes = [
   { path: '/', element: <HomePage /> },
   { path: '/notification', element: <NotificationPage /> },
-  { path: '/notifications', element: <NotificationPage /> }, // 호환용 별칭
+  { path: '/notifications', element: <NotificationPage /> },
   { path: '/calendar', element: <CalendarPage /> },
   { path: '/performance', element: <PerformanceListPage /> },
   { path: '/performance/:id', element: <PerformanceDetailPage /> },
 
-  // ✅ 단수 경로 유지 (/venue, /artist)
   { path: '/artist', element: <ArtistListPage /> },
   { path: '/artist/:id', element: <ArtistDetailPage /> },
 
@@ -51,7 +53,10 @@ const routes = [
   { path: '/venue/:id', element: <DetailVenue /> },
 
   { path: '/login/success', element: <LoginSuccess /> },
-  { path: '/pick/:id', element: <PickDetailPage /> }, // [PICK] 상세
+  { path: '/pick/:id', element: <PickDetailPage /> },
+
+  // ⬇️ 추가
+  { path: '/stamp', element: <StampPage /> },
 ];
 
 export default routes;
