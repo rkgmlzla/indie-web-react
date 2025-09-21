@@ -68,6 +68,7 @@ export const fetchPerformancesByDate = async (date) => {
     throw error;
   }
 };
+
 // 공연-1. 공연 목록 조회 (수정 완료 ✅)
 export const fetchPerformances = async ({ region, sort, page, size }) => {
   try {
@@ -95,7 +96,6 @@ export const fetchPerformances = async ({ region, sort, page, size }) => {
     throw error;
   }
 };
-
 
 // 공연-2. 공연 상세 정보 조회 (단일 객체 반환)
 export const fetchPerformanceDetail = async (id) => {
@@ -135,4 +135,12 @@ export const fetchUpcomingPerformancesByVenue = async (venueId, afterTime) => {
     console.error('❌ 특정 공연장 예정 공연 조회 실패:', error.response?.data || error.message);
     throw error;
   }
+};
+
+
+// 홈-5. 인기 많은 공연
+export const fetchPopularPerformances = async (limit = 6) => {
+  // ✅ 리스트 페이지와 동일 규약: sort=likes, page=1, size=limit
+  const list = await fetchPerformances({ sort: 'likes', page: 1, size: limit });
+  return Array.isArray(list) ? list : [];
 };

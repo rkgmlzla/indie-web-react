@@ -1,80 +1,116 @@
+/* src/pages/home/home.module.css */
+
+/* 페이지 컨테이너 */
 .pageContainer {
   position: relative;
   padding: 20px 16px 16px 16px;
   background: #ffffff;
+}
 
-  .header {
-    position: fixed;
-    top: 0;
-    height: 56px;
-    padding: 0 16px;
-    box-sizing: border-box;
-    background-color: #fff;
-    border-bottom: 1px solid #eee;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    z-index: 100;
+/* -------- 헤더: 전체 고정 + 내부 컨테이너 -------- */
+.headerOuter {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 56px;
+  background: transparent; /* 양옆 흰띠 방지 */
+  z-index: 100;
+}
 
-    .iconButton {
-      background: none;
-      border: none;
-      padding: 4px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-    }
+.headerInner {
+  height: 56px;
+  margin: 0 auto;
+  padding: 0 16px;
+  max-width: 480px;       /* 안전망 (JS에서 theme.layout.maxWidth도 주입) */
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: none;    /* 구분선 제거 */
+}
 
-    .title {
-      font-size: 18px;
-      font-weight: bold;
-      color: #1c1c1e;
-    }
-  }
+/* 버튼/아이콘 공통 */
+.iconButton {
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
 
-  .todaySection {
-    margin-bottom: 24px;
+/* 가운데 텍스트 스타일(현재 미사용, 주석 유지용) */
+.title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #1c1c1e;
+}
 
-    .todayHeader {
-      margin-bottom: 8px;
+/* SVG 아이콘: 크기 22px(지금 사이즈 유지), 회색 */
+.iconSvg {
+  width: 22px;
+  height: 22px;
+  color: #4B4B4B; /* gray600 */
+}
 
-      .todayTitle {
-        font-size: 16px;
-        font-weight: 700;
-        color: #1c1c1e;
-      }
-    }
-  }
+/* 자식 path/shape에 currentColor 적용 */
+.iconSvg path,
+.iconSvg circle,
+.iconSvg rect,
+.iconSvg line,
+.iconSvg polyline,
+.iconSvg polygon {
+  stroke: currentColor;
+}
+.iconSvg [fill]:not([fill="none"]) {
+  fill: currentColor;
+}
 
-  .calendarSection {
-    margin-bottom: 24px;
+/* -------------------- 섹션 -------------------- */
+.todaySection {
+  margin-bottom: 24px;
+}
 
-    .calendarBox {
-      display: flex;
-      align-items: center;
-      background: #ffffff;
-      border: 1px solid #cccccc;
-      border-radius: 8px;
-      padding: 12px;
-      cursor: pointer;
+.todayHeader {
+  margin-bottom: 8px;
+}
 
-      .calendarIcon {
-        width: 20px;
-        height: 20px;
-        margin-right: 12px;
-      }
+.todayTitle {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1c1c1e;
+}
 
-      .calendarText {
-        font-size: 14px;
-        color: #1c1c1e;
-        flex: 1;
-      }
+/* 캘린더 섹션 (보존) */
+.calendarSection {
+  margin-bottom: 24px;
+}
 
-      .calendarGoIcon {
-        width: 12px;
-        height: 12px;
-        margin-left: 8px;
-      }
-    }
-  }
+.calendarBox {
+  display: flex;
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid #cccccc;
+  border-radius: 8px;
+  padding: 12px;
+  cursor: pointer;
+}
+
+.calendarIcon {
+  width: 20px;
+  height: 20px;
+  margin-right: 12px;
+}
+
+.calendarText {
+  font-size: 14px;
+  color: #1c1c1e;
+  flex: 1;
+}
+
+.calendarGoIcon {
+  width: 12px;
+  height: 12px;
+  margin-left: 8px;
 }

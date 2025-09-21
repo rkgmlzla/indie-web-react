@@ -1,0 +1,35 @@
+/* ✅ src/components/performance/popular/PopularConcertList.module.css */
+/* - NewConcertList.module.css 톤과 동일 */
+/* - 섹션 제목 ↔ 리스트 간격 16px */
+
+.sectionContainer {
+  margin-top: 0;  /* Home에서 섹션 여백(32px)으로 감쌉니다 */
+  caret-color: transparent;
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px; /* 제목 ↔ 리스트 간격 */
+}
+
+.sectionTitle {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1c1c1e;
+  cursor: default;
+  margin: 0;
+}
+
+.listContainer {
+  display: flex;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  caret-color: transparent;
+}
+.listContainer::-webkit-scrollbar {
+  display: none;
+}
