@@ -48,11 +48,19 @@
   justify-content: center;
 }
 
-.iconImg {
+/* ⬇️ SVG 컴포넌트 공통 크기 */
+.iconSvg {
   width: 28px;
   height: 28px;
-  object-fit: contain;
   display: block;
+}
+
+/* ⬇️ SVG 내부 모든 도형에 강제로 테마색 적용
+   (원본에 fill/stroke가 박혀 있어도 덮어씀) */
+.iconSvg,
+.iconSvg * {
+  fill: var(--icon-color) !important;
+  stroke: var(--icon-color) !important;
 }
 
 .label {

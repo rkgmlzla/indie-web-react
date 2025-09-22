@@ -226,35 +226,8 @@ const HomePage = () => {
       {isSidebarOpen && <Sidebar onClose={() => setIsSidebarOpen(false)} />}
 
       {/* ✅ 커스텀 헤더: 가로 한 줄, 구분선 없음, 회색 아이콘, 가운데 텍스트 제거 */}
-      <div className={styles.headerOuter}>
-        <div className={styles.headerInner} style={{ maxWidth: theme.layout.maxWidth }}>
-          {/* 좌측 아이콘 (클릭 불가) */}
-          <span className={styles.iconButton} style={{ pointerEvents: 'none' }} aria-hidden>
-            <IconWeb className={`${styles.iconSvg} ${styles.iconGray}`} />
-          </span>
-
-          {/* <div className={styles.title} aria-hidden>김삼문</div> */} {/* ← 요구: 텍스트 제거 */}
-
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <button
-              type="button"
-              className={styles.iconButton}
-              aria-label="검색"
-              onClick={() => navigate('/search')}
-            >
-              <IconSearch className={`${styles.iconSvg} ${styles.iconGray}`} />
-            </button>
-            <button
-              type="button"
-              className={styles.iconButton}
-              aria-label="알림"
-              onClick={() => navigate('/notification')}
-            >
-              <IconNotify className={`${styles.iconSvg} ${styles.iconGray}`} />
-            </button>
-          </div>
-        </div>
-      </div>
+      {/* ── 요청: 헤더 섹션 제거 ── */}
+      {/* (해당 블록 전체 삭제 완료. 다른 코드/주석은 유지) */}
 
       <div className={styles.pageContainer}>
         {/* 섹션 간격: 기본은 위 32 / 아래 32 */}
@@ -292,6 +265,8 @@ const HomePage = () => {
               artists: '/artist', // ✅ 라우터 경로에 맞게 단수(/artist)
               // magazine: null
             }}
+            /* ▼ 라벨 오버라이드: 매거진 → 스탬프 */
+            labels={{ magazine: '스탬프' }}
           />
         </section>
 

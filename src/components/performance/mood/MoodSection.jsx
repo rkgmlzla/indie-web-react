@@ -1,48 +1,55 @@
 // ✅ src/components/performance/mood/MoodSection.jsx
 // - 김삼문 pick! 아래에 배치할 "MOOD별 공연" 섹션
-// - 더미 데이터 기반 UI (API 연동 전용)
-// - 기존 ConcertCard 그대로 재사용 (id, title, posterUrl, place, date)
+// - 더미 데이터 제거, moodApi.js와 연동 완료
+// - 기존 ConcertCard 재사용 (id, title, posterUrl, place, date)
 
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import styles from './MoodSection.module.css';
 import ConcertCard from '../ConcertCard';
 import { theme } from '../../../styles/theme';
-
-const MOODS = ['신나는', '차분한', '따뜻한', '짜릿한'];
-
-// 🖼️ 안정적인 더미 포스터 URL (seed 고정으로 캐시/안정성 ↑)
-const poster = (seed) => `https://picsum.photos/seed/${encodeURIComponent(seed)}/90/120`;
-
-// 🔸 더미 데이터 (배포 전까지 UI 확인용)
-//    운영 시 API 응답으로 교체 예정.
-const DUMMY_BY_MOOD = {
-  신나는: [
-    { id: 'ex-1',  title: '파워락 나이트',        posterUrl: poster('ex-1'),    place: 'Rolling Hall',  date: '2025-10-03' },
-    { id: 'ex-2',  title: '인디 스테이지 Vol.7', posterUrl: poster('ex-2'),    place: 'CLUB FF',       date: '2025-10-12' },
-    { id: 'ex-3',  title: 'Weekend Jump!',       posterUrl: poster('ex-3'),    place: '브이홀',        date: '2025-10-19' },
-  ],
-  차분한: [
-    { id: 'calm-1', title: '어쿠스틱 소품집',     posterUrl: poster('calm-1'),  place: '벙커스',        date: '2025-10-05' },
-    { id: 'calm-2', title: '노을빛 라이브',       posterUrl: poster('calm-2'),  place: '프리즘홀',      date: '2025-10-09' },
-  ],
-  따뜻한: [
-    { id: 'warm-1', title: 'Autumn Letter',      posterUrl: poster('warm-1'),  place: 'KT&G 상상마당', date: '2025-10-07' },
-    { id: 'warm-2', title: '담백한 밤',           posterUrl: poster('warm-2'),  place: '웨스트브릿지',  date: '2025-10-18' },
-  ],
-  짜릿한: [
-    { id: 'thrill-1', title: 'Electro Showcase', posterUrl: poster('thrill-1'), place: '무브홀',       date: '2025-10-11' },
-    { id: 'thrill-2', title: 'Bass Drop',        posterUrl: poster('thrill-2'), place: '페이머스',     date: '2025-10-22' },
-    { id: 'thrill-3', title: 'Night Pulse',      posterUrl: poster('thrill-3'), place: '롤링홀',       date: '2025-10-29' },
-  ],
-};
+import { fetchMoods, fetchPerformancesByMood } from '../../../api/moodApi';
 
 export default function MoodSection() {
-  const [activeMood, setActiveMood] = useState(MOODS[0]);
-  const items = useMemo(() => DUMMY_BY_MOOD[activeMood] ?? [], [activeMood]);
+  const [moods, setMoods] = useState([]);               // ✅ DB에서 가져온 무드 목록
+  const [activeMood, setActiveMood] = useState(null);   // ✅ 선택된 무드
+  const [performances, setPerformances] = useState([]); // ✅ 선택된 무드별 공연
 
   // 테마 안전 폴백
   const ORANGE = theme?.colors?.maybethemeOrange ?? '#F68B4D';
   const WHITE  = theme?.colors?.bgWhite ?? '#FFFFFF';
+
+  // ✅ 최초 로드 시 무드 목록 조회
+  useEffect(() => {
+    const loadMoods = async () => {
+      try {
+        const moodList = await fetchMoods();
+        setMoods(moodList);
+        if (moodList.length > 0) {
+          setActiveMood(moodList[0]); // 첫 무드를 기본 선택
+        }
+      } catch (error) {
+        console.error('❌ 무드 목록 불러오기 실패:', error);
+      }
+    };
+    loadMoods();
+  }, []);
+
+  // ✅ 무드 선택 시 해당 무드의 공연 추천 조회
+  useEffect(() => {
+    if (!activeMood) return;
+    const loadPerformances = async () => {
+      try {
+        const list = await fetchPerformancesByMood(activeMood.id);
+        setPerformances(list);
+      } catch (error) {
+        console.error('❌ 무드별 공연 불러오기 실패:', error);
+      }
+    };
+    loadPerformances();
+  }, [activeMood]);
+
+  // 🔑 useMemo로 성능 최적화 (필요 시)
+  const items = useMemo(() => performances ?? [], [performances]);
 
   return (
     <section className={styles.section} style={{ margin: '16px 0' }}>
@@ -53,11 +60,11 @@ export default function MoodSection() {
 
       {/* 무드 버튼 */}
       <div className={styles.pillRow}>
-        {MOODS.map((m) => {
-          const active = m === activeMood;
+        {moods.map((m) => {
+          const active = m.id === activeMood?.id;
           return (
             <button
-              key={m}
+              key={m.id}
               type="button"
               className={styles.pill}
               onClick={() => setActiveMood(m)}
@@ -68,7 +75,7 @@ export default function MoodSection() {
               }
               aria-pressed={active}
             >
-              {m}
+              {m.name}
             </button>
           );
         })}
@@ -81,9 +88,15 @@ export default function MoodSection() {
             key={item.id}
             id={item.id}
             title={item.title}
-            posterUrl={item.posterUrl}
-            place={item.place}
-            date={item.date}
+            posterUrl={
+              item.posterUrl ||
+              item.image_url ||
+              item.thumbnail ||
+              item.poster_url ||
+              null
+            }
+            place={item.venue?.name || item.place || ''}
+            date={item.date || item.performance_date || ''}
           />
         ))}
       </div>
