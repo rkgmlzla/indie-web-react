@@ -1,83 +1,18 @@
-// src/pages/venue/VenueReviewListPage.jsx
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Header from '../../components/layout/Header';
-import { fetchVenueReviewList } from '../../api/reviewApi';
+import ReviewCard from '../../components/review/ReviewCard';
+import { fetchVenueReviewList, likeReview, unlikeReview, createVenueReview } from '../../api/reviewApi';
 import './VenueReviewListPage.css';
 
-const AVATAR_PLACEHOLDER =
-  'data:image/svg+xml;utf8,' +
-  encodeURIComponent(
-    '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"><rect width="100%" height="100%" rx="10" fill="#e6e6ea"/></svg>'
-  );
-
-// 절대URL/루트상대(/...)은 그대로, 그 외는 루트에 붙임
-const resolveUrl = (url) => {
-  if (!url || typeof url !== 'string') return '';
-  const s = url.trim().replace(/"/g, '');
-  if (!s) return '';
-  if (s.startsWith('http')) return s;
-  if (s.startsWith('/')) return s;
-  return `/${s.replace(/^\//, '')}`;
-};
-
-function ReviewCard({ item, onReport }) {
-  // 서버가 주는 다양한 키 흡수
-  const rawAvatar =
-    item.profile_url ||
-    item.avatar_url ||
-    item.avatarUrl ||
-    item.user?.profile_url ||
-    '';
-
-  // 서버 기본값(/default_profile.png)을 절대 쓰지 않도록 차단
-  const isBadDefault =
-    /(^|\/)default_profile\.png$/.test((rawAvatar || '').trim());
-
-  // 최종 src
-  const avatarSrc = (!rawAvatar || isBadDefault)
-    ? AVATAR_PLACEHOLDER
-    : resolveUrl(rawAvatar);
-
-  const dateISO = item.created_at || item.createdAt || '';
-  const date = dateISO ? dateISO.slice(0, 10) : '';
-
-  return (
-    <div className="review-card">
-      <p className="review-card__content">{item.content}</p>
-
-      <div className="review-card__bottom">
-        <div className="review-card__left">
-          <img
-            className="review-card__avatar"
-            src={avatarSrc}
-            alt="작성자 프로필"
-            onError={(e) => {
-              // 무한 루프 방지 + 즉시 회색 플레이스홀더
-              e.currentTarget.onerror = null;
-              e.currentTarget.src = AVATAR_PLACEHOLDER;
-            }}
-          />
-          <span className="review-card__author">{item.author || '익명'}</span>
-          <span className="review-card__date">{date}</span>
-        </div>
-
-        <button
-          type="button"
-          className="review-card__report"
-          onClick={() => onReport(item.id)}
-        >
-          신고
-        </button>
-      </div>
-    </div>
-  );
-}
 
 export default function VenueReviewListPage() {
   const { id } = useParams();
   const venueId = Number(id);
   const navigate = useNavigate();
+  
+  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('accessToken'));
+  const authChecked = true;
 
   const PAGE_SIZE = 10;
 
@@ -92,6 +27,31 @@ export default function VenueReviewListPage() {
   const hasMoreRef = useRef(true);
 
   const sentinelRef = useRef(null);
+  
+  const handleNeedLogin = () => {
+    alert('로그인이 필요합니다.');
+    navigate('/login');
+  };
+
+  const handleToggleLike = async (reviewId, nextLiked) => {
+    try {
+      const accessToken = localStorage.getItem('accessToken');
+      if (nextLiked) {
+        await likeReview(venueId, reviewId, accessToken);
+      } else {
+        await unlikeReview(venueId, reviewId, accessToken);
+      }
+    } catch (e) {
+      const status = e?.response?.status;
+      if (status === 401) {
+        handleNeedLogin();
+      } else {
+        console.error(e);
+        alert('잠시 후 다시 시도해주세요.');
+      }
+      throw e; // 카드에서 롤백 처리됨
+    }
+  };
 
   // 페이지 로더
   const loadPage = async (targetPage, replace = false) => {
@@ -176,7 +136,9 @@ export default function VenueReviewListPage() {
           type="button"
           className="review-write-btn"
           disabled={!Number.isFinite(venueId)}
-          onClick={() => navigate(`/review/write?venueId=${venueId}`)}
+          onClick={() => {
+          navigate(`/review/write?venueId=${venueId}`);
+          }}
         >
           작성하기
         </button>
@@ -184,7 +146,14 @@ export default function VenueReviewListPage() {
 
       <div className="review-list">
         {items.map((it) => (
-          <ReviewCard key={it.id} item={it} onReport={handleReport} />
+          <ReviewCard
+            key={it.id}
+            item={it}
+            canLike={!!localStorage.getItem('accessToken')}                 
+            onNeedLogin={handleNeedLogin}    
+            onReport={handleReport}
+            onToggleLike={handleToggleLike}
+          />
         ))}
 
         {!items.length && !loading && (

@@ -4,11 +4,29 @@ import React from "react";
 import styled from "styled-components";
 import CloseIcon from "../../assets/icons/icon_close.svg"; 
 import StampCard from "./StampCard";
-// ...상단 import 동일
-// ...상단 import 동일
+
+const formatDate = (isoDate) => {
+  const d = new Date(isoDate);
+  return d.toLocaleDateString("ko-KR", {
+    month: "long",
+    day: "numeric",
+    weekday: "short",
+  }); 
+};
 
 export default function StampPopup({ onClose, stamps, onStampSelect }) {
   const list = Array.isArray(stamps) ? stamps : [];
+
+  const grouped = list.reduce((acc, s) => {
+    const dayKey = s.date ? s.date.split("T")[0] : "unknown"; 
+    if (!acc[dayKey]) acc[dayKey] = [];
+    acc[dayKey].push(s);
+    return acc;
+  }, {});
+
+  const sortedDates = Object.keys(grouped).sort(
+    (a, b) => new Date(b) - new Date(a)
+  );
 
   return (
     <ModalBackground>
@@ -19,16 +37,27 @@ export default function StampPopup({ onClose, stamps, onStampSelect }) {
           </CloseButton>
         </FixedHeader>
 
-        <ScrollArea>
-          {list.length === 0 && (
-            <Empty>표시할 공연이 없습니다.</Empty>  
-          )}
+        <ScrollArea isEmpty={sortedDates.length === 0}>
+          {sortedDates.map((day) => (
+            <DateSection key={day}>
+              <DateTitle>{formatDate(day)}</DateTitle>
+              <CardGrid>
+                {grouped[day].map((s) => (
+                  <StampCard
+                    key={s.id}
+                    id={s.id}
+                    posterUrl={s.posterUrl}
+                    venue={s.venue}
+                    onClick={() => onStampSelect?.(s)}
+                  />
+                ))}
+              </CardGrid>
+            </DateSection>
+          ))}
 
-          <CardGrid>
-            {list.map((s) => (
-              <StampCard key={s.id} item={s} onClick={() => onStampSelect?.(s)} />
-            ))}
-          </CardGrid>
+          {sortedDates.length === 0 && (
+            <Empty>표시할 공연이 없습니다.</Empty>
+          )}
         </ScrollArea>
       </PopupContainer>
     </ModalBackground>
@@ -43,8 +72,8 @@ const ModalBackground = styled.div`
   align-items: flex-start;
   padding-top: 16px;
   padding-bottom: 100px;
-  background: rgba(0,0,0,.2); /* ← 배경 살짝 어둡게 */
-  z-index: 9999;              /* ← FAB보다 위로 */
+  background: rgba(0,0,0,.2);
+  z-index: 9999;             
 `;
 
 const PopupContainer = styled.div`
@@ -52,8 +81,8 @@ const PopupContainer = styled.div`
   height: 93%;
   width: 100%;
   max-width: ${({ theme }) => theme.layout.maxWidth};
-  margin: 56px auto 0;         /* margin-top 합침 */
-  background: #fff;            /* ← 내용 대비 확보 */
+  margin: 56px auto 0;        
+  background: ${({ theme }) => theme.colors.bgWhite};       
   border-radius: 10px;
   box-sizing: border-box;
   display: flex;
@@ -77,28 +106,50 @@ const CloseButton = styled.button`
   border: none;
   padding: 0;
   cursor: pointer;
-  img { width: 28px; height: 28px; display: block; }
+  img { 
+    width: 28px; 
+    height: 28px; 
+    display: block; 
+  }
 `;
 
 const ScrollArea = styled.div`
   flex: 1;
-  overflow-y: auto;
-  padding: 8px 8px 16px 8px;   /* ← 내용이 가장자리와 붙지 않게 */
-  /* 스크롤바 스타일 생략 */
+  overflow-y: ${({ isEmpty }) => (isEmpty ? "hidden" : "auto")};
+  padding: 8px 16px 16px 16px;
+  display: ${({ isEmpty }) => (isEmpty ? "flex" : "block")};
+  justify-content: ${({ isEmpty }) => (isEmpty ? "center" : "initial")};
+  align-items: ${({ isEmpty }) => (isEmpty ? "center" : "initial")};
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+  }
 `;
 
 const CardGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(3, minmax(100px, 1fr));
-  justify-items: center;
-  align-content: start;
-  gap: 16px 16px;
-  padding: 8px 8px 16px;
-  min-height: 160px;
+  grid-template-columns: repeat(3, 1fr); 
+  column-gap: 32px; 
+  row-gap: 24px;
+  padding: 0;
 `;
 
 const Empty = styled.div`
-  color: #9e9e9e;
-  font-size: 14px;
-  padding: 16px 12px;
+  font-size: ${({ theme }) => theme.fontSizes.base};
+  font-weight: ${({ theme }) => theme.fontWeights.semibold};
+  color: ${({ theme }) => theme.colors.darkGray};
+  text-align: center;
+`;
+
+const DateSection = styled.div`
+  margin-bottom: 24px;
+`;
+
+const DateTitle = styled.div`
+  font-size: ${({ theme }) => theme.fontSizes.sm};
+  font-weight: ${({ theme }) => theme.fontWeights.semibold};
+  color: ${({ theme }) => theme.colors.themeGreen};
+  margin-bottom: 12px;
 `;

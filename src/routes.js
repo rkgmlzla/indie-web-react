@@ -20,7 +20,8 @@ import DetailVenue from './pages/venue/DetailVenue';
 import LoginSuccess from './pages/login/LoginSuccess';
 import VenueReviewListPage from './pages/review/VenueReviewListPage';
 import ReviewWritePage from './pages/review/ReviewWritePage';
-import StampsPage from "./pages/stamp/StampPage"; // 실제 페이지 컴포넌트
+import StampsPage from "./pages/stamp/StampPage"; 
+import MyStampPage from "./pages/mypage/MyStampPage";
 
 const routes = [
   { path: '/', element: <HomePage /> },
@@ -33,6 +34,7 @@ const routes = [
   { path: '/favorite', element: <FavoritePage /> },
   { path: '/login', element: <LoginPage /> },
   { path: '/mypage', element: <MyPage /> },
+  { path: '/my/stamps', element: <MyStampPage /> },
   { path: '/search', element: <Search /> },
   { path: '/bulletinwrite', element: <BulletinWrite /> },
   { path: '/bulletinboard', element: <BulletinBoard /> },
@@ -48,5 +50,4 @@ const routes = [
   
 ];
 
-export default routes;
 export default routes;

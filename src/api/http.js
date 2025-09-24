@@ -20,5 +20,4 @@ http.interceptors.response.use(
   (err) => Promise.reject(err)
 );
 
-
 export default http;

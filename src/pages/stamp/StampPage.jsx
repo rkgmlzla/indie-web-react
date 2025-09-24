@@ -8,6 +8,7 @@ import StampButtonIcon from "../../assets/icons/icon_s_stamp.svg";
 import FilterButtonNone from '../../components/common/FilterButtonNone'; 
 import StampPopup from '../../components/stamp/StampPopup';
 import StampPopupSmall from '../../components/stamp/StampPopupSmall';
+import StampPopupSmall2 from '../../components/stamp/StampPopupSmall2';
 import StampDetailPopup from '../../components/stamp/StampDetailPopup';
 import {
   fetchCollectedStamps,
@@ -24,6 +25,7 @@ export default function StampPage() {
   const [selectedStamp, setSelectedStamp] = useState(null);
   const [isConfirmPopupOpen, setIsConfirmPopupOpen] = useState(false);
   const [selectedStampDetail, setSelectedStampDetail] = useState(null);
+  const [isStampSmall2Open, setIsStampSmall2Open] = useState(false);
 
   // ✅ API 연결 관련 상태
   const [collectedStamps, setCollectedStamps] = useState([]);
@@ -101,14 +103,17 @@ useEffect(() => {
       <StampBoard>
         <ScrollArea>
           <StampPageContainer>
-            {collectedStamps.map((stamp) => (
-              <StampItem
-                key={stamp.id}
-                onClick={() => setSelectedStampDetail(stamp)}
-              >
-                <StampImage src={stamp.venueImageUrl} alt={stamp.place} />
-                <StampDate>{stamp.date}</StampDate>
-              </StampItem>
+            {collectedStamps
+              .slice()
+              .sort((a, b) => new Date(b.date) - new Date(a.date))
+              .map((stamp) => (
+                <StampItem
+                  key={stamp.id}
+                  onClick={() => setSelectedStampDetail(stamp)}
+                >
+                  <StampImage src={stamp.venueImageUrl} alt={stamp.place} />
+                  <StampDate>{stamp.date}</StampDate>
+                </StampItem>
             ))}
           </StampPageContainer>
         </ScrollArea>
@@ -124,11 +129,12 @@ useEffect(() => {
           onClose={() => setIsStampPopupOpen(false)}
           stamps={availableStamps}
           onStampSelect={(stamp) => {
-            if (!stamp.is_collected) {
+            // 3. 팝업 로직 수정
+            if (stamp.is_collected) { // is_collected 상태에 따라 분기
+              setIsStampSmall2Open(true); // StampPopupSmall2 띄우기
+            } else {
               setSelectedStamp(stamp);
               setIsConfirmPopupOpen(true);
-            } else {
-              alert('이미 스탬프를 받은 공연입니다.');
             }
           }}
         />
@@ -137,7 +143,12 @@ useEffect(() => {
       {isConfirmPopupOpen && (
         <StampPopupSmall
           onConfirm={() => handleStampCollect(selectedStamp)}
+          onCancel={() => setIsConfirmPopupOpen(false)}
         />
+      )}
+
+      {isStampSmall2Open && (
+        <StampPopupSmall2 onClose={() => setIsStampSmall2Open(false)} />
       )}
 
       {selectedStampDetail && (
@@ -174,16 +185,6 @@ const FilterGroup = styled.div`
   gap: ${({ theme }) => theme.spacing.sm};
 `;
 
-const ModalBackground = styled.div`
-  position: fixed;
-  inset: 0;
-  background-color: rgba(0, 0, 0, 0.3);
-  z-index: 1000;
-  display: flex;
-  justify-content: center;
-  align-items: flex-end;
-`;
-
 const PageWrapper = styled.div`
   width: 100%;
   max-width: ${({ theme }) => theme.layout.maxWidth};
@@ -213,18 +214,18 @@ const StampButton = styled.button`
 const StampBoard = styled.div`
   position: absolute;
   top: 80px;
-  bottom: 108px; 
+  bottom: 64px; /* ???? */
   left: 16px;
   right: 16px;
   display: flex;
-  flex-direction: column; /* ScrollArea가 flex:1 먹도록 */
+  flex-direction: column; 
 `;
 
 const StampPageContainer = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr 1fr; 
   row-gap: 48px; 
-  padding: 0 8px 0 0;
+  padding: 0 8px 64px 0;
   width: 100%;
   box-sizing: border-box;
 `;
@@ -246,13 +247,14 @@ const StampImage = styled.img`
   max-height: 100px;
   border-radius: 50%;
   object-fit: cover;
+  border: 1.6px solid ${({ theme }) => theme.colors.outlineGray}; 
 `;
 
 const StampDate = styled.div`
-  margin-top: 8px;
+  margin-top: 12px;
   font-size: ${({ theme }) => theme.fontSizes.sm};
   font-weight: ${({ theme }) => theme.fontWeights.semibold};
-  color: ${({ theme }) => theme.colors.black};
+  color: ${({ theme }) => theme.colors.stampGray};
 `;
 
 const ScrollArea = styled.div`
