@@ -56,6 +56,7 @@ const IconButton = styled.button`
 
 function Header({
   title,
+  logoSrc,
   showSearch = true,
   showMenu = true,
   initialSearchTab = '공연/공연장',
@@ -99,7 +100,9 @@ function Header({
           )}
         </LeftArea>
 
-        <Title>{title}</Title>
+        <Title>
+          {logoSrc ? <img src={logoSrc} alt="로고" style={{ height: '24px' }} /> : title}
+        </Title>
         <RightArea>
           {showSearch && (
             <IconButton onClick={handleSearch}>
