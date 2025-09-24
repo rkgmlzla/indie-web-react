@@ -24,59 +24,60 @@ const MapPage = () => {
 
   // 각 공연장에 "오늘 0시 이후 첫 공연 1개" 붙여주는 헬퍼
   const attachFirstUpcoming = async (venueList) => {
-    const now = new Date();
-    const kstMidnight = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate(),
-      0,
-      0,
-      0
-    );
+  const now = new Date(); 
+  
+  const withPerf = await Promise.all(
+    (venueList || []).map(async (venue) => {
+      try {
+        const { data: perfs } = await axios.get(
+          `${baseUrl}/nearby/venue/${venue.venue_id}/performance`
+        );
 
-    const withPerf = await Promise.all(
-      (venueList || []).map(async (venue) => {
-        try {
-          const { data: perfs } = await axios.get(
-            `${baseUrl}/nearby/venue/${venue.venue_id}/performance`,
-            { params: { after: kstMidnight.toISOString() } }
-          );
-          return { ...venue, upcomingPerformance: (perfs || []).slice(0, 1) };
-        } catch (e) {
-          console.error(`공연 불러오기 실패 (venue_id: ${venue.venue_id})`, e);
-          return { ...venue, upcomingPerformance: [] };
-        }
-      })
-    );
-    return withPerf;
-  };
+        const upcoming = (perfs || []).filter((p) => {
+          const perfDateTime = new Date(`${p.date}T${p.time}`);
+          return perfDateTime >= now;
+        });
+
+        return { ...venue, upcomingPerformance: upcoming.slice(0, 1) };
+      } catch (e) {
+        console.error(`공연 불러오기 실패 (venue_id: ${venue.venue_id})`, e);
+        return { ...venue, upcomingPerformance: [] };
+      }
+    })
+  );
+  return withPerf;
+};
+
 
   // 핀(마커) 클릭 시: 해당 장소만 공연 갱신 + 선택 동기화
   const handleMarkerClick = async (venue) => {
-    try {
-      const now = new Date().toISOString();
-      const { data: performances } = await axios.get(
-        `${baseUrl}/nearby/venue/${venue.venue_id}/performance`,
-        { params: { after: now } }
-      );
+  try {
+    const { data: performances } = await axios.get(
+      `${baseUrl}/nearby/venue/${venue.venue_id}/performance`
+    );
 
-      const updatedVenue = {
-        ...venue,
-        upcomingPerformance: (performances || []).slice(0, 1),
-      };
+    const upcoming = (performances || []).filter((p) => {
+      const perfDateTime = new Date(`${p.date}T${p.time}`);
+      return perfDateTime >= new Date();
+    });
 
-      setSelectedVenue(updatedVenue); // 지도 이동 + InfoWindow
-      setSelectedCardId(updatedVenue.venue_id); // 그리드 선택 동기화
+    const updatedVenue = {
+      ...venue,
+      upcomingPerformance: upcoming.slice(0, 1),
+    };
 
-      setVenues((prev) =>
-        prev.map((v) =>
-          v.venue_id === updatedVenue.venue_id ? updatedVenue : v
-        )
-      );
-    } catch (error) {
-      console.error('공연 정보 불러오기 실패:', error);
-    }
-  };
+    setSelectedVenue(updatedVenue);
+    setSelectedCardId(updatedVenue.venue_id);
+
+    setVenues((prev) =>
+      prev.map((v) =>
+        v.venue_id === updatedVenue.venue_id ? updatedVenue : v
+      )
+    );
+  } catch (error) {
+    console.error('공연 정보 불러오기 실패:', error);
+  }
+};
 
   // 최초 로딩: 내 위치 기준 3km
   useEffect(() => {
