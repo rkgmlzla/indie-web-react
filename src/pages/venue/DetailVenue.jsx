@@ -161,17 +161,20 @@ const Date = styled.div`
   text-overflow: ellipsis;
 `;
 const ReviewHeader = styled.div`
+  position: relative;   
+  z-index: 10;          
   margin: 20px 0 12px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  pointer-events: auto; 
 `;
 const ReviewTitle = styled.div`
   font-weight: ${({ theme }) => theme.fontWeights.medium};
   font-size: ${({ theme }) => theme.fontSizes.md};
   color: ${({ theme }) => theme.colors.black};
 `;
-const ReviewMore = styled.button`
+const ReviewMore = styled.button.attrs({ type: 'button' })`
   display: flex;
   align-items: center;
   gap: 6px;
@@ -182,6 +185,7 @@ const ReviewMore = styled.button`
   color: ${({ theme }) => theme.colors.darkGray};
   font-size: ${({ theme }) => theme.fontSizes.sm};
 `;
+
 const ReviewList = styled.div`
   display: flex;
   gap: 12px;
@@ -425,7 +429,12 @@ const DetailVenue = () => {
           <ReviewHeader>
             <ReviewTitle>리뷰</ReviewTitle>
             <ReviewMore
-              onClick={() => navigate(`/venue/${venueId}/review`)}
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                console.log('[더보기 클릭] venueId =', venueId); 
+                if (Number.isFinite(venueId)) navigate(`/venue/${venueId}/review`);
+  }}
               disabled={!Number.isFinite(venueId)}
             >
               <img src={ChevronRightIcon} alt="더보기" />

@@ -36,11 +36,11 @@
   word-break:break-word;
 }
 
-/* 아랫줄: 아바타+작성자+날짜 / 신고 */
-.review-card__bottom{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
+.review-card__bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
 }
 
 .review-card__left{
@@ -48,6 +48,54 @@
   align-items:center;
   gap:8px;
 }
+
+.review-card__right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.review-card__like {
+  display:inline-flex; align-items:center; gap:6px;
+  padding:4px 10px; border:1px solid #ddd; border-radius:16px;
+  background:#fff; cursor:pointer; transition:all .2s;
+  font-size:14px; line-height:1;
+}
+
+.review-card__like:hover:not(:disabled) {
+  border-color: #ff7a85;
+}
+
+.review-card__like.is-liked {
+  background: #ffe6ea;
+  border-color: #ffb3bd;
+  color: #d60036;
+  font-weight: 600;
+}
+
+.review-card__like.is-locked { 
+  opacity:.6; cursor:not-allowed; 
+}
+
+.review-card__like-count { min-width:1.4em; text-align:right; }
+
+.review-card__like:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+/* 좋아요 아이콘 */
+.review-card__like-icon {
+  font-size: 15px;
+  line-height: 1;
+}
+
+/* 좋아요 수 */
+.review-card__like-count {
+  min-width: 1.2em;
+  text-align: right;
+}
+
 
 .review-card__avatar{
   width:20px;
