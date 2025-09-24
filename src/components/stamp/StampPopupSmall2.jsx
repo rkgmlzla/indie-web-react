@@ -1,27 +1,22 @@
-// src/components/stamp/StampDetailPopup.jsx
-import React from "react";
-import styled from "styled-components";
-import StampDetailCard from '../stamp/StampDetailCard';
+// src/components/stamp/StampPopupSmall2.jsx
 
-function StampDetailPopup({ concert, onClose }) {
-  return (
+import React from "react";
+import ReactDOM from "react-dom";
+import styled from "styled-components";
+
+export default function StampPopupSmall2({ onClose }) {
+  return ReactDOM.createPortal(
     <ModalBackground>
-      <PopupContainer>
-        <StampDetailCard 
-          posterUrl={concert.posterUrl}
-          title={concert.title}
-          date={concert.date}
-          venue={concert.venue}
-        />
+      <PopupContainer onClick={(e) => e.stopPropagation()}>
+        <Message>이미 받은 스탬프입니다.</Message>
         <ButtonGroup>
           <ConfirmButton onClick={onClose}>확인</ConfirmButton>
         </ButtonGroup>
       </PopupContainer>
-    </ModalBackground>
+    </ModalBackground>,
+    document.body
   );
 }
-
-export default StampDetailPopup;
 
 const ModalBackground = styled.div`
   position: fixed;
@@ -34,20 +29,27 @@ const ModalBackground = styled.div`
 `;
 
 const PopupContainer = styled.div`
-  position: relative;
-  width: 30%;
-  padding: 24px 32px;
-  background: white;
-  border-radius: 10px;
+  background-color: white;
+  border-radius: 12px;
+  padding: 24px;
+  min-width: 280px;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: center; /* StampPopupSmall과 동일하게 중앙 정렬 */
+`;
+
+const Message = styled.p`
+  font-size: ${({ theme }) => theme.fontSizes.base};
+  font-weight: ${({ theme }) => theme.fontWeights.semibold};
+  text-align: center;
+  margin-bottom: 24px; /* StampPopupSmall과 동일 */
+  color: ${({ theme }) => theme.colors.darkGray};
 `;
 
 const ButtonGroup = styled.div`
   display: flex;
-  width: 24%; 
-  margin-top: 16px;
+  gap: 12px;
+  width: 24%;
 `;
 
 const ConfirmButton = styled.button`
