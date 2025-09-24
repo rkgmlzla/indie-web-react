@@ -8,10 +8,7 @@ import styles from './pickDetail.module.css';
 // ✅ 매거진 API 연결
 import { fetchMagazineDetail } from '../../api/magazineApi';
 
-// ───────────────────────────────────────────────────────────────
 // [FAKE] 홈에서 넘어온 state가 없을 때를 대비한 폴백 데이터
-//  - 추후 API 붙이면 이 부분 삭제하고 id로 fetch하면 됨.
-// ───────────────────────────────────────────────────────────────
 const FAKE_PICK_BY_ID = {
   '1': {
     id: 1,
@@ -35,53 +32,56 @@ const PickDetailPage = () => {
   const { state } = useLocation();
   const { id } = useParams();
 
-  // ✅ API에서 가져온 실제 데이터
-  const [pick, setPick] = useState(
-    state ?? FAKE_PICK_BY_ID[String(id)] ?? {
+  // ✅ API에서 가져온 실제 데이터 저장 (blocks 포함)
+  const [pick, setPick] = useState({
+    ...(state ?? FAKE_PICK_BY_ID[String(id)] ?? {
       id,
       title: '제목이 없습니다',
       author: '김삼문관리자',
       createdAt: new Date().toISOString(),
       imageUrl: '',
       content: '내용이 없습니다.',
-    }
-  );
+    }),
+    blocks: [], // 🔑 블록 전체 저장
+  });
 
   useEffect(() => {
-    // state가 없으면 id로 서버에서 재조회
-    if (!state && id) {
-      (async () => {
-        try {
-          const data = await fetchMagazineDetail(id);
-          setPick({
-            id: data.id,
-            title: data.title ?? '',
-            author: data.author ?? '관리자',
-            createdAt: data.createdAt ?? data.created_at ?? '',
-            imageUrl:
-              data.coverImageUrl ??
-              data.cover_image_url ??
-              data.image_url ??
-              '',
-            // 블록 데이터를 단순 텍스트로 합쳐 임시 렌더 (블록 렌더는 추후 확장)
-            content: Array.isArray(data.blocks)
-              ? data.blocks
-                  .map((b) => {
-                    if (b.type === 'text') return b.text;
-                    if (b.type === 'quote') return `“${b.text}”`;
-                    // image/embed/divider는 여기서는 단순히 무시하거나 필요 시 처리
-                    return '';
-                  })
-                  .filter(Boolean)
-                  .join('\n\n')
-              : data.content ?? '',
-          });
-        } catch (err) {
-          console.error('📛 매거진 상세 조회 실패:', err);
-        }
-      })();
-    }
-  }, [id, state]);
+    if (!id) return;
+    let mounted = true;
+
+    (async () => {
+      try {
+        // ✅ 항상 상세 API 호출하여 blocks 포함한 실제 데이터 확보
+        const data = await fetchMagazineDetail(id);
+
+        if (!mounted) return;
+
+        setPick((prev) => ({
+          ...prev,
+          id: data?.id ?? prev.id,
+          title: data?.title ?? prev.title ?? '',
+          author: data?.author ?? prev.author ?? '관리자',
+          createdAt: data?.createdAt ?? data?.created_at ?? prev.createdAt ?? '',
+          // 썸네일로 쓰는 imageUrl은 홈 카드 전용 → 상세에서는 사용하지 않음
+          imageUrl:
+            data?.coverImageUrl ??
+            data?.cover_image_url ??
+            data?.image_url ??
+            prev.imageUrl ??
+            '',
+          // 블록 전체를 그대로 저장 (순서/정렬/타입 그대로)
+          blocks: Array.isArray(data?.blocks) ? data.blocks : [],
+          content: prev.content,
+        }));
+      } catch (err) {
+        console.error('📛 매거진 상세 조회 실패:', err);
+      }
+    })();
+
+    return () => {
+      mounted = false;
+    };
+  }, [id]);
 
   const formatKST = (d) => {
     try {
@@ -98,6 +98,23 @@ const PickDetailPage = () => {
     }
   };
 
+  // ✅ 텍스트 블록 내 개행을 단락으로 변환
+  const renderParagraphs = (text, keyPrefix) =>
+    String(text)
+      .split(/\n{2,}/)
+      .map((para, i) =>
+        para.trim() ? (
+          <p key={`${keyPrefix}-${i}`}>{para}</p>
+        ) : (
+          <div key={`${keyPrefix}-${i}`} className={styles.spacer} />
+        )
+      );
+
+  // ✅ blocks를 order 값 순서대로 정렬
+  const sortedBlocks = Array.isArray(pick.blocks)
+    ? pick.blocks.slice().sort((a, b) => (a?.order ?? 0) - (b?.order ?? 0))
+    : [];
+
   return (
     <>
       <Header title="김삼문 pick !" onMenuClick={() => setIsSidebarOpen(true)} />
@@ -113,22 +130,59 @@ const PickDetailPage = () => {
         </div>
         <div className={styles.hr} />
 
-        {/* 본문 (이미지 + 텍스트) */}
-        {pick.imageUrl ? (
-          <img className={styles.hero} src={pick.imageUrl} alt={pick.title} />
-        ) : null}
+        {/* ✅ 블록을 순서대로 그대로 렌더링 */}
+        {sortedBlocks.length > 0 && (
+          <section className={styles.blocks}>
+            {sortedBlocks.map((b) => {
+              const type = b?.type;
 
-        <article className={styles.content}>
-          {String(pick.content)
-            .split('\n')
-            .map((para, i) =>
-              para.trim() ? (
-                <p key={i}>{para}</p>
-              ) : (
-                <div key={i} className={styles.spacer} />
-              )
-            )}
-        </article>
+              if (type === 'image') {
+                const src = b?.imageUrl || b?.image_url;
+                if (!src) return null;
+                const align = (b?.align ?? b?.meta?.align ?? 'center').toLowerCase();
+                return (
+                  <figure
+                    key={`img-${b.id}`}
+                    className={styles.blockImage}
+                    data-align={['left', 'center', 'right'].includes(align) ? align : 'center'}
+                  >
+                    <img src={src} alt={b?.caption ?? pick.title} />
+                  </figure>
+                );
+              }
+
+              if (type === 'text' && b?.text) {
+                return (
+                  <div key={`txt-${b.id}`} className={styles.blockText}>
+                    {renderParagraphs(b.text, `txt-${b.id}`)}
+                  </div>
+                );
+              }
+
+              if (type === 'quote' && b?.text) {
+                return (
+                  <blockquote key={`q-${b.id}`} className={styles.blockQuote}>
+                    “{b.text}”
+                  </blockquote>
+                );
+              }
+
+              if (type === 'divider') {
+                return <hr key={`hr-${b.id}`} className={styles.blockDivider} />;
+              }
+
+              // embed 등은 필요 시 확장
+              return null;
+            })}
+          </section>
+        )}
+
+        {/* (선택) 과거 content 필드도 계속 표시 */}
+        {pick.content && (
+          <article className={styles.content}>
+            {renderParagraphs(pick.content, 'content')}
+          </article>
+        )}
       </main>
     </>
   );

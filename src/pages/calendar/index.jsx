@@ -74,12 +74,13 @@ function CalendarPage() {
     loadDailyConcerts(formatted);
   };
 
-  // ✅ 지역 변경 적용
+  // ✅ 지역 변경 적용 (날짜 선택도 해제)
   const handleRegionApply = (regions) => {
     setSelectedRegions(regions);
     setShowRegionSheet(false);
-    const formatted = format(selectedDate, 'yyyy-MM-dd');
-    loadDailyConcerts(formatted);
+    // 👉 날짜 선택 및 공연 카드 모두 해제
+    setSelectedDate(null);
+    setDailyConcerts([]);
   };
 
   return (
@@ -135,8 +136,15 @@ function CalendarPage() {
         <div className={styles.divider} />
 
         {/* 날짜별 공연 리스트 */}
-        <h3 className={styles.dailyTitle}>{format(selectedDate, 'M월 d일')} 공연</h3>
-        <DailyConcertList concerts={dailyConcerts} />
+        {selectedDate ? (
+          <>
+            <h3 className={styles.dailyTitle}>{format(selectedDate, 'M월 d일')} 공연</h3>
+            <DailyConcertList concerts={dailyConcerts} />
+          </>
+        ) : (
+          // 날짜 선택 해제 시 아무것도 보이지 않게 처리
+          <div style={{ height: '0px' }} />
+        )}
       </div>
     </>
   );

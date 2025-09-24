@@ -47,3 +47,26 @@
 .spacer {
   height: 10px;
 }
+/* ✅ 이미지 블록 정렬 처리 */
+.blockImage[data-align="center"] {
+  text-align: center;
+}
+.blockImage[data-align="center"] img {
+  display: inline-block;     /* 또는 block + margin:auto 둘 다 가능 */
+}
+
+.blockImage[data-align="left"] {
+  text-align: left;
+}
+.blockImage[data-align="right"] {
+  text-align: right;
+}
+.blockImage img {
+  display: block;
+  width: 100%;         /* 부모 폭 기준으로 꽉 채움 */
+  max-width: 600px;    /* ✅ 모든 이미지를 최대 600px 폭으로 통일 */
+  height: auto;        /* 세로는 비율에 따라 자동 */
+  border-radius: 16px; /* 모서리 둥글게 (값 조절 가능) */
+  margin-left: auto;
+  margin-right: auto;
+}
