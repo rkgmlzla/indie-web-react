@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
+import './LoginPage.css';  // ✅ 추가
 
 const API_BASE = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8000';
+const KAKAO_BTN_SRC =
+  'https://developers.kakao.com/tool/resource/static/img/button/login/full/ko/kakao_login_large_wide.png';
 
 export default function LoginPage() {
   const [checking, setChecking] = useState(true);
@@ -11,7 +14,7 @@ export default function LoginPage() {
     (async () => {
       try {
         const r = await fetch(`${API_BASE}/user/me`, { credentials: 'include' });
-        if (r.status === 401) return;                 // 비로그인 = 정상
+        if (r.status === 401) return;
         if (!r.ok) throw new Error('user/me failed');
         const data = await r.json();
         if (alive) setMe(data);
@@ -27,16 +30,24 @@ export default function LoginPage() {
   const startKakao = async () => {
     const r = await fetch(`${API_BASE}/auth/kakao/login`);
     const { loginUrl } = await r.json();
-    window.location.href = loginUrl;                  // 카카오 로그인 시작
+    window.location.href = loginUrl;
   };
 
-  if (checking) return <div style={{ padding: 24 }}>로그인 상태 확인 중…</div>;
-  if (me)       return <div style={{ padding: 24 }}>이미 로그인됨. 홈으로 이동해 주세요.</div>;
+  if (checking) return <div className="login-page">로그인 상태 확인 중…</div>;
+  if (me)       return <div className="login-page">이미 로그인 상태입니다. 홈으로 이동해 주세요.</div>;
 
   return (
-    <div style={{ padding: 24 }}>
-      <h2>로그인</h2>
-      <button onClick={startKakao}>카카오로 로그인</button>
+    <div className="login-page">
+      <div className="login-box">
+        <h2 className="login-title">로그인</h2>
+        <img
+          src={KAKAO_BTN_SRC}
+          alt="카카오로 로그인"
+          className="kakao-btn"
+          onClick={startKakao}
+          draggable={false}
+        />
+      </div>
     </div>
   );
 }

@@ -1,0 +1,51 @@
+.page--review-write {
+  min-height: 100vh;
+  background: #fff;
+}
+
+.rw__container {
+  padding: 16px;
+}
+
+.rw__textarea {
+  width: 100%;
+  min-height: 160px;
+  border: 1px solid #e5e5e5;
+  border-radius: 10px;
+  padding: 12px;
+  font-size: 14px;
+  resize: vertical;
+  outline: none;
+}
+
+.rw__textarea:focus {
+  border-color: #ff6b00;
+  box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.08);
+}
+
+.rw__bottom {
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.rw__count {
+  color: #9aa0a6;
+  font-size: 12px;
+}
+
+.rw__submit {
+  padding: 10px 16px;
+  border-radius: 10px;
+  border: none;
+  background: #ff6b00;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.rw__submit:disabled {
+  background: #ffd8bf;
+  cursor: not-allowed;
+}

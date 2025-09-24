@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Menu, Search, ChevronLeft } from 'lucide-react';
+import { Menu, Search, ChevronLeft, Bell } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useState } from 'react';
 import Sidebar from '../sidebar/Sidebar';
@@ -28,6 +28,12 @@ const LeftArea = styled.div`
   gap: 8px;
 `;
 
+const RightArea = styled.div`
+  display: flex;3
+  align-items: center;
+  gap: 8px;
+`;
+
 const Title = styled.h1`
   position: absolute;
   left: 50%;
@@ -50,6 +56,7 @@ const IconButton = styled.button`
 
 function Header({
   title,
+  logoSrc,
   showSearch = true,
   showMenu = true,
   initialSearchTab = '공연/공연장',
@@ -70,6 +77,12 @@ function Header({
       state: { initialTab: initialSearchTab },
     });
   };
+  
+  const handleAlarm = () => {
+    navigate(`/alarm?keyword=${encodeURIComponent(keyword)}`, {
+      state: { initialTab: initialSearchTab },
+    });
+  };
 
   return (
     <>
@@ -87,12 +100,20 @@ function Header({
           )}
         </LeftArea>
 
-        <Title>{title}</Title>
-        {showSearch && (
-          <IconButton onClick={handleSearch}>
-            <Search size={22} color="#d55a1f" />
+        <Title>
+          {logoSrc ? <img src={logoSrc} alt="로고" style={{ height: '24px' }} /> : title}
+        </Title>
+        <RightArea>
+          {showSearch && (
+            <IconButton onClick={handleSearch}>
+              <Search size={22} color="#d55a1f" />
+            </IconButton>
+          )}
+          <IconButton onClick={handleAlarm}>
+            <Bell size={22} color="#d55a1f" />
           </IconButton>
-        )}
+        </RightArea>
+
       </HeaderWrapper>
 
       {isSidebarOpen && <Sidebar onClose={handleSidebarClose} />}

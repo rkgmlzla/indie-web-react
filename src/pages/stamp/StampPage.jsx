@@ -8,6 +8,7 @@ import StampButtonIcon from "../../assets/icons/icon_s_stamp.svg";
 import FilterButtonNone from '../../components/common/FilterButtonNone'; 
 import StampPopup from '../../components/stamp/StampPopup';
 import StampPopupSmall from '../../components/stamp/StampPopupSmall';
+import StampPopupSmall2 from '../../components/stamp/StampPopupSmall2';
 import StampDetailPopup from '../../components/stamp/StampDetailPopup';
 import {
   fetchCollectedStamps,
@@ -15,9 +16,6 @@ import {
   collectStamp,
   fetchStampDetail
 } from '../../api/stampApi';
-
-// 🔐 추가: 라우팅 훅 (로그인 가드용)
-import { useNavigate, useLocation } from 'react-router-dom';
 
 export default function StampPage() {
   const [isPeriodModalOpen, setIsPeriodModalOpen] = useState(false);
@@ -27,6 +25,7 @@ export default function StampPage() {
   const [selectedStamp, setSelectedStamp] = useState(null);
   const [isConfirmPopupOpen, setIsConfirmPopupOpen] = useState(false);
   const [selectedStampDetail, setSelectedStampDetail] = useState(null);
+  const [isStampSmall2Open, setIsStampSmall2Open] = useState(false);
 
   // ✅ API 연결 관련 상태
   const [collectedStamps, setCollectedStamps] = useState([]);
@@ -34,28 +33,12 @@ export default function StampPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // 🔐 추가: 인증 가드 상태
-  const [authed, setAuthed] = useState(false);
-  const [authChecked, setAuthChecked] = useState(false);
-  const navigate = useNavigate();
-  const location = useLocation();
 
-  // 🔐 추가: 토큰 없으면 로그인 페이지로 이동 (원래 위치 기억)
-  useEffect(() => {
-    const token = localStorage.getItem('accessToken');
-    if (!token) {
-      navigate('/login', { state: { from: location.pathname } });
-      setAuthed(false);
-      setAuthChecked(true);
-      return;
-    }
-    setAuthed(true);
-    setAuthChecked(true);
-  }, [navigate, location.pathname]);
+  // ✅ 인증 토큰 가져오기 (FavoritePage와 동일)
+  //const authToken = localStorage.getItem('accessToken');
 
-  // ✅ 수집한 스탬프 목록 로드 (🔐 인증 후에만)
+  // ✅ 수집한 스탬프 목록 로드
   useEffect(() => {
-    if (!authChecked || !authed) return;
     const loadCollectedStamps = async () => {
       try {
         setLoading(true);
@@ -69,29 +52,32 @@ export default function StampPage() {
       }
     };
     loadCollectedStamps();
-  }, [authChecked, authed, startMonth, endMonth]);
+  }, [startMonth, endMonth]);
 
-  // ✅ 사용 가능한 스탬프 목록 로드 (🔐 인증 후에만)
-  useEffect(() => {
-    if (!authChecked || !authed) return;
-    const loadAvailableStamps = async () => {
-      try {
-        const stamps = await fetchAvailableStamps();
-        setAvailableStamps(stamps);
-      } catch (e) {
-        console.error('📛 사용 가능한 스탬프 로딩 실패:', e);
-      }
-    };
-    loadAvailableStamps();
-  }, [authChecked, authed]);
+  
+useEffect(() => {
+  if (!isStampPopupOpen) return;   // 팝업 열릴 때만 호출
+  (async () => {
+    try {
+      const list = await fetchAvailableStamps({ days: 30 }); // 필요시 days 조절
+      console.log('🎯 available stamps:', list);
+      setAvailableStamps(Array.isArray(list) ? list : []);
+    } catch (e) {
+      console.error('❌ available 오류', e?.response?.data || e.message);
+      setAvailableStamps([]);
+    }
+  })();
+}, [isStampPopupOpen]);
 
   // ✅ 스탬프 수집 처리
   const handleStampCollect = async (stampData) => {
     try {
       await collectStamp(stampData.id);
+      
       // 성공 후 수집한 스탬프 목록 새로고침
       const updatedStamps = await fetchCollectedStamps(startMonth, endMonth);
       setCollectedStamps(updatedStamps);
+
       setIsConfirmPopupOpen(false);
       setIsStampPopupOpen(false);
       setSelectedStamp(null);
@@ -101,52 +87,34 @@ export default function StampPage() {
     }
   };
 
-  // 🔐 인증 체크 중엔 아무 것도 렌더하지 않음 (깜빡임 방지)
-  if (!authChecked) return null;
-  // 🔐 인증 실패로 /login 이동한 경우에도 여기선 아무 것도 렌더하지 않음
-  if (!authed) return null;
-
   return (
     <PageWrapper>
       <Header title="스탬프" />
       <div style={{ height: '16px' }} />
       <FilterBar>
-        <FilterGroup>
-          <FilterButtonNone onClick={() => setIsPeriodModalOpen(true)}>
-            기간 설정
-          </FilterButtonNone>
-        </FilterGroup>
+          <FilterGroup>
+            <FilterButtonNone onClick={() => setIsPeriodModalOpen(true)}>
+              기간 설정
+            </FilterButtonNone>
+          </FilterGroup>
       </FilterBar>
 
       {/* ✅ 메인 스탬프판 */}
       <StampBoard>
         <ScrollArea>
           <StampPageContainer>
-            {collectedStamps.map((stamp) => {
-              // (선택) 널/대체값 대비 안전 처리 — 기존 구조는 유지하되 NPE 방지
-              const venueImg =
-                stamp?.venueImageUrl ??
-                stamp?.performance?.venue?.image_url ??
-                null;
-              const place =
-                stamp?.place ??
-                stamp?.performance?.venue?.name ??
-                '공연장';
-              const dateStr =
-                typeof stamp?.date === 'string'
-                  ? stamp.date
-                  : (stamp?.performance?.date ?? '');
-
-              return (
+            {collectedStamps
+              .slice()
+              .sort((a, b) => new Date(b.date) - new Date(a.date))
+              .map((stamp) => (
                 <StampItem
                   key={stamp.id}
                   onClick={() => setSelectedStampDetail(stamp)}
                 >
-                  <StampImage src={venueImg || ''} alt={place} />
-                  <StampDate>{dateStr}</StampDate>
+                  <StampImage src={stamp.venueImageUrl} alt={stamp.place} />
+                  <StampDate>{stamp.date}</StampDate>
                 </StampItem>
-              );
-            })}
+            ))}
           </StampPageContainer>
         </ScrollArea>
       </StampBoard>
@@ -161,11 +129,12 @@ export default function StampPage() {
           onClose={() => setIsStampPopupOpen(false)}
           stamps={availableStamps}
           onStampSelect={(stamp) => {
-            if (!stamp.is_collected) {
+            // 3. 팝업 로직 수정
+            if (stamp.is_collected) { // is_collected 상태에 따라 분기
+              setIsStampSmall2Open(true); // StampPopupSmall2 띄우기
+            } else {
               setSelectedStamp(stamp);
               setIsConfirmPopupOpen(true);
-            } else {
-              alert('이미 스탬프를 받은 공연입니다.');
             }
           }}
         />
@@ -174,15 +143,20 @@ export default function StampPage() {
       {isConfirmPopupOpen && (
         <StampPopupSmall
           onConfirm={() => handleStampCollect(selectedStamp)}
+          onCancel={() => setIsConfirmPopupOpen(false)}
         />
       )}
 
-      {selectedStampDetail && (
-        <StampDetailPopup
-          concert={selectedStampDetail}
-          onClose={() => setSelectedStampDetail(null)}
-        />
+      {isStampSmall2Open && (
+        <StampPopupSmall2 onClose={() => setIsStampSmall2Open(false)} />
       )}
+
+      {selectedStampDetail && (
+      <StampDetailPopup
+        concert={selectedStampDetail}
+        onClose={() => setSelectedStampDetail(null)}
+      />
+    )}
 
       {isPeriodModalOpen && (
         <PeriodModal
@@ -209,16 +183,6 @@ const FilterBar = styled.div`
 const FilterGroup = styled.div`
   display: flex;
   gap: ${({ theme }) => theme.spacing.sm};
-`;
-
-const ModalBackground = styled.div`
-  position: fixed;
-  inset: 0;
-  background-color: rgba(0, 0, 0, 0.3);
-  z-index: 1000;
-  display: flex;
-  justify-content: center;
-  align-items: flex-end;
 `;
 
 const PageWrapper = styled.div`
@@ -250,18 +214,18 @@ const StampButton = styled.button`
 const StampBoard = styled.div`
   position: absolute;
   top: 80px;
-  bottom: 108px; 
+  bottom: 64px; /* ???? */
   left: 16px;
   right: 16px;
   display: flex;
-  flex-direction: column; /* ScrollArea가 flex:1 먹도록 */
+  flex-direction: column; 
 `;
 
 const StampPageContainer = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr 1fr; 
   row-gap: 48px; 
-  padding: 0 8px 0 0;
+  padding: 0 8px 64px 0;
   width: 100%;
   box-sizing: border-box;
 `;
@@ -283,13 +247,14 @@ const StampImage = styled.img`
   max-height: 100px;
   border-radius: 50%;
   object-fit: cover;
+  border: 1.6px solid ${({ theme }) => theme.colors.outlineGray}; 
 `;
 
 const StampDate = styled.div`
-  margin-top: 8px;
+  margin-top: 12px;
   font-size: ${({ theme }) => theme.fontSizes.sm};
   font-weight: ${({ theme }) => theme.fontWeights.semibold};
-  color: ${({ theme }) => theme.colors.black};
+  color: ${({ theme }) => theme.colors.stampGray};
 `;
 
 const ScrollArea = styled.div`

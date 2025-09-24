@@ -1,0 +1,139 @@
+// 웹/src/pages/mypage/MyStampPage.jsx
+import React, { useEffect, useState } from "react";
+import styled from "styled-components";
+import Header from '../../components/layout/Header';
+import PeriodModal from '../../components/modals/PeriodModal';
+import StampMyCard from '../../components/stamp/StampMyCard';
+import FilterButtonNone from '../../components/common/FilterButtonNone';
+import { fetchCollectedStamps } from '../../api/stampApi';
+
+export default function MyStampPage() {
+  const [stamps, setStamps] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const [isPeriodModalOpen, setIsPeriodModalOpen] = useState(false);
+  const [startMonth, setStartMonth] = useState(1);
+  const [endMonth, setEndMonth] = useState(12);
+  
+  useEffect(() => {
+    const loadStamps = async () => {
+      try {
+        setLoading(true);
+        const data = await fetchCollectedStamps(1, 12);
+        setStamps(data);
+      } catch (e) {
+        console.error("📛 스탬프 불러오기 실패:", e);
+        setError("스탬프를 불러오는데 실패했습니다.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadStamps();
+  }, [startMonth, endMonth]);
+
+  return (
+    <PageWrapper>
+      <Header title="내 스탬프" />
+      <div style={{ height: '16px' }} />
+      <StampCount>
+        <AllText>All</AllText> <CountText>{stamps.length}</CountText>
+      </StampCount>
+      <FilterBar>
+        <FilterGroup>
+          <FilterButtonNone onClick={() => setIsPeriodModalOpen(true)}>
+            기간 설정
+          </FilterButtonNone>
+        </FilterGroup>
+      </FilterBar>
+
+      <Content>
+        {loading && <Message>불러오는 중...</Message>}
+        {error && <Message>{error}</Message>}
+        {!loading && !error && stamps.length === 0 && (
+          <Message>수집한 스탬프가 없습니다.</Message>
+        )}
+
+        <StampGrid>
+          {stamps
+            .slice()
+            .sort((a, b) => new Date(b.date) - new Date(a.date))
+            .map(stamp => (
+                <StampMyCard
+                key={stamp.id}
+                posterUrl={stamp.posterUrl} 
+                title={stamp.title}              
+                venue={stamp.venue}              
+                date={stamp.date}                
+                />
+            ))}
+        </StampGrid>
+      </Content>
+
+      {isPeriodModalOpen && (
+            <PeriodModal
+            startMonth={startMonth}
+            endMonth={endMonth}
+            onChange={({ startMonth, endMonth }) => {
+                setStartMonth(startMonth);
+                setEndMonth(endMonth);
+            }}
+            onClose={() => setIsPeriodModalOpen(false)}
+            />
+        )}
+    </PageWrapper>
+  );
+}
+
+const StampCount = styled.div`
+  padding: 16px 0;
+  font-size: ${({ theme }) => theme.fontSizes.sm};
+  font-weight: ${({ theme }) => theme.fontWeights.semibold};
+`;
+
+const AllText = styled.span`
+  color: ${({ theme }) => theme.colors.darkGray};
+`;
+
+const CountText = styled.span`
+  color: ${({ theme }) => theme.colors.themeGreen};
+`;
+
+const FilterBar = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+const FilterGroup = styled.div`
+  display: flex;
+  gap: ${({ theme }) => theme.spacing.sm};
+`;
+
+const PageWrapper = styled.div`
+  width: 100%;
+  max-width: ${({ theme }) => theme.layout.maxWidth};
+  margin: 0 auto;
+  min-height: 100vh;
+  background: ${({ theme }) => theme.colors.bgWhite};
+  padding-bottom: 16px;
+  border-radius: 10px;
+`;
+
+const Content = styled.div`
+  padding-top: 16px;
+  padding-bottom: 64px;
+`;
+
+const StampGrid = styled.div`
+  display: grid;
+  grid-template-columns: 1fr;
+  row-gap: 16px;
+`;
+
+const Message = styled.div`
+  font-size: ${({ theme }) => theme.fontSizes.base};
+  font-weight: ${({ theme }) => theme.fontWeights.semibold};
+  color: ${({ theme }) => theme.colors.darkGray};
+  text-align: center;
+  margin: 16px 0;
+`;

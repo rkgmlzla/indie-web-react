@@ -2,8 +2,11 @@ import http from './http';
 
 // 1) 로그인 후 사용자 정보 조회
 export const fetchUserInfo = async () => {
-  const { data } = await http.get('/user/me');  
-  return data;
+ const res = await http.get('/user/me'); // 실제 엔드포인트에 맞춰 수정
+  // http.js는 401도 resolve 하므로, 여기서 직접 분기
+  if (res.status === 401 || res.status === 403) return null;       // 비로그인
+  if (res.status !== 200) throw new Error(res.data?.message || `HTTP ${res.status}`);
+  return res.data; // 로그인한 유저 정보
 };
 
 // 2) 닉네임 수정
