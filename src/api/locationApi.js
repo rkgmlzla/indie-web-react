@@ -2,7 +2,6 @@ import axios from 'axios';
 
 import { baseUrl } from './config';
 
-
 //가까운공연 찾기-1.사용자 위치 기반 반경 3km이내 공연장 조회
 /**
  * 사용자 위치 기준 3km 이내 공연장 조회 API

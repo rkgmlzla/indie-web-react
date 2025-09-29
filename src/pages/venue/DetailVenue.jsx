@@ -4,7 +4,7 @@ import Header from '../../components/layout/Header';
 import Divider from '../../components/common/Divider';
 import IconCopy from '../../assets/icons/icon_y_copy.svg';
 import ChevronRightIcon from '../../assets/icons/icon_go.svg';
-import MapView2 from '../map/components/MapView2';
+import MapView2 from '../../components/map/MapView2';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { fetchVenueDetail } from '../../api/venueApi'; // ✅ API import

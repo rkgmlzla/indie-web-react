@@ -34,15 +34,16 @@ const ModalBackground = styled.div`
 `;
 
 const PopupContainer = styled.div`
-  position: relative;
-  width: 30%;
-  padding: 24px 32px;
+  position: absolute; 
+  width: calc(${({ theme }) => theme.layout.maxWidth} * 0.5);
+  padding: 16px 24px;
   background: white;
   border-radius: 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
 `;
+
 
 const ButtonGroup = styled.div`
   display: flex;

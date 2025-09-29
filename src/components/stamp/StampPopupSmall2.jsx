@@ -35,14 +35,14 @@ const PopupContainer = styled.div`
   min-width: 280px;
   display: flex;
   flex-direction: column;
-  align-items: center; /* StampPopupSmall과 동일하게 중앙 정렬 */
+  align-items: center;
 `;
 
 const Message = styled.p`
   font-size: ${({ theme }) => theme.fontSizes.base};
   font-weight: ${({ theme }) => theme.fontWeights.semibold};
   text-align: center;
-  margin-bottom: 24px; /* StampPopupSmall과 동일 */
+  margin-bottom: 24px; 
   color: ${({ theme }) => theme.colors.darkGray};
 `;
 
