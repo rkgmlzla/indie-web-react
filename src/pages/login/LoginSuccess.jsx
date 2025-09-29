@@ -16,7 +16,7 @@ export default function LoginSuccess() {
         const me = await res.json();
 
         // TODO: 전역 상태 저장 (e.g. useAuthStore.getState().setUser(me))
-        navigate('/', { replace: true });
+        navigate('/home', { replace: true });
       } catch (e) {
         console.error(e);
         navigate('/login', { replace: true });

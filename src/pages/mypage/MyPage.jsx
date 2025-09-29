@@ -93,12 +93,14 @@ function MyPage() {
   };
 
   const handleLogout = async () => {
-    try {
-      await logout();
-    } finally {
-      window.location.href = '/';
-    }
-  };
+  try {
+    await logout(); // ✅ 쿠키/세션 초기화
+  } catch (err) {
+    console.error('[MyPage] 로그아웃 오류:', err);
+  } finally {
+    navigate('/home', { replace: true }); // ✅ 홈으로 이동
+  }
+};
 
   if (loading) {
     return (
@@ -183,7 +185,7 @@ function MyPage() {
                 <Heart className="quick__icon" />
                 <span className="quick__label">찜</span>
               </button>
-              <button className="quick__item" onClick={() => navigate('/my/reviews')}>
+              <button className="quick__item" onClick={() => navigate('/venue/my/review')}>
                 <Pencil className="quick__icon" />
                 <span className="quick__label">내가 쓴 리뷰</span>
               </button>

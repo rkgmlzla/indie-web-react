@@ -28,7 +28,7 @@ export default function HomeNaviBar({
     { key: 'performance', label: '공연',    icon: iconMusic,   to: routes.performance, disabled: !routes.performance },
     { key: 'venues',      label: '공연장',  icon: iconMic,     to: routes.venues,     disabled: !routes.venues },
     { key: 'artists',     label: '아티스트', icon: iconGuitar,  to: routes.artists,    disabled: !routes.artists },
-    { key: 'magazine',    label: '매거진',  icon: iconMessage, to: routes.magazine,   disabled: true }, // 강제 비활성
+    { key: 'review',    label: '리뷰',  icon: iconMessage, to: routes.review,   disabled: !routes.review }, // 강제 비활성
   ];
 
   const handleClick = (item) => {

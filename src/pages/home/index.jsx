@@ -290,7 +290,7 @@ const HomePage = () => {
               performance: '/performance',
               venues: '/venue',   // ✅ 라우터 경로에 맞게 단수(/venue)
               artists: '/artist', // ✅ 라우터 경로에 맞게 단수(/artist)
-              // magazine: null
+              review: '/venue/reviews'
             }}
           />
         </section>
@@ -337,7 +337,7 @@ const HomePage = () => {
               imageUrl={pickItem.imageUrl}
               onClick={() => {
                 // 상세 페이지 연결 예정: navigate(`/pick/${pickItem.id}`, { state: pickItem })
-                navigate(`/pick/${pickItem.id}`, { state: pickItem });
+                navigate(`/magazine/${pickItem.id}`, { state: pickItem });
               }}
             />
           )}

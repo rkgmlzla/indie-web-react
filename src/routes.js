@@ -22,9 +22,13 @@ import VenueReviewListPage from './pages/review/VenueReviewListPage';
 import ReviewWritePage from './pages/review/ReviewWritePage';
 import StampsPage from "./pages/stamp/StampPage"; 
 import MyStampPage from "./pages/mypage/MyStampPage";
+import MyReviewListPage from './pages/review/MyReviewListPage';
+import fetchMagazineDetail from './pages/pick/PickDetailPage';
+import AllReview from './pages/review/AllReview';
+
 
 const routes = [
-  { path: '/', element: <HomePage /> },
+  { path: '/home', element: <HomePage /> },
   { path: '/notification', element: <NotificationPage /> },
   { path: '/calendar', element: <CalendarPage /> },
   { path: '/performance', element: <PerformanceListPage /> },
@@ -41,12 +45,16 @@ const routes = [
   { path: '/freeboard/:id', element: <Bulletindetail /> },
   { path: '/map', element: <MapPage /> },
   { path: '/venue', element: <ListVenue /> },
+  { path: '/venue/reviews', element: <AllReview />},
   { path: '/venue/:id', element: <DetailVenue /> },
   { path: '/login/success', element: <LoginSuccess/> }, 
-  { path: '/venue/:id/review', element: <VenueReviewListPage /> },
-  { path: '/review/write', element: <ReviewWritePage /> },
+  { path: '/venue/:id/review', element: <VenueReviewListPage/> },
+  { path: '/venue/:id/review/write', element: <ReviewWritePage/>},
   { path: '/stamps', element: <StampsPage /> },
-  { path: '/stamp', element: <Navigate to="/stamps" replace /> }
+  { path: '/stamp', element: <Navigate to="/stamps" replace /> },
+  { path: '/venue/my/review', element: <MyReviewListPage /> },
+  { path: '/magazine/:id', element: <fetchMagazineDetail />}
+  
   
 ];
 

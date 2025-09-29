@@ -1,18 +1,18 @@
 // ✅ src/pages/venue/DetailVenue.jsx
 import styled from 'styled-components';
 import Header from '../../components/layout/Header';
-import Divider from '../../components/common/Divider';
 import IconCopy from '../../assets/icons/icon_y_copy.svg';
 import ChevronRightIcon from '../../assets/icons/icon_go.svg';
 import MapView2 from '../map/components/MapView2';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { fetchVenueDetail } from '../../api/venueApi'; // ✅ API import
-import { fetchVenueReviewPreview } from '../../api/reviewApi'; // ✅ 미리보기 API
+import { fetchReviewPreview } from '../../api/reviewApi'; // ✅ 미리보기 API
+import ReviewCard from '../../components/review/ReviewCard';
 
 const Container = styled.div`
   width: 100%;
-  margin: 0;
+  margin: 0;donteai
   padding: 0;
 `;
 const InnerWrapper = styled.div`
@@ -160,93 +160,67 @@ const Date = styled.div`
   overflow: hidden;
   text-overflow: ellipsis;
 `;
-const ReviewHeader = styled.div`
-  position: relative;   
-  z-index: 10;          
-  margin: 20px 0 12px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  pointer-events: auto; 
-`;
-const ReviewTitle = styled.div`
-  font-weight: ${({ theme }) => theme.fontWeights.medium};
-  font-size: ${({ theme }) => theme.fontSizes.md};
-  color: ${({ theme }) => theme.colors.black};
-`;
-const ReviewMore = styled.button.attrs({ type: 'button' })`
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  background: transparent;
-  border: 0;
-  padding: 6px 8px;
-  cursor: pointer;
-  color: ${({ theme }) => theme.colors.darkGray};
-  font-size: ${({ theme }) => theme.fontSizes.sm};
-`;
 
-const ReviewList = styled.div`
+/* ============================
+ *  ⬇️ 리뷰 섹션 스타일 추가
+ * ============================ */
+const ReviewTag = styled(LabelTag)`
+  margin: 16px 0 8px;
+`;
+const ReviewScrollWrapper = styled.div`
   display: flex;
-  gap: 12px;
   overflow-x: auto;
-  flex-wrap: nowrap;
+  gap: 8px; /* 카드 간격 (기존보다 좁게) */
+  padding: 8px 0 80px; /* 하단 패딩 추가 (탭바와 겹치지 않게) */
   &::-webkit-scrollbar {
     display: none;
+`;
+const ReviewRow = styled.div`
+  display: flex;
+  width: max-content;
+  gap: 12px;
+  padding-right: 8px;
+  align-items: flex-start;       /* 자식이 세로로 늘어나지 않게 */
+`;
+
+const ReviewCardWrapper = styled.div`
+  width: 220px;          /* 카드 폭(모바일 1.1~1.2장 보이게) */
+  flex-shrink: 0;
+`;
+
+const ReviewMoreCard = styled.button`
+  width: auto;
+  min-width: 112px;
+  flex-shrink: 0;
+  border: 1px solid ${({ theme }) => theme.colors.border || '#eee'};
+  background: ${({ theme }) => theme.colors.white || '#fff'};
+  border-radius: 8px;
+  padding: 8px 10px;
+  display: flex;
+  align-items: center;            /* 내부 컨텐츠 수직 가운데 정렬 */
+  gap: 4px;
+  cursor: pointer;
+  height: auto;                   /*  높이 고정 해제 */
+  align-self: center;             /*  row에서 가운데 맞춤 (stretch 방지) */
+
+  &:hover {
+    background: ${({ theme }) => theme.colors.bgGray || '#fafafa'};
   }
 `;
-const ReviewCard = styled.div`
-  display: flex;
-  gap: 10px;
-  align-items: flex-start;
-  background: #fff;
-  border: 1px solid #eee;
-  border-radius: 12px;
-  padding: 12px 14px;
-  min-width: 240px;
-  max-width: 280px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
-`;
-const Avatar = styled.img`
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  object-fit: cover;
-  flex-shrink: 0;
-  background: #e6e6ea;
-`;
-const ReviewBody = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  flex: 1;
-`;
-const ReviewTop = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: ${({ theme }) => theme.fontSizes.xs};
-`;
-const Author = styled.span`
-  color: ${({ theme }) => theme.colors.black};
-  font-weight: ${({ theme }) => theme.fontWeights.medium};
-`;
-const Dot = styled.span`
-  color: #dcdde1;
-`;
-const RDate = styled.span`
-  color: ${({ theme }) => theme.colors.lightGray};
-`;
-const RText = styled.p`
-  margin: 0;
+
+const ReviewMoreText = styled.span`
   font-size: ${({ theme }) => theme.fontSizes.sm};
-  color: ${({ theme }) => theme.colors.black};
-  line-height: 1.4;
-  display: -webkit-box;
-  -webkit-line-clamp: 1;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+  color: ${({ theme }) => theme.colors.darkGray};
+  white-space: nowrap;
 `;
+
+const ChevronImg = styled.img`
+  width: 14px;
+  height: 14px;
+`;
+
+/* ============================ */
+
 const UpcomingCard = ({ data, onClick }) => {
   if (!data) return null;
   return (
@@ -269,12 +243,6 @@ const PastCard = ({ data, onClick }) => {
   );
 };
 
-const PLACEHOLDER_AVATAR =
-  'data:image/svg+xml;utf8,' +
-  encodeURIComponent(
-    '<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28"><rect width="100%" height="100%" rx="14" fill="#e6e6ea"/></svg>'
-  );
-
 const DetailVenue = () => {
   const { id } = useParams();
   const venueId = Number(id);
@@ -283,6 +251,8 @@ const DetailVenue = () => {
   const [venue, setVenue] = useState(null);
   const [upcomingConcerts, setUpcomingConcerts] = useState([]);
   const [pastConcerts, setPastConcerts] = useState([]);
+
+  // ✅ 리뷰 미리보기 상태
   const [reviews, setReviews] = useState([]);
 
   useEffect(() => {
@@ -299,32 +269,35 @@ const DetailVenue = () => {
           Array.isArray(data?.pastPerformance) ? data.pastPerformance : []
         );
 
-        // ✅ 리뷰 3개 미리보기 (fetchVenueReviewPreview로 교체)
+        // ✅ 리뷰 미리보기 최대 2개
         try {
-          const preview = await fetchVenueReviewPreview(venueId, 3);
-          const items = Array.isArray(preview) ? preview : [];
+          // fetchVenueReviewPreview(venueId, limit) 형태 가정
+          const preview = await fetchReviewPreview(venueId, 2);
+          const items = Array.isArray(preview?.items || preview) ? (preview.items || preview) : [];
           setReviews(
-            items.map((x) => ({
+            items.slice(0, 2).map((x) => ({
               id: x.id,
-              authorName: x.author ?? '익명',
-              createdAt: (x.created_at || '').slice(0, 10),
+              user: { nickname: x.user?.nickname || x.author || '익명', profile_url: x.user?.profile_url || x.profile_url || '' },
               content: x.content ?? '',
-              // 렌더에서 r.avatar를 사용하므로 avatar 키로 매핑
-              avatar: x.profile_url || '',
+              images: Array.isArray(x.images) ? x.images : [],
+              created_at: x.created_at,
+              like_count: x.like_count ?? 0,
+              liked_by_me: x.liked_by_me ?? false,
             }))
           );
-        } catch {
-          setReviews([]); // API 실패 시 섹션 비우기
+        } catch (e) {
+          console.warn('⚠️ 리뷰 미리보기 로드 실패:', e);
+          setReviews([]);
         }
       } catch (err) {
         console.error('📛 공연장 상세 API 호출 실패:', err);
         setVenue(null);
         setUpcomingConcerts([]);
         setPastConcerts([]);
+        setReviews([]);
       }
     };
     loadVenueDetail();
-    // venueId를 의존성에 포함 (ESLint 경고 해결)
   }, [id, venueId]);
 
   if (!venue) return <div>로딩 중...</div>;
@@ -339,8 +312,6 @@ const DetailVenue = () => {
             <ProfileImage src={venue.image_url || ''} alt="공연장 이미지" />
             <VenueName>{venue.name || '공연장 이름 없음'}</VenueName>
           </Row>
-
-          <Divider mt="24px" mb="24px" />
 
           <Row>
             <InstagramTag>인스타그램</InstagramTag>
@@ -425,47 +396,56 @@ const DetailVenue = () => {
             </PastCardRow>
           </PastScrollWrapper>
 
-          {/* ▶ 리뷰 미리보기 */}
-          <ReviewHeader>
-            <ReviewTitle>리뷰</ReviewTitle>
-            <ReviewMore
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                console.log('[더보기 클릭] venueId =', venueId); 
-                if (Number.isFinite(venueId)) navigate(`/venue/${venueId}/review`);
-  }}
-              disabled={!Number.isFinite(venueId)}
-            >
-              <img src={ChevronRightIcon} alt="더보기" />
-            </ReviewMore>
-          </ReviewHeader>
+          {/* ============================
+              ⬇️ 리뷰 미리보기 + ‘리뷰 더보기 >’ 카드
+              ============================ */}
+ 
+          <ReviewTag>리뷰</ReviewTag>
+          <ReviewScrollWrapper>
+            <ReviewRow>
+              {reviews.length > 0 ? (
+                <>
+                  {reviews.map((r) => (
+                    <ReviewCardWrapper key={r.id}>
+                      <ReviewCard
+                        review={r}
+                        variant="compact"     // 상세페이지용 미리보기: 날짜/좋아요/삭제 숨김
+                        isLoggedIn={false}    // 미리보기 구역에서는 토글/삭제 안 보이도록 고정
+                        isOwner={false}
+                      />
+                    </ReviewCardWrapper>
+                  ))}
 
-          <ReviewList>
-            {reviews.length ? (
-              reviews.map((r) => (
-                <ReviewCard key={r.id}>
-                  <Avatar
-                    src={r.avatar || PLACEHOLDER_AVATAR}
-                    alt={`${r.authorName} 프로필`}
-                    onError={(e) => (e.currentTarget.src = PLACEHOLDER_AVATAR)}
-                  />
-                  <ReviewBody>
-                    <ReviewTop>
-                      <Author>{r.authorName}</Author>
-                      <Dot>•</Dot>
-                      <RDate>{r.createdAt}</RDate>
-                    </ReviewTop>
-                    <RText>{r.content}</RText>
-                  </ReviewBody>
-                </ReviewCard>
-              ))
-            ) : (
-              <div style={{ color: '#aaa', fontSize: 12, padding: '4px 2px' }}>
-                아직 등록된 리뷰가 없습니다.
-              </div>
-            )}
-          </ReviewList>
+                  {/* ⬇️ 스크롤 끝에 노출되는 '리뷰 더보기 >' 카드 */}
+                  <ReviewMoreCard
+                    type="button"
+                    onClick={() => navigate(`/venue/${venueId}/review`)}
+                    aria-label="리뷰 더보기"
+                    title="리뷰 더보기"
+                  >
+                    <ReviewMoreText>리뷰 더보기</ReviewMoreText>
+                    <ChevronImg src={ChevronRightIcon} alt=">" />
+                  </ReviewMoreCard>
+                </>
+              ) : (
+                <>
+                  <div style={{ color: '#aaa', fontSize: '12px', padding: '10px' }}>
+                    아직 등록된 리뷰가 없습니다.
+                  </div>
+                  <ReviewMoreCard
+                    type="button"
+                    onClick={() => navigate(`/venue/${venueId}/review`)}
+                    aria-label="리뷰 더보기"
+                    title="리뷰 더보기"
+                  >
+                    <ReviewMoreText>리뷰 더보기</ReviewMoreText>
+                    <ChevronImg src={ChevronRightIcon} alt=">" />
+                  </ReviewMoreCard>
+                </>
+              )}
+            </ReviewRow>
+          </ReviewScrollWrapper>
+          {/* ============================ */}
         </InnerWrapper>
       </Container>
     </>

@@ -46,8 +46,8 @@
   padding: 8px 12px;
   font-size: 14px;
   line-height: 1;
-  border: 1px solid #7e57c2;      /* 보라색 라인 */
-  color: #7e57c2;
+  border: 1px solid #3C9C68;   /* ← # 추가 */
+  color: #3C9C68;              /* ← # 추가 */
   background: transparent;
   border-radius: 999px;
   cursor: pointer;
@@ -128,7 +128,7 @@
 }
 
 .profile__name .edit-nickname button {
-  background-color: #f4511e;
+  background-color: #3C9C68;
   color: #fff;
   border: none;
   border-radius: 4px;
