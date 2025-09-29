@@ -1,171 +1,285 @@
-import { useEffect, useRef, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+// ✅ src/pages/review/VenueReviewListPage.jsx
+import styled from 'styled-components';
+import { useEffect, useMemo, useRef, useState, useCallback } from 'react';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import Header from '../../components/layout/Header';
 import ReviewCard from '../../components/review/ReviewCard';
-import { fetchVenueReviewList, likeReview, unlikeReview, createVenueReview } from '../../api/reviewApi';
-import './VenueReviewListPage.css';
+import { fetchVenueDetail } from '../../api/venueApi';
+import { fetchReviews, toggleReviewLike, deleteReview } from '../../api/reviewApi';
+import { fetchUserInfo } from '../../api/userApi';
 
+const Page = styled.div`
+  width: 100%;
+  margin: 0 auto;
+  padding-bottom: 88px; /* 하단 네비와 겹치지 않게 */
+  --side: 16px;
+`;
+
+const HeaderSpacer = styled.div`
+  height: 28px;
+`;
+
+const ActionRow = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  padding: 8px var(--side) 0;
+  margin-bottom: 12px;
+`;
+
+const WriteButton = styled.button`
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  border: none;
+  background: ${({ disabled }) => (disabled ? '#a6d5bd' : '#3C9C68')};
+  color: #fff;
+  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
+  box-shadow: none;
+  outline: none;
+`;
+
+const List = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 0 var(--side);
+  box-sizing: border-box;
+`;
+
+const Empty = styled.div`
+  padding: 40px var(--side);
+  color: ${({ theme }) => theme.colors?.lightGray || '#999'};
+  text-align: center;
+  font-size: ${({ theme }) => theme.fontSizes?.sm || '14px'};
+  box-sizing: border-box;
+`;
+
+const Loader = styled.div`
+  padding: 16px var(--side);
+  text-align: center;
+  color: ${({ theme }) => theme.colors?.darkGray || '#666'};
+  font-size: ${({ theme }) => theme.fontSizes?.sm || '14px'};
+  box-sizing: border-box;
+`;
 
 export default function VenueReviewListPage() {
   const { id } = useParams();
   const venueId = Number(id);
   const navigate = useNavigate();
-  
-  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('accessToken'));
-  const authChecked = true;
+  const location = useLocation();
 
-  const PAGE_SIZE = 10;
+  const [venueName, setVenueName] = useState('');
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [currentUserId, setCurrentUserId] = useState(null);
 
-  const [total, setTotal] = useState(0);
   const [items, setItems] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(1);
+  const size = 10;
   const [hasMore, setHasMore] = useState(true);
-
-  // 최신 상태 ref
-  const pageRef = useRef(0);
-  const loadingRef = useRef(false);
-  const hasMoreRef = useRef(true);
+  const [initialLoading, setInitialLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
 
   const sentinelRef = useRef(null);
-  
-  const handleNeedLogin = () => {
-    alert('로그인이 필요합니다.');
-    navigate('/login');
+
+  // API → 화면용 매핑
+  const mapReviews = (list) =>
+    list.map((x) => ({
+      id: x.id,
+      user: {
+        id: x.user?.id,
+        nickname: x.user?.nickname || x.author || '익명',
+        profile_url: x.user?.profile_url || x.profile_url || '',
+      },
+      content: x.content ?? '',
+      images: Array.isArray(x.images) ? x.images : [],
+      created_at: x.created_at,
+      like_count: x.like_count ?? 0,
+      liked_by_me: x.liked_by_me ?? false,
+    }));
+
+  // 중복 제거 병합
+  const mergeDedupe = (prevItems, nextItems) => {
+    const map = new Map();
+    [...nextItems, ...prevItems].forEach((it) => {
+      if (it && it.id != null) map.set(it.id, it);
+    });
+    return Array.from(map.values());
   };
 
-  const handleToggleLike = async (reviewId, nextLiked) => {
-    try {
-      const accessToken = localStorage.getItem('accessToken');
-      if (nextLiked) {
-        await likeReview(venueId, reviewId, accessToken);
-      } else {
-        await unlikeReview(venueId, reviewId, accessToken);
+  // 공연장 이름
+  useEffect(() => {
+    (async () => {
+      try {
+        const v = await fetchVenueDetail(venueId);
+        setVenueName(v?.name || '');
+      } catch {
+        setVenueName('');
       }
-    } catch (e) {
-      const status = e?.response?.status;
-      if (status === 401) {
-        handleNeedLogin();
-      } else {
-        console.error(e);
-        alert('잠시 후 다시 시도해주세요.');
+    })();
+  }, [venueId]);
+
+  // 로그인 상태
+  useEffect(() => {
+    (async () => {
+      try {
+        const me = await fetchUserInfo();
+        if (me?.id) {
+          setIsLoggedIn(true);
+          setCurrentUserId(me.id);
+        } else {
+          setIsLoggedIn(false);
+          setCurrentUserId(null);
+        }
+      } catch {
+        setIsLoggedIn(false);
+        setCurrentUserId(null);
       }
-      throw e; // 카드에서 롤백 처리됨
-    }
-  };
+    })();
+  }, []);
 
-  // 페이지 로더
-  const loadPage = async (targetPage, replace = false) => {
-    if (!Number.isFinite(venueId)) return;
-    if (loadingRef.current || !hasMoreRef.current) return;
-
-    loadingRef.current = true;
-    setLoading(true);
-
-    try {
-      const { total: totalCount, items: list } = await fetchVenueReviewList(
-        venueId,
-        { page: targetPage, size: PAGE_SIZE }
-      );
-
-      setTotal(Number(totalCount ?? 0));
-      setItems((prev) => (replace ? list : [...prev, ...list]));
-      pageRef.current = targetPage;
-
-      const fetched = targetPage * PAGE_SIZE - (PAGE_SIZE - list.length);
-      const noMore = !list.length || fetched >= Number(totalCount ?? 0);
-      if (noMore) {
-        hasMoreRef.current = false;
+  // 첫 페이지
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      setInitialLoading(true);
+      try {
+        const res = await fetchReviews(venueId, { page: 1, size, order: 'desc' });
+        const list = Array.isArray(res?.items || res) ? (res.items || res) : [];
+        if (!mounted) return;
+        setItems(mapReviews(list));
+        setPage(2);
+        setHasMore(list.length >= size);
+      } catch (e) {
+        console.error('리뷰 목록 로드 실패:', e);
+        setItems([]);
         setHasMore(false);
+      } finally {
+        setInitialLoading(false);
       }
+    })();
+    return () => {
+      mounted = false;
+    };
+  }, [venueId]);
+
+  // 더 불러오기
+  const loadMore = useCallback(async () => {
+    if (!hasMore || loadingMore) return;
+    setLoadingMore(true);
+    try {
+      const res = await fetchReviews(venueId, { page, size, order: 'desc' });
+      const list = Array.isArray(res?.items || res) ? (res.items || res) : [];
+      setItems((prev) => mergeDedupe(prev, mapReviews(list))); // ✅ dedupe
+      setPage((p) => p + 1);
+      if (list.length < size) setHasMore(false);
     } catch (e) {
-      console.error('[VenueReviewListPage] load error:', e);
-      hasMoreRef.current = false;
+      console.error('리뷰 추가 로드 실패:', e);
       setHasMore(false);
     } finally {
-      loadingRef.current = false;
-      setLoading(false);
+      setLoadingMore(false);
     }
-  };
+  }, [venueId, page, size, hasMore, loadingMore]);
 
-  // venueId 바뀔 때 초기화 + 첫 페이지 로드
+  // 무한 스크롤
   useEffect(() => {
-    setTotal(0);
-    setItems([]);
-    setLoading(false);
-    setHasMore(true);
-    pageRef.current = 0;
-    loadingRef.current = false;
-    hasMoreRef.current = true;
-
-    if (Number.isFinite(venueId)) {
-      loadPage(1, true);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [venueId]);
-
-  // 무한 스크롤 옵저버
-  useEffect(() => {
-    if (!sentinelRef.current) return;
-    const io = new IntersectionObserver(
+    const el = sentinelRef.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting) {
-          const next = pageRef.current + 1;
-          loadPage(next);
-        }
+        if (entries[0].isIntersecting) loadMore();
       },
-      { root: null, rootMargin: '200px 0px 400px', threshold: 0 }
+      { rootMargin: '200px 0px' }
     );
-    io.observe(sentinelRef.current);
-    return () => io.disconnect();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [venueId]);
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [loadMore]);
 
-  const handleReport = (id) => {
-    alert('신고가 접수되었습니다.');
-    // TODO: 신고 API 연결
+  // 좋아요
+  const handleToggleLike = async (reviewId, nextLiked) => {
+    if (!isLoggedIn) {
+      navigate(`/login?redirect=${encodeURIComponent(location.pathname)}`);
+      return;
+    }
+    try {
+      const data = await toggleReviewLike(reviewId, !nextLiked); // 현재 상태 넘김
+      setItems((prev) =>
+        prev.map((it) =>
+          it.id === reviewId
+            ? {
+                ...it,
+                like_count:
+                  typeof data?.like_count === 'number'
+                    ? data.like_count
+                    : it.like_count + (nextLiked ? 1 : -1),
+                liked_by_me:
+                  typeof data?.liked_by_me === 'boolean'
+                    ? data.liked_by_me
+                    : nextLiked,
+              }
+            : it
+        )
+      );
+    } catch (e) {
+      console.error('좋아요 토글 실패:', e);
+    }
   };
+
+  // 삭제
+  const handleDelete = async (reviewId) => {
+    if (!isLoggedIn) return;
+    if (!window.confirm('이 리뷰를 삭제할까요?')) return;
+    try {
+      await deleteReview(reviewId);
+      setItems((prev) => prev.filter((it) => it.id !== reviewId));
+    } catch (e) {
+      console.error('리뷰 삭제 실패:', e);
+      alert('삭제에 실패했습니다.');
+    }
+  };
+
+  // 작성
+  const goWrite = () => {
+    if (!isLoggedIn) {
+      navigate(`/login?redirect=${encodeURIComponent(location.pathname)}`);
+      return;
+    }
+    navigate(`/venue/${venueId}/review/write`);
+  };
+
+  const title = useMemo(() => (venueName ? `${venueName} | 리뷰` : '리뷰'), [venueName]);
+  const hasItems = items.length > 0;
 
   return (
-    <div className="page page--reviews">
-      <Header title="리뷰" showBack />
-      <div className="header-spacer" />
+    <Page>
+      <Header title={title} />
+      <HeaderSpacer />
 
-      <div className="review-summary">
-        <span>총 {total}개</span>
-        <button
-          type="button"
-          className="review-write-btn"
-          disabled={!Number.isFinite(venueId)}
-          onClick={() => {
-          navigate(`/review/write?venueId=${venueId}`);
-          }}
-        >
+      <ActionRow>
+        <WriteButton onClick={goWrite} disabled={!isLoggedIn}>
           작성하기
-        </button>
-      </div>
+        </WriteButton>
+      </ActionRow>
 
-      <div className="review-list">
-        {items.map((it) => (
+      {initialLoading && <Loader>불러오는 중…</Loader>}
+
+      {!initialLoading && !hasItems && <Empty>아직 등록된 리뷰가 없습니다.</Empty>}
+
+      <List>
+        {items.map((r) => (
           <ReviewCard
-            key={it.id}
-            item={it}
-            canLike={!!localStorage.getItem('accessToken')}                 
-            onNeedLogin={handleNeedLogin}    
-            onReport={handleReport}
+            key={r.id} // ✅ id만 사용 → 중복 key 제거
+            review={r}
+            variant="full"
+            isLoggedIn={isLoggedIn}
+            isOwner={r.user?.id && currentUserId && r.user.id === currentUserId}
             onToggleLike={handleToggleLike}
+            onDelete={handleDelete}
           />
         ))}
+      </List>
 
-        {!items.length && !loading && (
-          <div className="empty">아직 작성된 리뷰가 없어요.</div>
-        )}
-
-        <div ref={sentinelRef} className="sentinel" />
-        {loading && <div className="loading">불러오는 중…</div>}
-        {!hasMore && items.length > 0 && (
-          <div className="end">마지막 리뷰입니다.</div>
-        )}
-      </div>
-    </div>
+      {hasMore && <Loader ref={sentinelRef}>더 불러오는 중…</Loader>}
+      {!hasMore && hasItems && <Loader>마지막 리뷰입니다.</Loader>}
+    </Page>
   );
 }

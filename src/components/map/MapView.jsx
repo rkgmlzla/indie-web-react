@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { LocateFixed, RotateCcw } from 'lucide-react';
+import { LocateFixed, RotateCw } from 'lucide-react';
 import { MapPin as LucideMapPin } from 'lucide-react';
 import ReactDOMServer from 'react-dom/server';
 
@@ -45,8 +45,21 @@ const MapView = ({
         center: new window.naver.maps.LatLng(lat, lng),
         zoom: 13, // 대략 3km
       });
-    };
 
+      const userLocation = new window.naver.maps.LatLng(lat, lng);
+      const marker = new window.naver.maps.Marker({
+        position: userLocation,
+        map: mapRef.current,
+        icon: {
+          content:
+            '<div style="background:#007bff;border-radius:50%;width:14px;height:14px;border:2px solid white;"></div>',
+          size: new window.naver.maps.Size(14, 14),
+          anchor: new window.naver.maps.Point(7, 7),
+        },
+      });
+      setCurrentMarker(marker);
+    };
+    
     navigator.geolocation.getCurrentPosition(
       ({ coords }) => initMap(coords.latitude, coords.longitude),
       () => initMap(37.5665, 126.978) // 실패 시 서울 시청
@@ -158,12 +171,12 @@ const MapView = ({
     const bounds = mapRef.current.getBounds();
     const ne = bounds.getNE();
     const sw = bounds.getSW();
-    const center = mapRef.current.getCenter();
 
     onSearchInMap({
-      ne: { lat: ne.lat(), lng: ne.lng() },
-      sw: { lat: sw.lat(), lng: sw.lng() },
-      center: { lat: center.lat(), lng: center.lng() },
+      sw_lat: sw.lat(),
+      sw_lng: sw.lng(),
+      ne_lat: ne.lat(),
+      ne_lng: ne.lng(),
     });
   };
 
@@ -186,24 +199,24 @@ const MapView = ({
         onClick={handleSearchHere}
         style={{
           position: 'absolute',
-          top: '20px',
+          top: '28px',
           left: '50%',
           transform: 'translateX(-50%)',
           display: 'flex',
           alignItems: 'center',
-          gap: 8,
+          gap: 4,
+          fontSize: '12px',
+          fontWeight: 500,
           padding: '4px 8px',
           borderRadius: 24,
-          border: '1px solid #ff7a3d',
-          background: '#fff5ef',
-          color: '#d55a1f',
-          fontWeight: 500,
-          boxShadow: '0 2px 6px rgba(0,0,0,0.08)',
+          border: '1px solid #3C9C68',
+          background: '#FAFAFA',
+          color: '#3C9C68',
           cursor: 'pointer',
           zIndex: 2,
         }}
         aria-label="현 지도에서 검색">
-        <RotateCcw size={16} />현 지도에서 검색
+        <RotateCw size={14}/>현 지도에서 검색
       </button>
 
       {/* 우하단: 내 위치로 이동 */}

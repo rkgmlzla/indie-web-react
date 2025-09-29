@@ -1,10 +1,26 @@
 // src/components/modals/PeriodModal.js
 import styled from 'styled-components';
+import React, { useState } from 'react';
 
 export default function PeriodModal({ startYear, startMonth, endYear, endMonth, onChange, onClose }) {
   const months = Array.from({ length: 12 }, (_, i) => i + 1);
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: 5 }, (_, i) => currentYear + i);
+
+  const [tempStartYear, setTempStartYear] = useState(startYear);
+  const [tempStartMonth, setTempStartMonth] = useState(startMonth);
+  const [tempEndYear, setTempEndYear] = useState(endYear);
+  const [tempEndMonth, setTempEndMonth] = useState(endMonth);
+
+  const handleApply = () => {
+    onChange({
+      startYear: tempStartYear,
+      startMonth: tempStartMonth,
+      endYear: tempEndYear,
+      endMonth: tempEndMonth,
+    });
+    onClose();
+  };
 
   return (
     <Backdrop onClick={onClose}>
@@ -16,10 +32,8 @@ export default function PeriodModal({ startYear, startMonth, endYear, endMonth, 
             <Picker>
               <SelectWrapper>
                 <select
-                  value={startYear}
-                  onChange={(e) =>
-                    onChange({ startYear: Number(e.target.value), startMonth, endYear, endMonth })
-                  }
+                  value={tempStartYear}
+                  onChange={(e) => setTempStartYear(Number(e.target.value))}
                 >
                   {years.map((y) => (
                     <option key={y} value={y}>{y}</option>
@@ -31,10 +45,8 @@ export default function PeriodModal({ startYear, startMonth, endYear, endMonth, 
             <Picker>
               <SelectWrapper>
                 <select
-                  value={startMonth}
-                  onChange={(e) =>
-                    onChange({ startYear, startMonth: Number(e.target.value), endYear, endMonth })
-                  }
+                  value={tempStartMonth}
+                  onChange={(e) => setTempStartMonth(Number(e.target.value))}
                 >
                   {months.map((m) => (
                     <option key={m} value={m}>{m}</option>
@@ -50,10 +62,8 @@ export default function PeriodModal({ startYear, startMonth, endYear, endMonth, 
             <Picker>
               <SelectWrapper>
                 <select
-                  value={endYear}
-                  onChange={(e) =>
-                    onChange({ startYear, startMonth, endYear: Number(e.target.value), endMonth })
-                  }
+                  value={tempEndYear}
+                  onChange={(e) => setTempEndYear(Number(e.target.value))}
                 >
                   {years.map((y) => (
                     <option key={y} value={y}>{y}</option>
@@ -65,10 +75,8 @@ export default function PeriodModal({ startYear, startMonth, endYear, endMonth, 
             <Picker>
               <SelectWrapper>
                 <select
-                  value={endMonth}
-                  onChange={(e) =>
-                    onChange({ startYear, startMonth, endYear, endMonth: Number(e.target.value) })
-                  }
+                  value={tempEndMonth}
+                  onChange={(e) => setTempEndMonth(Number(e.target.value))}
                 >
                   {months.map((m) => (
                     <option key={m} value={m}>{m}</option>
@@ -79,7 +87,7 @@ export default function PeriodModal({ startYear, startMonth, endYear, endMonth, 
           </PickerGroup>
         </PickerRow>
 
-        <CloseButton onClick={onClose}>적용</CloseButton>
+        <CloseButton onClick={handleApply}>적용</CloseButton>
       </BottomSheet>
     </Backdrop>
   );

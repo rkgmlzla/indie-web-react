@@ -2,19 +2,45 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Bell, BellOff, Heart } from 'lucide-react';
 import Searchbar from '../../components/ui/searchbar';
-import Tab from '../../components/ui/tab';
+//import Tab from '../../components/ui/tab';
+import styled from 'styled-components';
+
 import './Search.css';
 import PostItem from '../../components/ui/postitem';
 import Header from '../../components/layout/Header';
 
 // ✅ API Import
-import { searchPerformanceAndVenue, searchArtist, searchPost } from '../../api/searchApi';
+import { searchPerformanceAndVenue, searchArtist } from '../../api/searchApi';
 import {
   likeArtist,
   unlikeArtist,
   registerArtistAlert,
   cancelArtistAlert,
 } from '../../api/likeApi';
+
+
+/* ===== styles ===== */
+const TabRow = styled.div`
+  display: flex;
+  justify-content: center;
+  border-bottom: 1px solid ${({ theme }) => theme.colors.outlineGray};
+  margin-bottom: 0.5rem;
+`;
+
+const TabButton = styled.button`
+  flex: 1;
+  padding: 0.75rem 1rem;
+  font-size: ${({ theme }) => theme.fontSizes.base};
+  font-weight: ${({ theme }) => theme.fontWeights.medium};
+  color: ${({ active, theme }) =>
+    active ? theme.colors.textRed : theme.colors.darkGray};
+  border: none;
+  border-bottom: ${({ active, theme }) =>
+    active ? `1.5px solid ${theme.colors.textRed}` : 'none'};
+  background-color: transparent;
+  cursor: pointer;
+`;
+
 
 function Search() {
   const location = useLocation();
@@ -30,7 +56,6 @@ function Search() {
   const [concerts, setConcerts] = useState([]);
   const [venues, setVenues] = useState([]);
   const [artists, setArtists] = useState([]);
-  const [posts, setPosts] = useState([]);
 
   const [alarmState, setAlarmState] = useState({});
   const [likedState, setLikedState] = useState({});
@@ -90,7 +115,7 @@ function Search() {
     setConcerts([]);
     setVenues([]);
     setArtists([]);
-    setPosts([]);
+ 
 
     try {
       if (currentTab === '공연/공연장') {
@@ -112,10 +137,7 @@ function Search() {
         });
         setLikedState(initialLiked);
         setAlarmState(initialAlarm);
-      } else if (currentTab === '자유게시판') {
-        const postRes = await searchPost({ keyword: searchKeyword, page: 1, size: 10 });
-        setPosts(Array.isArray(postRes) ? postRes : []);
-      }
+      } 
     } catch (err) {
       console.error('📛 검색 API 호출 실패:', err);
     }
@@ -176,7 +198,19 @@ function Search() {
       <div style={{ height: '30px' }} />
 
       <Searchbar value={keyword} onChange={(e) => setKeyword(e.target.value)} onSearch={handleSearch} />
-      <Tab options={['공연/공연장', '아티스트', '자유게시판']} activeTab={tab} onChange={setTab} />
+    
+      <TabRow>
+        <TabButton
+          active={tab === '공연/공연장'}
+          onclick={()=>setTab('공연/공연장')}>
+          공연/공연장
+        </TabButton>
+        <TabButton
+          active={tab === '아티스트'}
+          onClick={()=>setTab('아티스트')}>
+          아티스트
+        </TabButton>
+      </TabRow>
 
       {/* 🔍 최근 검색어 */}
       <div className="recent">
@@ -261,16 +295,10 @@ function Search() {
         </div>
       )}
 
-      {/* 📝 자유게시판 */}
-      {keyword && tab === '자유게시판' && (
-        <div className="freeboard-section">
-          {posts.length > 0 ? posts.map((post) => (
-            <PostItem key={post.id} post={post} onClick={() => navigate(`/freeboard/${post.id}`)} />
-          )) : <p><strong>{keyword}</strong>에 대한 자유게시판 게시물이 없습니다.</p>}
-        </div>
-      )}
+      
     </div>
   );
 }
 
 export default Search;
+

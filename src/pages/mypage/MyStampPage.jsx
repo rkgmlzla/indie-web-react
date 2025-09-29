@@ -13,6 +13,9 @@ export default function MyStampPage() {
   const [error, setError] = useState(null);
 
   const [isPeriodModalOpen, setIsPeriodModalOpen] = useState(false);
+  const currentYear = new Date().getFullYear();
+  const [startYear, setStartYear] = useState(currentYear);
+  const [endYear, setEndYear] = useState(currentYear);
   const [startMonth, setStartMonth] = useState(1);
   const [endMonth, setEndMonth] = useState(12);
   
@@ -20,7 +23,7 @@ export default function MyStampPage() {
     const loadStamps = async () => {
       try {
         setLoading(true);
-        const data = await fetchCollectedStamps(1, 12);
+        const data = await fetchCollectedStamps(startMonth, endMonth);
         setStamps(data);
       } catch (e) {
         console.error("📛 스탬프 불러오기 실패:", e);
@@ -30,7 +33,7 @@ export default function MyStampPage() {
       }
     };
     loadStamps();
-  }, [startMonth, endMonth]);
+  }, [startMonth, endMonth, startYear, endYear]); 
 
   return (
     <PageWrapper>
@@ -71,16 +74,21 @@ export default function MyStampPage() {
       </Content>
 
       {isPeriodModalOpen && (
-            <PeriodModal
-            startMonth={startMonth}
-            endMonth={endMonth}
-            onChange={({ startMonth, endMonth }) => {
-                setStartMonth(startMonth);
-                setEndMonth(endMonth);
-            }}
-            onClose={() => setIsPeriodModalOpen(false)}
-            />
-        )}
+        <PeriodModal
+          startYear={startYear}
+          startMonth={startMonth}
+          endYear={endYear}
+          endMonth={endMonth}
+
+          onChange={({ startYear, startMonth, endYear, endMonth }) => {
+            setStartYear(startYear);
+            setStartMonth(startMonth);
+            setEndYear(endYear);
+            setEndMonth(endMonth);
+          }}
+          onClose={() => setIsPeriodModalOpen(false)}
+        />
+      )}
     </PageWrapper>
   );
 }
