@@ -12,15 +12,25 @@ export const theme = {
     darkGray: '#4B4B4B',
     lightGray: '#B0B0B0',
     outlineGray: '#E4E4E4',
+    popupGray: '#edededff',
+    stampGray: '#6a6a6a',
 
     // 테마 색상
     themeOrange: '#F14F21',
     themeOrangeAlpha: '#F14F214D', // alpha 포함
+    themeGreen: '#3C9C68',
 
     // 텍스트 계열
     textPrimary: '#FF1C1C1E',
     textHint: '#FFB0B0B0',
     textRed: '#9A1616',
+ 
+    //홈 색//캘린더 색
+    maybethemeOrange: '#3C9C68', // 앞으로 주황색은 이 값으로!
+    gray600: '#4B4B4B',          // 공연장 이름 등
+    gray400: '#B0B0B0',          // NEW 업로드 공연 카드의 장소/날짜 등
+
+
   },
 
   // 폰트 크기/굵기, 여백 등
@@ -31,6 +41,10 @@ export const theme = {
     base: '1rem',     // 16px
     lg: '1.25rem',    // 20px
     xl: '1.5rem',     // 24px
+
+
+
+
   },
 
   fontWeights: {

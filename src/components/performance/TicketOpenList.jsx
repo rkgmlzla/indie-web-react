@@ -1,4 +1,4 @@
-// src/components/performance/TicketOpenList.jsx
+// ✅ src/components/performance/TicketOpenList.jsx
 import React from 'react';
 import styles from './TicketOpenList.module.css';
 import TicketOpenCard from './TicketOpenCard';
@@ -19,7 +19,9 @@ const TicketOpenList = ({ performances = [] }) => {
 
   return (
     <div className={styles.sectionContainer}>
-      <h2 className={styles.sectionTitle}>티켓 오픈 예정</h2>
+      <h2 className={styles.sectionTitle} style={{ textAlign: 'center', width: '100%' }}>
+        티켓 오픈 예정
+      </h2>
       <div className={styles.listContainer}>
         {performances.map((item) => (
           <TicketOpenCard

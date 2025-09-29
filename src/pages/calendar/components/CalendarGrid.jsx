@@ -19,22 +19,13 @@ function CalendarGrid({ currentMonth, selectedDate, onDateClick, concerts }) {
   const year = format(currentMonth, 'yyyy');
   const month = format(currentMonth, 'MM');
 
-  // 🎯 공연 날짜 포맷팅: 숫자만 올 경우 YYYY-MM-DD로 변환
   const concertDates = concerts.map((d) => {
     if (typeof d === 'number') {
-      const formatted = `${year}-${month}-${String(d).padStart(2, '0')}`;
-      console.log('📅 숫자 → 날짜 변환:', formatted);
-      return formatted;
+      return `${year}-${month}-${String(d).padStart(2, '0')}`;
     }
-    if (typeof d === 'string' && d.length >= 10) {
-      return d.slice(0, 10); // YYYY-MM-DD
-    }
-    const formatted = format(new Date(d), 'yyyy-MM-dd');
-    console.log('📅 일반 변환:', formatted);
-    return formatted;
+    if (typeof d === 'string' && d.length >= 10) return d.slice(0, 10);
+    return format(new Date(d), 'yyyy-MM-dd');
   });
-
-  console.log('📅 최종 concertDates:', concertDates);
 
   const today = format(new Date(), 'yyyy-MM-dd');
 
@@ -49,7 +40,7 @@ function CalendarGrid({ currentMonth, selectedDate, onDateClick, concerts }) {
 
         const dateStr = format(dayItem, 'yyyy-MM-dd');
         const hasConcert = concertDates.includes(dateStr);
-        const isSelected = isSameDay(dayItem, selectedDate);
+        const isSelected = selectedDate ? isSameDay(dayItem, selectedDate) : false; // ✅ null 안전
         const isToday = dateStr === today;
 
         let className = styles.day;

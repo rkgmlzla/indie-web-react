@@ -1,37 +1,42 @@
 .cardContainer {
   display: flex;
   width: 168px;
-  height: 104px; /* 높이 고정 */
+  height: 104px;
   background: #ffffff;
   border: 1px solid #cccccc;
-  border-radius: 6px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-  padding: 8px;
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+  padding: 6px;
   flex-shrink: 0;
   cursor: pointer;
 }
 
+/* ▶ 포스터를 카드 세로 공간에 더 채우도록 높이 ↑ */
 .poster {
-  width: 60px;
-  height: 80px;
+  width: 68px;
+  height: 103px;            /* 92→96→98 로 점진적 확대 */
   object-fit: cover;
-  border-radius: 4px;
+  border-radius: 6px;
+  display: block;
+  flex-shrink: 0;
 }
 
+/* ▶ 글귀 수직 가운데 정렬 */
 .textContainer {
   display: flex;
   flex-direction: column;
-  margin-left: 8px;
+  justify-content: center;  /* 가운데 배치 */
+  margin-left: 10px;
   flex: 1;
-  overflow: hidden; /* 내부 넘침 방지 */
+  overflow: hidden;
 }
 
 .title {
   font-size: 10px;
   font-weight: 700;
   color: #1c1c1e;
-  line-height: 1.4;
-  margin: 0;
+  line-height: 1.25;
+  margin: 0 0 4px 0;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -41,17 +46,30 @@
 
 .place {
   font-size: 8px;
-  color: #ff4b4b4b;
-  margin-top: 2px;
+  color: #4B4B4B;
+  margin: 0 0 6px 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
+.badge {
+  display: inline-block;
+  padding: 3px 8px;
+  font-size: 9px;
+  font-weight: 700;
+  color: #ffffff;
+  background-color: #F68B4D; /* maybethemeOrange */
+  border-radius: 4px;
+  line-height: 1;
+  align-self: flex-start;
+  margin: 0 0 6px 0;
+}
+
 .ticketDate {
-  font-size: 8px;
-  color: #f14f21;
-  margin-top: 4px;
-  line-height: 1.4;
+  font-size: 9px;
+  color: #F68B4D;          /* maybethemeOrange */
+  line-height: 1.2;
   white-space: nowrap;
+  margin: 0;
 }

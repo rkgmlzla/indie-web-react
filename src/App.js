@@ -1,6 +1,8 @@
 import { Routes, Route } from 'react-router-dom';
 import routes from './routes';
 import ScrollToTop from './components/layout/ScrollToTop';
+import BottomNav from "./components/layout/BottomNav";
+import  { Toaster } from 'react-hot-toast';
 
 function App() {
   return (
@@ -11,6 +13,8 @@ function App() {
           <Route key={idx} path={path} element={element} />
         ))}
       </Routes>
+      <Toaster />
+      <BottomNav />
     </>
   );
 }

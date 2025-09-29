@@ -1,0 +1,72 @@
+/* ✅ src/components/home_navibar/HomeNaviBar.module.css */
+/* 외부 여백 32px은 Home에서 섹션으로 감싸서 제어 */
+.wrap {
+  width: 100%;
+  margin: 0; /* 간격 예측 가능하게 */
+}
+
+.row {
+  display: flex;
+  justify-content: space-between; /* 4개 균등 배치 */
+  align-items: center;
+  gap: 12px;
+}
+
+.item {
+  flex: 1 1 0;
+  background: transparent;
+  border: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px; /* 아이콘 ↔ 라벨 간격 */
+  cursor: pointer;
+}
+
+.item:focus-visible {
+  outline: 2px solid #e4e4e4;
+  outline-offset: 4px;
+  border-radius: 14px;
+}
+
+.disabled {
+  cursor: default;
+  /* ⛔️ 불투명도 낮추지 않음: 아이콘/배경이 연해 보이지 않게 */
+  opacity: 1;
+  pointer-events: none; /* 비활성 클릭 방지 */
+}
+
+.tile {
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+  background: #f6f6f6;     /* 디자인에 맞춘 연회색 타일 */
+  border: 1px solid #eaeaea;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ⬇️ SVG 컴포넌트 공통 크기 */
+.iconSvg {
+  width: 28px;
+  height: 28px;
+  display: block;
+}
+
+/* ⬇️ SVG 내부 모든 도형에 강제로 테마색 적용
+   (원본에 fill/stroke가 박혀 있어도 덮어씀) */
+.iconSvg,
+.iconSvg * {
+  fill: var(--icon-color) !important;
+  stroke: var(--icon-color) !important;
+}
+
+.label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #4b4b4b; /* theme의 gray600 톤과 유사 */
+  line-height: 1;
+  user-select: none;
+}

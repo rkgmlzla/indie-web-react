@@ -1,3 +1,4 @@
+/* ✅ src/pages/calendar/CalendarPage.module.css */
 .calendarPage {
   padding: 24px;
   background: white;
@@ -7,19 +8,19 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 16px;
+  /* 🔻 월 타이틀 위아래 간격 축소 */
+  margin-bottom: 8px;
 }
 
 .navIcon {
-  width: 24px;
-  height: 24px;
+  width: 24px;   /* ⭕ 좌/우 아이콘 동일 크기 */
+  height: 24px;  /* ⭕ 좌/우 아이콘 동일 크기 */
   cursor: pointer;
 }
 
 .leftIcon {
   transform: scaleX(-1);
-  width: 25px;
-  height: 25px;
+  /* ❌ 더이상 크기 다르게 하지 않음 */
 }
 
 .monthTitle {
@@ -31,38 +32,59 @@
 .dailyTitle {
   font-weight: bold;
   font-size: 18px;
-  margin-top: 16px;
+  margin-top: 12px;
   margin-bottom: 8px;
 }
 
+/* 📌 달력 그리드 (CalendarGrid에서도 동일 클래스명을 사용하는 경우 맞춰서 유지) */
 .calendarGrid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 4px;
 }
 
+/* 주차 줄이 display: contents 로 들어올 때 높이 변동 방지 */
 .week {
   display: contents;
 }
 
+/* 🔒 날짜 셀 고정 크기 & 보더 공간 예약으로 클릭 시 레이아웃 안 흔들리게 */
 .day {
   width: 40px;
   height: 40px;
   text-align: center;
-  line-height: 40px;
+  line-height: 36px; /* 보더 2px 포함해서 수직 정렬 보정 */
   border-radius: 50%;
   cursor: pointer;
+
+  /* ⭕ 항상 2px 보더 공간을 확보해둬서
+     border 유무/색 변화에도 레이아웃이 안 밀림 */
+  border: 2px solid transparent;
+  box-sizing: border-box;
 }
 
+/* ✅ 공연 있는 날짜: 테두리만 강조 (색은 theme 주황) */
 .circleBorder {
-  border: 2px solid red; /* ○ 공연 있는 날짜 */
+  border-color: var(--accent);
+  background: transparent;
+  color: inherit;
 }
 
+/* ✅ 선택된 날짜: 배경 강조 (동일 두께 보더로 흔들림 방지) */
 .circleFilled {
-  background: red; /* ● 선택된 날짜 */
+  background: var(--accent);
+  border-color: var(--accent); /* 두께 동일 유지 */
   color: white;
 }
 
 .disabled {
   opacity: 0.3;
+}
+
+/* ✅ 달력 ↔ 선택 날짜 섹션 구분선 */
+.divider {
+  height: 1px;
+  background: var(--outlineGray);
+  margin: 12px 0 8px;
+  border: 0;
 }

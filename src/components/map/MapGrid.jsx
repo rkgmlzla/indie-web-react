@@ -1,3 +1,5 @@
+// src/components/map/MapGrid.jsx
+
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import styled from 'styled-components';
@@ -8,11 +10,13 @@ const Container = styled.div`
   position: relative;
   z-index: 1;
 `;
+
 const Row = styled.div`
   display: flex;
   justify-content: space-between;
   margin-top: 16px;
 `;
+
 const CardContainer = styled.div`
   width: 30%;
   display: flex;
@@ -21,44 +25,57 @@ const CardContainer = styled.div`
   flex-direction: column;
   caret-color: transparent;
 `;
+
 const CardWrapper = styled.div`
   width: 100%;
-  aspect-ratio: 3 / 4;
   display: flex;
   flex-direction: column;
   padding: 8px;
-  border-radius: 13px;
+  border-radius: 10px;
   cursor: pointer;
   box-sizing: border-box;
-  border: ${({ $isSelected }) =>
-    $isSelected ? '1px solid rgba(241, 79, 33, 0.8)' : 'none'};
+  background-color: ${({ $isSelected, theme }) =>
+    $isSelected ? 'rgba(241, 79, 33, 0.1)' : 'white'}; 
+  position: relative;
   flex-shrink: 0;
 `;
+
 const Poster = styled.img`
   width: 100%;
   aspect-ratio: 3 / 4;
-  border-radius: 5px;
+  border-radius: 10px;
   object-fit: cover;
 `;
+
 const Venue = styled.div`
   margin-top: 6px;
   font-weight: ${({ theme }) => theme.fontWeights.semibold};
-  font-size: ${({ theme }) => theme.fontSizes.xxs};
+  font-size: ${({ theme }) => theme.fontSizes.xs};
   color: ${({ theme }) => theme.colors.black};
   line-height: 16px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 `;
+
 const Time = styled.div`
-  margin-top: 2px;
+  margin-top: 4px;
   font-weight: ${({ theme }) => theme.fontWeights.regular};
-  font-size: ${({ theme }) => theme.fontSizes.xxs};
+  font-size: ${({ theme }) => theme.fontSizes.xs};
   color: ${({ theme }) => theme.colors.darkGray};
   line-height: 12px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+`;
+
+const EmptyMessage = styled.div`
+  width: 100%;
+  text-align: center;
+  padding: 40px 0;
+  font-weight: ${({ theme }) => theme.fontWeights.medium};
+  color: ${({ theme }) => theme.colors.darkGray};
+  font-size: ${({ theme }) => theme.fontSizes.sm};
 `;
 
 const formatOnlyTime = (timeStr) => {
@@ -102,6 +119,14 @@ const MapGrid = ({
     rows.push(slice);
   }
 
+  if (data.length === 0) {
+    return (
+      <Container>
+        <EmptyMessage>예정 공연이 없습니다</EmptyMessage>
+      </Container>
+    );
+  }
+
   return (
     <Container>
       {rows.map((rowItems, rowIndex) => {
@@ -124,7 +149,7 @@ const MapGrid = ({
                 return (
                   <CardContainer key={colIndex}>
                     <MapCard
-                      poster={item.image_url}
+                      poster={firstUpcoming?.image_url}
                       venue={item.name}
                       time={
                         firstUpcoming

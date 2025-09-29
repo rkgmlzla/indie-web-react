@@ -25,12 +25,12 @@
 
 .place {
   font-size: 8px;
-  color: #ff4b4b4b;
+  color: #B0B0B0; /* 변경: 공연장명 회색 */
   margin-top: 2px;
 }
 
 .date {
   font-size: 8px;
-  color: #ff4b4b4b;
+  color: #B0B0B0; /* 변경: 날짜 회색 */
   margin-top: 1px;
 }

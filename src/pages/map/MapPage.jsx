@@ -3,70 +3,44 @@ import React, { useEffect, useState } from 'react';
 import Header from '../../components/layout/Header';
 import Divider from '../../components/common/Divider';
 import ScrollableContainer from '../../components/common/ScrollableContainer';
-import MapView from './components/MapView';
-import MapTime from './components/MapTime';
-import MapGrid from './components/MapGrid';
+import MapView from '../../components/map/MapView';
+import MapTime from '../../components/map/MapTime';
+import MapGrid from '../../components/map/MapGrid';
 import styled from 'styled-components';
 import axios from 'axios';
 import { baseUrl } from '../../api/config';
-
-const PageWrapper = styled.div`
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-`;
 
 const MapPage = () => {
   const [venues, setVenues] = useState([]);
   const [selectedVenue, setSelectedVenue] = useState(null);
   const [selectedCardId, setSelectedCardId] = useState(null);
+  const [myLocation, setMyLocation] = useState(null);
 
-  // 각 공연장에 "오늘 0시 이후 첫 공연 1개" 붙여주는 헬퍼
-  const attachFirstUpcoming = async (venueList) => {
-    const now = new Date();
-    const kstMidnight = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate(),
-      0,
-      0,
-      0
-    );
-
-    const withPerf = await Promise.all(
-      (venueList || []).map(async (venue) => {
-        try {
-          const { data: perfs } = await axios.get(
-            `${baseUrl}/nearby/venue/${venue.venue_id}/performance`,
-            { params: { after: kstMidnight.toISOString() } }
-          );
-          return { ...venue, upcomingPerformance: (perfs || []).slice(0, 1) };
-        } catch (e) {
-          console.error(`공연 불러오기 실패 (venue_id: ${venue.venue_id})`, e);
-          return { ...venue, upcomingPerformance: [] };
-        }
-      })
-    );
-    return withPerf;
+  const attachFirstUpcoming = (venueList) => {
+    return venueList.map(venue => ({
+      ...venue,
+      upcomingPerformance: venue.performance.slice(0, 1)
+    }));
   };
 
   // 핀(마커) 클릭 시: 해당 장소만 공연 갱신 + 선택 동기화
   const handleMarkerClick = async (venue) => {
     try {
-      const now = new Date().toISOString();
+      const now = new Date();
+      const isoNow = now.toISOString();
+
       const { data: performances } = await axios.get(
         `${baseUrl}/nearby/venue/${venue.venue_id}/performance`,
-        { params: { after: now } }
+        { params: { after: isoNow } }
       );
-
+      
       const updatedVenue = {
         ...venue,
-        upcomingPerformance: (performances || []).slice(0, 1),
+        upcomingPerformance: performances.slice(0, 1),
       };
 
-      setSelectedVenue(updatedVenue); // 지도 이동 + InfoWindow
-      setSelectedCardId(updatedVenue.venue_id); // 그리드 선택 동기화
+      setSelectedVenue(updatedVenue);
+      setSelectedCardId(updatedVenue.venue_id);
 
       setVenues((prev) =>
         prev.map((v) =>
@@ -78,22 +52,31 @@ const MapPage = () => {
     }
   };
 
-  // 최초 로딩: 내 위치 기준 3km
+  // 최초 로딩: 내 위치 기준 지도 범위 내 공연장 검색
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(
       async ({ coords }) => {
+        const { latitude, longitude } = coords;
+        setMyLocation({ lat: latitude, lng: longitude });
+
+        const latDelta = 0.009; 
+        const lngDelta = 0.012; 
+        const sw_lat = latitude - latDelta;
+        const sw_lng = longitude - lngDelta;
+        const ne_lat = latitude + latDelta;
+        const ne_lng = longitude + lngDelta;
+
         try {
-          const { data: venueList } = await axios.get(
-            `${baseUrl}/nearby/venue`,
+          const { data: nearbyVenues } = await axios.post(
+            `${baseUrl}/nearby/performance`,
             {
-              params: {
-                lat: coords.latitude,
-                lng: coords.longitude,
-                radius: 3,
-              },
+              sw_lat,
+              sw_lng,
+              ne_lat,
+              ne_lng,
             }
           );
-          setVenues(await attachFirstUpcoming(venueList));
+          setVenues(attachFirstUpcoming(nearbyVenues));
         } catch (error) {
           console.error('🎯 근처 공연장 불러오기 실패:', error);
         }
@@ -111,22 +94,24 @@ const MapPage = () => {
 
       <MapView
         data={venues}
+        myLocation={myLocation}
         selectedVenue={selectedVenue}
         setSelectedVenue={setSelectedVenue}
         setSelectedCardId={setSelectedCardId}
         handleMarkerClick={handleMarkerClick}
-        // “현 지도에서 검색”: 지도 중심 기준 반경 3km 재조회
-        onSearchInMap={async ({ center }) => {
+        onSearchInMap={async ({ sw_lat, sw_lng, ne_lat, ne_lng }) => {
           try {
-            const { lat, lng } = center;
-            const { data: venueList } = await axios.get(
-              `${baseUrl}/nearby/venue`,
+            const { data: venueList } = await axios.post(
+              `${baseUrl}/nearby/performance`,
               {
-                params: { lat, lng, radius: 3 },
+                sw_lat,
+                sw_lng,
+                ne_lat,
+                ne_lng,
               }
             );
-            setVenues(await attachFirstUpcoming(venueList));
-            setSelectedVenue(null); // 선택 초기화 (원하면 유지하도록 변경 가능)
+            setVenues(attachFirstUpcoming(venueList));
+            setSelectedVenue(null);
             setSelectedCardId(null);
           } catch (error) {
             console.error('🎯 지도 내 공연장 불러오기 실패:', error);
@@ -140,14 +125,13 @@ const MapPage = () => {
       <ScrollableContainer>
         <MapGrid
           data={venues}
-          selectedCardId={selectedCardId} // ✅ 제어형으로 전달
+          selectedCardId={selectedCardId}
           onChangeSelected={(id) => {
-            // ✅ 카드 클릭 시 동기화
             setSelectedCardId(id);
             const found = venues.find((v) => v.venue_id === id) || null;
-            setSelectedVenue(found); // 지도 이동 + InfoWindow
+            setSelectedVenue(found);
           }}
-          onSelectVenue={setSelectedVenue} // (선택 유지용, MapGrid 내부 호출 시)
+          onSelectVenue={setSelectedVenue}
         />
       </ScrollableContainer>
     </PageWrapper>
@@ -155,3 +139,11 @@ const MapPage = () => {
 };
 
 export default MapPage;
+
+const PageWrapper = styled.div`
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;  
+  overflow-y: auto;
+`;

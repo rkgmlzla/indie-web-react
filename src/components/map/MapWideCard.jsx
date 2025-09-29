@@ -1,19 +1,19 @@
 import React from 'react';
 import styled from 'styled-components';
-import IconMore from '../../../assets/icons/icon_y_more.svg';
-import IconCopy from '../../../assets/icons/icon_y_copy.svg';
+import IconMore from '../../assets/icons/icon_y_more.svg'
+import IconCopy from '../../assets/icons/icon_y_copy.svg';
 import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
 const CardWrapper = styled.div`
   display: flex;
   flex-direction: row;
-  width: 94%;
-  margin: 0 16px;
-  padding: 4px;
+  width: 100%;
+  margin: 0 auto;
   box-sizing: border-box;
-  background: #ffdabaff;
-  border-radius: 13px;
-  padding-top: ${({ $noTopPadding }) => ($noTopPadding ? '0' : '16px')};
+  border: 1.4px solid ${({ theme }) => theme.colors.themeGreen};
+  border-radius: 10px;
+  padding: 8px;
 `;
 
 const Poster = styled.img`
@@ -34,6 +34,7 @@ const InfoBox = styled.div`
 `;
 
 const TopInfoBox = styled.div`
+  margin-top: 8px;
   display: flex;
   flex-direction: column;
 `;
@@ -42,24 +43,22 @@ const Title = styled.div`
   font-weight: ${({ theme }) => theme.fontWeights.semibold};
   font-size: ${({ theme }) => theme.fontSizes.sm};
   color: ${({ theme }) => theme.colors.black};
-  line-height: 20px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 `;
 
 const Time = styled.div`
-  font-weight: ${({ theme }) => theme.fontWeights.regular};
-  font-size: ${({ theme }) => theme.fontSizes.xs};
+  font-weight: ${({ theme }) => theme.fontWeights.medium};
+  font-size: ${({ theme }) => theme.fontSizes.sm};
   color: ${({ theme }) => theme.colors.black};
-  margin-top: 6px;
-  line-height: 18px;
+  margin-top: 4px;
 `;
 
 const BottomInfoBox = styled.div`
+  margin-bottom: 8px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
 `;
 
 const RowWrapper = styled.div`
@@ -77,13 +76,13 @@ const TextWrapper = styled.div`
 
 const VenueText = styled.div`
   flex-shrink: 1;
+  padding-bottom: 4px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   font-weight: ${({ theme }) => theme.fontWeights.semibold};
   font-size: ${({ theme }) => theme.fontSizes.sm};
   color: ${({ theme }) => theme.colors.black};
-  line-height: 20px;
   min-width: 0;
 `;
 
@@ -95,7 +94,6 @@ const AddressText = styled.div`
   font-weight: ${({ theme }) => theme.fontWeights.regular};
   font-size: ${({ theme }) => theme.fontSizes.xs};
   color: ${({ theme }) => theme.colors.darkGray};
-  line-height: 18px;
   min-width: 0;
 `;
 
@@ -132,7 +130,17 @@ const MapWideCard = ({ data, noTopPadding = false }) => {
     const copyTarget = perf?.address ?? address;
     if (copyTarget) {
       navigator.clipboard.writeText(copyTarget).then(() => {
-        alert('주소가 복사되었습니다.');
+        toast.success('주소가 복사되었습니다.', {
+          position: 'bottom-center', 
+          duration: 2000,    
+          style: {
+            marginBottom: '84px',
+          },       
+          iconTheme: {
+            primary: '#3C9C68', 
+            secondary: '#FFFFFF', 
+          },
+        });
       });
     }
   };
@@ -142,7 +150,7 @@ const MapWideCard = ({ data, noTopPadding = false }) => {
       <Poster src={perf?.image_url ?? '/default.jpg'} alt="poster" />
       <InfoBox>
         <TopInfoBox>
-          <Title>{perf?.title ?? '공연 없음'}</Title>
+          <Title>{perf?.title}</Title>
           <Time>{perf?.time ? formatTimeOnly(perf.time) : '-'}</Time>
         </TopInfoBox>
 
@@ -156,7 +164,7 @@ const MapWideCard = ({ data, noTopPadding = false }) => {
 
           <RowWrapper onClick={handleAddressClick}>
             <TextWrapper>
-              <AddressText>📍 {perf?.address ?? address ?? '-'}</AddressText>
+              <AddressText>{perf?.address ?? address ?? '-'}</AddressText>
               <FixedIcon src={IconCopy} alt="copy" />
             </TextWrapper>
           </RowWrapper>
