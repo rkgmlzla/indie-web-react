@@ -10,6 +10,7 @@ import Header from '../../components/layout/Header';
 import HeartOutlineIcon from '../../assets/icons/icon_heart_outline.svg';
 import HeartFilledIcon from '../../assets/icons/icon_heart_filled.svg';
 import ChevronRightIcon from '../../assets/icons/icon_go.svg';
+import { formatKoreanFromParts } from '../../utils/dateUtils';
 
 // ✅ API
 import { fetchPerformanceDetail } from '../../api/performanceApi';
@@ -25,6 +26,9 @@ export default function PerformanceDetailPage() {
   const [likeCount, setLikeCount] = useState(0);
   const [isAlarmed, setIsAlarmed] = useState(false); // ✅ 알림
 
+   const displayPerformanceDateTime =
+   formatKoreanFromParts(performance?.date, performance?.time) ||
+   [performance?.date, performance?.time].filter(Boolean).join(' ');
   // 🔑 하드코딩 제거 → localStorage에서 토큰 가져오기 (아티스트 상세페이지와 동일 패턴)
   const authToken = localStorage.getItem('accessToken');
 
@@ -99,7 +103,7 @@ export default function PerformanceDetailPage() {
         <InfoSection>
           <LabelRow>
             <Label>공연일시</Label>
-            <Value>{performance.date} {performance.time}</Value>
+           <Value>{formatKoreanFromParts(performance.date, performance.time)}</Value>
           </LabelRow>
           <LabelRow>
             <Label>공연장</Label>
@@ -121,7 +125,7 @@ export default function PerformanceDetailPage() {
           </LabelRow>
           <LabelRow>
             <Label>티켓 오픈</Label>
-            <Value>{performance.ticket_open_date} {performance.ticket_open_time}</Value>
+            <Value>{formatKoreanFromParts(performance.ticket_open_date, performance.ticket_open_time)}</Value>
           </LabelRow>
           <LabelRow>
             <Label>상세 정보</Label>

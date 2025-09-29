@@ -19,6 +19,13 @@ import { Routes, Route } from 'react-router-dom';
 import routes from './routes';
 
 function App() {
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = `https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=${process.env.NAVER_MAP_KEY}`;
+    script.async = true;
+    document.head.appendChild(script);
+  }, []);
+
   return (
     <Routes>
       {routes.map(({ path, element }, idx) => (
@@ -30,9 +37,3 @@ function App() {
 
 export default App;
 
-// const profileData = {
-//   profileImg: sampleVenueItem4,
-//   title: '언드',
-//   instagram: '@und_space',
-//   address: '경남 거제시 거제대로 3734 지하1층 eeeeeeed  eeeeeddddddddeeeeeee',
-// };

@@ -66,10 +66,7 @@ const List = styled.div`
   flex-direction: column;
 `;
 
-/* =========================
-   ✅ 헬퍼: 공연 날짜 파싱
-   - 백엔드가 date/time을 따로 주거나, ISO 하나로 주는 경우 모두 대응
-   ========================= */
+/* ===== 날짜 파싱 ===== */
 const getDateTime = (p) => {
   const iso = p.datetime || p.dateTime || p.performanceDateTime || p.start_at;
   if (iso) return new Date(iso);
@@ -77,6 +74,20 @@ const getDateTime = (p) => {
   if (p.date && p.time) return new Date(`${p.date}T${p.time}`);
   if (p.date) return new Date(`${p.date}T00:00:00`);
   return null;
+};
+
+/* ===== 썸네일 정규화 ===== */
+const normalizePoster = (p) => {
+  const thumbnail =
+    p.thumbnail ||
+    p.posterUrl ||
+    p.poster_url ||
+    p.poster ||
+    p.image_url ||
+    (Array.isArray(p.images) ? p.images[0] : '') ||
+    '';
+
+  return { ...p, thumbnail };
 };
 
 export default function PerformanceListPage() {
@@ -100,14 +111,9 @@ export default function PerformanceListPage() {
       const data = await fetchPerformances({ region: regionParam, sort: sortParam, page, size });
       let list = Array.isArray(data) ? data : [];
 
-      /* ✅ 공연임박순일 때만:
-         - 오늘 00:00 이전 공연 제외
-         - 가까운 날짜(오름차순)로 정렬
-         - 다른 정렬 옵션은 절대 변경하지 않음 */
       if (sortOption === 'date') {
         const startOfToday = new Date();
         startOfToday.setHours(0, 0, 0, 0);
-
         list = list
           .map((p) => ({ ...p, __dt: getDateTime(p) }))
           .filter((p) => p.__dt && p.__dt >= startOfToday)
@@ -115,10 +121,13 @@ export default function PerformanceListPage() {
           .map(({ __dt, ...rest }) => rest);
       }
 
+      // ✅ 포스터 경로 보정
+      list = list.map(normalizePoster);
+
       console.log('🎯 [공연 목록] 최종 리스트:', list);
       setPerformances(list);
     } catch (err) {
-      console.error('📛 공연 목록 API 호출 실패:', err.response?.data || err.message);
+      console.error('📛 공연 목록 API 호출 실패:', err?.response?.data || err.message);
       setPerformances([]);
     }
   };
@@ -157,7 +166,7 @@ export default function PerformanceListPage() {
             performances.map((p) => (
               <PerformanceListCard
                 key={p.id}
-                performance={p}
+                performance={p} // ✅ p.thumbnail 이 항상 존재하도록 보정됨
                 onClick={() => navigate(`/performance/${p.id}`)}
               />
             ))
