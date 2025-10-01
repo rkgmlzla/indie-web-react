@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import styled from 'styled-components';
 import { useNavigate, useLocation } from 'react-router-dom';
+import Header from "../../components/layout/Header";
 import ReviewCardAll from '../../components/review/ReviewCardAll';
 import {
   fetchAllReviews,          // GET  /venue/reviews?page=&size=&order=
@@ -11,16 +12,20 @@ import {
 import { fetchUserInfo } from '../../api/userApi';
 
 /* ===================== 스타일 ===================== */
+const HeaderSpacer = styled.div`
+  height: 28px;
+`;
+
 const PageWrap = styled.div`
   max-width: 720px;
   margin: 0 auto;
-  padding: 16px 14px 120px;
+  padding: 16px 14px 150px;
 `;
 
 const Heading = styled.h1`
   font-size: 20px;
   font-weight: 700;
-  margin: 0 0 12px 0;
+  margin: 10 0 12px 0;
 `;
 
 const SubBar = styled.div`
@@ -270,8 +275,8 @@ export default function AllReview({
 
   return (
     <PageWrap>
-      <Heading>공연장 리뷰</Heading>
-
+       <Header title='공연장 리뷰' />
+       <HeaderSpacer />
       {err && <ErrorBox role="alert">{err}</ErrorBox>}
 
       <SubBar>

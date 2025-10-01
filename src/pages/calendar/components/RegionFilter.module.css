@@ -65,9 +65,9 @@
 }
 
 .selected {
-  background-color: tomato;
+  background-color: #3C9C68;
   color: white;
-  border-color: tomato;
+  border-color: #3C9C68;
 }
 
 .sheetActions {

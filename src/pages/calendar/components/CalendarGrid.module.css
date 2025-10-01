@@ -69,10 +69,10 @@
 .redDot {
   width: 6px;
   height: 6px;
-  background: red;
-  border-radius: 50%;
+  background: rgb(226, 226, 226);
+  border-radius: 45%;
   position: absolute;
-  top: 4px;
+  top: 1px;
   left: 50%;
   transform: translateX(-50%);
 }

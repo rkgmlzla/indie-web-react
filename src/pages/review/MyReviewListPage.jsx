@@ -6,6 +6,10 @@ import ReviewCard from '../../components/review/ReviewCard';
 import { fetchMyReviews, toggleReviewLike, deleteReview } from '../../api/reviewApi';
 import { fetchUserInfo } from '../../api/userApi';
 
+const HeaderSpacer = styled.div`
+  height: 28px;
+`;
+
 const Page = styled.div`
   width: 100%;
   margin: 0 auto;
@@ -179,7 +183,7 @@ export default function MyReviewListPage() {
   return (
     <Page>
       <Header title="내 리뷰" />
-      <div style={{ height: "16px" }} />
+      <HeaderSpacer />
 
       {initialLoading && <Loader>불러오는 중…</Loader>}
       {!initialLoading && loadError && <Loader>불러오기에 실패했습니다.</Loader>}
