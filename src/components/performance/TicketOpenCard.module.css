@@ -9,6 +9,8 @@
   padding: 6px;
   flex-shrink: 0;
   cursor: pointer;
+  overflow: hidden;
+  align-items: center;
 }
 
 /* ▶ 포스터를 카드 세로 공간에 더 채우도록 높이 ↑ */

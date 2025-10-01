@@ -1,10 +1,18 @@
 // src/components/stamp/StampMyCard.jsx
 import React from "react";
 import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
 
-export default function StampMyCard({ posterUrl, title, venue, date }) {
-  return (
-    <CardWrapper>
+export default function StampMyCard({ id, posterUrl, title, venue, date }) {
+
+  const navigate = useNavigate();
+  
+  const handleClick = () => {
+    navigate(`/performance/${id}`);  
+  };
+
+   return (
+    <CardWrapper onClick={handleClick}>
       <Poster src={posterUrl} alt={title} />
       <Info>
         <Title>{title}</Title>
@@ -25,6 +33,11 @@ const CardWrapper = styled.div`
   display: flex;
   padding: 16px; 
   box-sizing: border-box;
+  cursor: pointer;
+
+   &:hover {
+    background: ${({ theme }) => theme.colors.bgLightGray};
+  }
 `;
 
 const Poster = styled.img`

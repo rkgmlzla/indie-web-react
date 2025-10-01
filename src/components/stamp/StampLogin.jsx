@@ -11,17 +11,21 @@ export default function StampLogin() {
 }
 
 const Overlay = styled.div`
-  position: absolute;
+  position: fixed;
   top: 56px;
-  left: 0;
+ bottom: 84px;  /* ✅ 실제 하단바 높이에 맞춰 증가 */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
   max-width: ${({ theme }) => theme.layout.maxWidth};
-  height: calc(100vh - 56px - 84px); /* 헤더 + 하단바 제외 */
-  background-color: #ffffff;
+  margin: 0 auto;
+  background-color: rgba(255,255,255,0.5);
   display: flex;
   justify-content: center;
   align-items: center;
+  text-align: center;
   z-index: 9999;
-  background-color: rgba(255,255,255,0.5)
+  pointer-events: all;
 `;
 
 const Message = styled.div`

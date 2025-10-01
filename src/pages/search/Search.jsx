@@ -33,10 +33,10 @@ const TabButton = styled.button`
   font-size: ${({ theme }) => theme.fontSizes.base};
   font-weight: ${({ theme }) => theme.fontWeights.medium};
   color: ${({ active, theme }) =>
-    active ? theme.colors.textRed : theme.colors.darkGray};
+    active ? theme.colors.themeGreen : theme.colors.darkGray};
   border: none;
   border-bottom: ${({ active, theme }) =>
-    active ? `1.5px solid ${theme.colors.textRed}` : 'none'};
+    active ? `1.5px solid ${theme.colors.themeGreen}` : 'none'};
   background-color: transparent;
   cursor: pointer;
 `;
@@ -73,10 +73,19 @@ function Search() {
   };
 
   const formatRange = (startISO, endISO) => {
-    if (!startISO && !endISO) return null;
-    const toK = (d) =>
-      new Date(d).toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' });
-    return startISO && endISO ? `${toK(startISO)} ~ ${toK(endISO)}` : toK(startISO || endISO);
+   if (!startISO && !endISO) return null;
+
+    const toYYYYMMDD = (d) => {
+      const date = new Date(d);
+      const y = date.getFullYear();
+      const m = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${y}-${m}-${day}`;   // ✅ 2025-09-25
+  };
+
+  return startISO && endISO
+    ? `${toYYYYMMDD(startISO)} ~ ${toYYYYMMDD(endISO)}`
+    : toYYYYMMDD(startISO || endISO);
   };
 
   // ✅ 공연 → PostItem 포맷 정규화 (이미지/날짜/장소 보강)
@@ -202,7 +211,7 @@ function Search() {
       <TabRow>
         <TabButton
           active={tab === '공연/공연장'}
-          onclick={()=>setTab('공연/공연장')}>
+          onClick={()=>setTab('공연/공연장')}>
           공연/공연장
         </TabButton>
         <TabButton
