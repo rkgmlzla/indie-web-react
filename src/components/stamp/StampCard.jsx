@@ -56,7 +56,7 @@ const Venue = styled.div`
   margin-top: 12px;
   font-size: ${({ theme }) => theme.fontSizes.xs};
   font-weight: ${({ theme }) => theme.fontWeights.semibold};
-  color: ${({ theme }) => theme.colors.darkGray};
+  color: ${({ theme }) => theme.colors.darkblack};
   text-align: center;
 
   display: -webkit-box;        

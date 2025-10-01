@@ -90,7 +90,7 @@ const MapPage = () => {
   return (
     <PageWrapper>
       <Header title="가까운 공연" />
-      <div style={{ height: '30px' }} />
+      <div style={{ height: "16px" }} />
 
       <MapView
         data={venues}

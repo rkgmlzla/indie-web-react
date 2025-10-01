@@ -15,7 +15,7 @@ const DividerLine = styled.div`
   top: 0;
   width: 100vw;  /* 진짜 브라우저 전체 넓이 */
   height: 1px;
-  background-color: ${({ theme }) => theme.colors.outlineGray || '#ccc'};
+  background-color: ${({ theme }) => theme.colors.outlineGray};
 `;
 
 function Divider({ mt, mb }) {

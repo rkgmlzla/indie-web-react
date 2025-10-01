@@ -1,45 +1,74 @@
 import React from 'react';
-import styles from './TodayConcertCard.module.css';
-import iconGo from '../../assets/icons/icon_go_hyunjin.svg'; // ✅ 여기 수정 그대로 유지
+import styled from 'styled-components';
 
-const TodayConcertCard = ({
-  title,
-  posterUrl,
-  place,
-  date,
-  onGoClick,
-  onClick,
-}) => {
+const TodayConcertCard = ({ title, posterUrl, place, date, onClick }) => {
   return (
-    <div className={styles.cardContainer} onClick={onClick}>
-      <img className={styles.poster} src={posterUrl} alt={title} />
-      <div className={styles.textContainer}>
-        <h2 className={styles.title}>{title}</h2>
-        <p className={styles.place}>{place}</p>
-        <p className={styles.date}>{date}</p>
-      </div>
-
-      {/* ✅ go 아이콘 클릭 시 상세 이동 막고 슬라이드 넘기기 */}
-      <img
-        className={styles.goIcon}
-        src={iconGo}
-        alt="다음 공연 보기"
-        role="button"
-        tabIndex={0}
-        onClick={(e) => {
-          e.stopPropagation();        // 카드 onClick(상세 이동) 차단
-          onGoClick?.();              // 캐러셀 다음 슬라이드
-        }}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            e.stopPropagation();
-            onGoClick?.();
-          }
-        }}
-      />
-    </div>
+    <CardContainer onClick={onClick}>
+      <Poster src={posterUrl} alt={title} />
+      <TextContainer>
+        <Title>{title}</Title>
+        <Place>{place}</Place>
+        <DateText>{date}</DateText>
+      </TextContainer>
+    </CardContainer>
   );
 };
 
 export default TodayConcertCard;
+
+const CardContainer = styled.div`
+  display: flex;
+  align-items: center;
+  background: ${({ theme }) => theme.colors.bgWhite};
+  border: 1px solid ${({ theme }) => theme.colors.outlineGray};
+  border-radius: 5px;
+  padding: 12px;
+  margin-right: 8px;
+  min-width: 320px;
+  cursor: pointer;
+  height: 180px;
+  box-sizing: border-box;
+`;
+
+const Poster = styled.img`
+  width: 120px;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 5px;
+`;
+
+const TextContainer = styled.div`
+  flex: 1;
+  margin-left: 12px;
+`;
+
+const Title = styled.h2`
+  font-size: ${({ theme }) => theme.fontSizes.base};
+  font-weight: ${({ theme }) => theme.fontWeights.medium};
+  color: ${({ theme }) => theme.colors.black};
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3; 
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
+
+const Place = styled.p`
+  font-size: ${({ theme }) => theme.fontSizes.sm};
+  font-weight: ${({ theme }) => theme.fontWeights.medium};
+  color: ${({ theme }) => theme.colors.themeGreen};
+  margin-top: 11px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2; 
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
+
+const DateText = styled.p`
+  margin-top: -8px;
+  font-size: ${({ theme }) => theme.fontSizes.sm};
+  font-weight: ${({ theme }) => theme.fontWeights.regular};
+  color: ${({ theme }) => theme.colors.darkGray};
+`;

@@ -18,7 +18,6 @@ const MapWideSelectCard = ({
   name,
   address,
   poster,
-  nextPerformance,
   upcomingPerformance,
   venue_id,
 }) => {

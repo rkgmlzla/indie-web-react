@@ -115,8 +115,8 @@ export default function FavoritePage() {
 
   return (
     <Container>
-      <Header title="찜 목록" />
-      <div style={{ height: '30px' }} />
+      <Header title="찜 리스트" />
+      <div style={{ height: "16px" }} />
 
       <TabRow>
         <TabButton
@@ -144,7 +144,7 @@ export default function FavoritePage() {
               />
             ))
           ) : (
-            <Empty>찜한 공연이 없어요.</Empty>
+            <Empty>찜한 공연이 없습니다.</Empty>
           ))}
 
         {selectedTab === 'artist' &&
@@ -160,14 +160,13 @@ export default function FavoritePage() {
               />
             ))
           ) : (
-            <Empty>찜한 아티스트가 없어요.</Empty>
+            <Empty>찜한 아티스트가 없습니다.</Empty>
           ))}
       </List>
     </Container>
   );
 }
 
-/* ===== styles ===== */
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -186,11 +185,13 @@ const TabButton = styled.button`
   font-size: ${({ theme }) => theme.fontSizes.base};
   font-weight: ${({ theme }) => theme.fontWeights.medium};
   color: ${({ active, theme }) =>
-    active ? theme.colors.textRed : theme.colors.darkGray};
+    active ? theme.colors.themeGreen : theme.colors.lightGray};
   border: none;
   border-bottom: ${({ active, theme }) =>
-    active ? `1.5px solid ${theme.colors.textRed}` : 'none'};
+    active ? `1.5px solid ${theme.colors.themeGreen}` : theme.colors.lightGray};
   background-color: transparent;
+  cursor: pointer;
+  font-family: inherit; 
 `;
 
 const List = styled.div`
@@ -199,6 +200,11 @@ const List = styled.div`
 `;
 
 const Empty = styled.div`
-  padding: 24px 16px;
-  color: ${({ theme }) => theme.colors.gray};
+  padding: 16px 16px;
+  font-size: ${({ theme }) => theme.fontSizes.sm};
+  font-weight: ${({ theme }) => theme.fontWeights.medium};
+  color: ${({ theme }) => theme.colors.darkGray};
+  display: flex;
+  justify-content: center; 
+  align-items: center;    
 `;

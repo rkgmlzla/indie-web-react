@@ -11,7 +11,7 @@ const Button = styled.button`
     font-size: ${({ theme }) => theme.fontSizes.sm};
     font-weight: ${({ theme }) => theme.fontWeights.regular};
     color: ${({ theme }) => theme.colors.black};
-    border: 1.5px solid ${({ theme }) => theme.colors.outlineGray};
+    border: 2px solid ${({ theme }) => theme.colors.outlineGray};
     border-radius: 1.5rem;
     background-color: ${({ theme }) => theme.colors.bgWhite};
     cursor: pointer;

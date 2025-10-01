@@ -131,16 +131,19 @@ const ScrollArea = styled.div`
 const CardGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr); 
-  column-gap: 32px; 
-  row-gap: 24px;
+  column-gap: 36px; 
+  row-gap: 32px;
   padding: 0;
 `;
 
 const Empty = styled.div`
-  font-size: ${({ theme }) => theme.fontSizes.base};
-  font-weight: ${({ theme }) => theme.fontWeights.semibold};
+  padding: 16px 16px;
+  font-size: ${({ theme }) => theme.fontSizes.sm};
+  font-weight: ${({ theme }) => theme.fontWeights.medium};
   color: ${({ theme }) => theme.colors.darkGray};
-  text-align: center;
+  display: flex;
+  justify-content: center; 
+  align-items: center;
 `;
 
 const DateSection = styled.div`
@@ -148,8 +151,8 @@ const DateSection = styled.div`
 `;
 
 const DateTitle = styled.div`
-  font-size: ${({ theme }) => theme.fontSizes.sm};
+  font-size: ${({ theme }) => theme.fontSizes.base};
   font-weight: ${({ theme }) => theme.fontWeights.semibold};
   color: ${({ theme }) => theme.colors.themeGreen};
-  margin-bottom: 12px;
+  margin-bottom: 16px;
 `;

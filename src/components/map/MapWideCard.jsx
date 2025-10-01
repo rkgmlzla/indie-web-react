@@ -11,7 +11,7 @@ const CardWrapper = styled.div`
   width: 100%;
   margin: 0 auto;
   box-sizing: border-box;
-  border: 1.4px solid ${({ theme }) => theme.colors.themeGreen};
+  border: 1.4px solid ${({ theme }) => theme.colors.outlineGray};
   border-radius: 10px;
   padding: 8px;
 `;
@@ -49,9 +49,9 @@ const Title = styled.div`
 `;
 
 const Time = styled.div`
-  font-weight: ${({ theme }) => theme.fontWeights.medium};
+  font-weight: ${({ theme }) => theme.fontWeights.regular};
   font-size: ${({ theme }) => theme.fontSizes.sm};
-  color: ${({ theme }) => theme.colors.black};
+  color: ${({ theme }) => theme.colors.darkGray};
   margin-top: 4px;
 `;
 
@@ -158,14 +158,14 @@ const MapWideCard = ({ data, noTopPadding = false }) => {
           <RowWrapper onClick={handleVenueClick}>
             <TextWrapper>
               <VenueText>{name}</VenueText>
-              <FixedIcon src={IconMore} alt="more" />
+              <FixedIcon src={IconMore} alt="more" style={{ paddingBottom: '3px' }}/>
             </TextWrapper>
           </RowWrapper>
 
           <RowWrapper onClick={handleAddressClick}>
             <TextWrapper>
               <AddressText>{perf?.address ?? address ?? '-'}</AddressText>
-              <FixedIcon src={IconCopy} alt="copy" />
+              <FixedIcon src={IconCopy} alt="copy" style={{ paddingTop: '1px' }}/>
             </TextWrapper>
           </RowWrapper>
         </BottomInfoBox>

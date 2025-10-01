@@ -14,7 +14,7 @@ const Container = styled.div`
 const Row = styled.div`
   display: flex;
   justify-content: space-between;
-  margin-top: 16px;
+  margin-top: 8px;
 `;
 
 const CardContainer = styled.div`
@@ -35,7 +35,7 @@ const CardWrapper = styled.div`
   cursor: pointer;
   box-sizing: border-box;
   background-color: ${({ $isSelected, theme }) =>
-    $isSelected ? 'rgba(241, 79, 33, 0.1)' : 'white'}; 
+    $isSelected ? 'rgba(60, 156, 103, 0.5)' : 'white'}; 
   position: relative;
   flex-shrink: 0;
 `;
@@ -70,12 +70,13 @@ const Time = styled.div`
 `;
 
 const EmptyMessage = styled.div`
-  width: 100%;
-  text-align: center;
-  padding: 40px 0;
+  padding: 16px 16px;
+  font-size: ${({ theme }) => theme.fontSizes.sm};
   font-weight: ${({ theme }) => theme.fontWeights.medium};
   color: ${({ theme }) => theme.colors.darkGray};
-  font-size: ${({ theme }) => theme.fontSizes.sm};
+  display: flex;
+  justify-content: center; 
+  align-items: center;  
 `;
 
 const formatOnlyTime = (timeStr) => {
@@ -138,7 +139,7 @@ const MapGrid = ({
         );
 
         return (
-          <motion.div layout key={rowIndex}>
+          <div key={rowIndex}>
             <Row>
               {rowItems.map((item, colIndex) => {
                 if (!item) return <CardContainer key={colIndex} />;
@@ -218,7 +219,7 @@ const MapGrid = ({
                   );
                 })()}
             </AnimatePresence>
-          </motion.div>
+          </div>
         );
       })}
     </Container>

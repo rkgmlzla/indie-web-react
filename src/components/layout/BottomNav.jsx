@@ -27,14 +27,14 @@ const NavItem = styled(NavLink)`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 8px; /* 상단에서 8px */
+  margin-top: 8px; 
   text-decoration: none;
-  color: ${({ theme }) => theme.colors.bottomGray};
+  color: ${({ theme }) => theme.colors.themeGreen};
   font-size: ${({ theme }) => theme.fontSizes.xs}; /* 12px */
   font-weight: ${({ theme }) => theme.fontWeights.medium};
 
   &.active {
-    color: ${({ theme }) => theme.colors.red};
+    color: ${({ theme }) => theme.colors.themePink};
   }
 
   svg {

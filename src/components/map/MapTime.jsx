@@ -4,11 +4,10 @@ import styled from 'styled-components';
 
 const TimeText = styled.div`
   text-align: left;
-  line-height: 20px;
   font-size: ${({ theme }) => theme.fontSizes.sm};
   font-weight: ${({ theme }) => theme.fontWeights.semibold};
   color: ${({ theme }) => theme.colors.black};
-  padding: 16px 12px;
+  padding: 16px 8px;
 `;
 
 const CurrentTimeText = () => {

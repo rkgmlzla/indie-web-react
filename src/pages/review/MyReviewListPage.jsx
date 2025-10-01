@@ -9,12 +9,8 @@ import { fetchUserInfo } from '../../api/userApi';
 const Page = styled.div`
   width: 100%;
   margin: 0 auto;
-  padding-bottom: 88px;          /* 하단 탭과 겹치지 않게 */
-  --side: 16px;                  /* 좌우 여백 통일 */
-`;
-
-const HeaderSpacer = styled.div`
-  height: 28px;                  /* 앱 공통 헤더 보정 */
+  padding-bottom: 88px;        
+  --side: 16px;                
 `;
 
 const List = styled.div`
@@ -33,10 +29,13 @@ const Loader = styled.div`
 `;
 
 const Empty = styled.div`
-  padding: 40px var(--side);
-  text-align: center;
-  color: ${({ theme }) => theme.colors?.lightGray || '#999'};
-  font-size: ${({ theme }) => theme.fontSizes?.sm || '14px'};
+  padding: 16px 16px;
+  font-size: ${({ theme }) => theme.fontSizes.sm};
+  font-weight: ${({ theme }) => theme.fontWeights.medium};
+  color: ${({ theme }) => theme.colors.darkGray};
+  display: flex;
+  justify-content: center; 
+  align-items: center;  
 `;
 
 export default function MyReviewListPage() {
@@ -164,7 +163,7 @@ export default function MyReviewListPage() {
   // 삭제
   const handleDelete = async (reviewId) => {
     if (!isLoggedIn) return;
-    if (!window.confirm('이 리뷰를 삭제할까요?')) return;
+    if (!window.confirm('이 리뷰를 삭제하시겠습니까?')) return;
     try {
       await deleteReview(reviewId);
       setItems((prev) => prev.filter((it) => it.id !== reviewId));
@@ -179,12 +178,12 @@ export default function MyReviewListPage() {
 
   return (
     <Page>
-      <Header title={title} />
-      <HeaderSpacer />
+      <Header title="내 리뷰" />
+      <div style={{ height: "16px" }} />
 
       {initialLoading && <Loader>불러오는 중…</Loader>}
-      {!initialLoading && loadError && <Loader>불러오기에 실패했어요.</Loader>}
-      {!initialLoading && !loadError && !hasItems && <Empty>작성한 리뷰가 없어요.</Empty>}
+      {!initialLoading && loadError && <Loader>불러오기에 실패했습니다.</Loader>}
+      {!initialLoading && !loadError && !hasItems && <Empty>작성한 리뷰가 없습니다.</Empty>}
 
       <List>
         {items.map((r) => (

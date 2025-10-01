@@ -64,6 +64,6 @@ const ConfirmButton = styled.button`
   cursor: pointer;
 
   &:hover {
-    background-color: #216840ff;
+    background-color: #2a8a55ff;
   }
 `;

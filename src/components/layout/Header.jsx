@@ -2,7 +2,6 @@ import styled from 'styled-components';
 import { Menu, Search, ChevronLeft, Bell } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useState } from 'react';
-import Sidebar from '../sidebar/Sidebar';
 
 const HeaderWrapper = styled.header`
   position: fixed;
@@ -38,9 +37,9 @@ const Title = styled.h1`
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  font-size: ${({ theme }) => theme.fontSizes.lg};
-  font-weight: ${({ theme }) => theme.fontWeights.semibold};
-  color: ${({ theme }) => theme.colors.black};
+  font-size: ${({ theme }) => theme.fontSizes.md};
+  font-weight: ${({ theme }) => theme.fontWeights.medium};
+  color: ${({ theme }) => theme.colors.darkblack};
   caret-color: transparent;
   cursor: default;
 `;
@@ -58,19 +57,13 @@ function Header({
   title,
   logoSrc,
   showSearch = true,
-  showMenu = true,
   initialSearchTab = '공연/공연장',
   keyword = '',
 }) {
   const navigate = useNavigate();
   const location = useLocation();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
   const isHome = location.pathname === '/' || location.pathname === '/home';
-
   const handleBack = () => navigate(-1);
-  const handleSidebarOpen = () => setIsSidebarOpen(true);
-  const handleSidebarClose = () => setIsSidebarOpen(false);
 
   const handleSearch = () => {
     navigate(`/search?keyword=${encodeURIComponent(keyword)}`, {
@@ -90,12 +83,7 @@ function Header({
         <LeftArea>
           {!isHome && (
             <IconButton onClick={handleBack}>
-              <ChevronLeft size={24} color="#d55a1f" />
-            </IconButton>
-          )}
-          {showMenu && (
-            <IconButton onClick={handleSidebarOpen}>
-              <Menu size={24} color="#d55a1f" />
+              <ChevronLeft size={28} color="#3C9C68" strokeWidth={2.2} style={{ transform: 'translateX(-10px)' }}/>
             </IconButton>
           )}
         </LeftArea>
@@ -106,17 +94,14 @@ function Header({
         <RightArea>
           {showSearch && (
             <IconButton onClick={handleSearch}>
-              <Search size={22} color="#d55a1f" />
+              <Search size={22} color="#3C9C68" strokeWidth={2.4}/>
             </IconButton>
           )}
           <IconButton onClick={handleAlarm}>
-            <Bell size={22} color="#d55a1f" />
+            <Bell size={22} color="#3C9C68" strokeWidth={2.4}/>
           </IconButton>
         </RightArea>
-
       </HeaderWrapper>
-
-      {isSidebarOpen && <Sidebar onClose={handleSidebarClose} />}
     </>
   );
 }
