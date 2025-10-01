@@ -4,6 +4,7 @@ export const theme = {
   colors: {
     // 기본 색상
     black: '#1C1C1E',
+    darkblack: '#2F2F2F',
     white: '#FAFAFA',
     red: '#FF3B30',
     bgWhite: '#FFFFFF',
@@ -19,6 +20,7 @@ export const theme = {
     themeOrange: '#F14F21',
     themeOrangeAlpha: '#F14F214D', // alpha 포함
     themeGreen: '#3C9C68',
+    themePink: '#eb72a0ff',
 
     // 텍스트 계열
     textPrimary: '#FF1C1C1E',
@@ -39,6 +41,7 @@ export const theme = {
     xs: '0.75rem',    // 12px
     sm: '0.875rem',   // 14px
     base: '1rem',     // 16px
+    md: '1.125rem',   // 18px
     lg: '1.25rem',    // 20px
     xl: '1.5rem',     // 24px
 

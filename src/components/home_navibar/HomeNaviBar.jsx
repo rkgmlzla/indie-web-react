@@ -1,14 +1,8 @@
 // ✅ src/components/home_navibar/HomeNaviBar.jsx
-// - 홈의 간이 이동 메뉴 (공연/공연장/아티스트/매거진)
-// - 매거진은 "표시만", 클릭 비활성
-// - 공연장/아티스트는 routes prop으로 경로 주입. 없으면 자동 비활성.
-// - 섹션 간 외부 여백(32px)은 Home에서 section으로 감쌈.
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './HomeNaviBar.module.css';
 
-// 아이콘 (네가 올린 SVG를 그대로 사용: 색/윤곽 유지)
 import iconMusic from '../../assets/icons/home_menu/music.svg';          // 공연
 import iconMic from '../../assets/icons/home_menu/mic.svg';              // 공연장
 import iconGuitar from '../../assets/icons/home_menu/guitar_line.svg';   // 아티스트
@@ -28,7 +22,7 @@ export default function HomeNaviBar({
     { key: 'performance', label: '공연',    icon: iconMusic,   to: routes.performance, disabled: !routes.performance },
     { key: 'venues',      label: '공연장',  icon: iconMic,     to: routes.venues,     disabled: !routes.venues },
     { key: 'artists',     label: '아티스트', icon: iconGuitar,  to: routes.artists,    disabled: !routes.artists },
-    { key: 'review',    label: '리뷰',  icon: iconMessage, to: routes.review,   disabled: !routes.review }, // 강제 비활성
+    { key: 'review',      label: '리뷰',  icon: iconMessage, to: routes.review,   disabled: !routes.review }, // 강제 비활성
   ];
 
   const handleClick = (item) => {
@@ -49,7 +43,6 @@ export default function HomeNaviBar({
             aria-disabled={item.disabled}
           >
             <div className={styles.tile}>
-              {/* 원본 SVG 노출 (mask X, 색 변형 X) */}
               <img src={item.icon} alt="" className={styles.iconImg} />
             </div>
             <span className={styles.label}>{item.label}</span>

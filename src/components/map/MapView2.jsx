@@ -43,7 +43,7 @@ const MapView2 = ({
         const iconSvg = ReactDOMServer.renderToStaticMarkup(
           <LucideMapPin
             size={28}
-            stroke="#d55a1f"
+            stroke="#3C9C68"
             strokeWidth={2}
             strokeLinecap="round"
             strokeLinejoin="round"

@@ -1,35 +1,4 @@
 /* src/pages/home/home.module.css */
-
-/* 페이지 컨테이너 */
-.pageContainer {
-  position: relative;
-  padding: 20px 16px 16px 16px;
-  background: #ffffff;
-}
-
-/* -------- 헤더: 전체 고정 + 내부 컨테이너 -------- */
-.headerOuter {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 56px;
-  background: transparent; /* 양옆 흰띠 방지 */
-  z-index: 100;
-}
-
-.headerInner {
-  height: 56px;
-  margin: 0 auto;
-  padding: 0 16px;
-  max-width: 480px;       /* 안전망 (JS에서 theme.layout.maxWidth도 주입) */
-  background: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: none;    /* 구분선 제거 */
-}
-
 /* 버튼/아이콘 공통 */
 .iconButton {
   background: none;
@@ -38,13 +7,6 @@
   cursor: pointer;
   display: flex;
   align-items: center;
-}
-
-/* 가운데 텍스트 스타일(현재 미사용, 주석 유지용) */
-.title {
-  font-size: 18px;
-  font-weight: bold;
-  color: #1c1c1e;
 }
 
 /* SVG 아이콘: 크기 22px(지금 사이즈 유지), 회색 */
@@ -68,20 +30,6 @@
 }
 
 /* -------------------- 섹션 -------------------- */
-.todaySection {
-  margin-bottom: 24px;
-}
-
-.todayHeader {
-  margin-bottom: 8px;
-}
-
-.todayTitle {
-  font-size: 16px;
-  font-weight: 700;
-  color: #1c1c1e;
-}
-
 /* 캘린더 섹션 (보존) */
 .calendarSection {
   margin-bottom: 24px;

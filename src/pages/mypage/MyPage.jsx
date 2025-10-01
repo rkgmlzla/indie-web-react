@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { Settings, Pencil, User, Heart, Stamp, ChevronRight } from 'lucide-react';
 import './Mypage.css';
 import Toggle from '../../components/ui/toggle';
-import Header from '../../components/layout/Header';
+import Header from "../../components/layout/Header";
+import Divider from '../../components/common/Divider';
 import {
   fetchUserInfo,
   updateNickname,
@@ -13,7 +14,7 @@ import {
 } from '../../api/userApi';
 
 function MyPage() {
-  const navigate = useNavigate(); // ✅ 추가
+  const navigate = useNavigate(); 
 
   const [profileImage, setProfileImage] = useState('');
   const [nickname, setNickname] = useState('');
@@ -105,30 +106,24 @@ function MyPage() {
   if (loading) {
     return (
       <div className="page">
-        <Header title="마이페이지" showBack showSearch={false} showMenu={false} />
-        <div className="header-spacer" />
+        <Header title="마이페이지" />
+        <div style={{ height: "16px" }} />
       </div>
     );
   }
 
   return (
     <div className="page">
-      <Header title="마이페이지" showBack showSearch={false} showMenu={false} />
-      <div className="header-spacer" />
+      <Header title="마이페이지" />
+      <div style={{ height: "16px" }} />
 
       {!isLoggedIn ? (
-        <>
-          <div className="guest">
-            <div className="guest__header">
-              <div className="guest__avatar" />
-              <button className="guest__cta" onClick={() => (window.location.href = '/login')}>
-                로그인 / 회원가입
-              </button>
-            </div>
-            <p className="guest__message">로그인 후 이용 가능합니다.</p>
-            <div className="footer">© Kimthreemun Corp.</div>
-          </div>
-        </>
+        <div className="guest">
+          <button className="guest__cta" onClick={() => (window.location.href = '/login')}>
+            로그인 / 회원가입
+          </button>
+          <p className="guest__message">로그인 후 이용 가능합니다.</p>
+        </div>
       ) : (
         <>
           {/* 상단 프로필 */}
@@ -177,7 +172,7 @@ function MyPage() {
               </div>
             </div>
           </div>
-
+                
           {/* 🔹 퀵 메뉴 3개 */}
           <div className="quick">
             <div className="quick__grid">
@@ -196,28 +191,36 @@ function MyPage() {
             </div>
           </div>
 
-          <hr className="divider" />
-
+          <Divider />
+          
           {/* 🔹 설정 + 링크 리스트 */}
           <div className="settings">
             <div className="settings__toggle">
-              <p>알림 설정</p>
+              <span>알림 설정</span>
               <Toggle value={alarmEnabled} onChange={(v) => handleSettingChange('alarm', v)} />
             </div>
             <div className="settings__toggle">
-              <p>위치정보 사용</p>
+              <span>위치정보 사용</span>
               <Toggle value={locationEnabled} onChange={(v) => handleSettingChange('location', v)} />
             </div>
           </div>
 
-          <div className="list">
-            <button className="list-item list-item--link" onClick={() => navigate('/notice')}>
-              <span className="list-item__label">공지사항</span>
+          <div className="list-item">
+            <span className="list-item__label">공지사항</span>
+            <button 
+              className="chev-button" 
+              onClick={() => navigate('/notice')}
+            >
               <ChevronRight className="chev" />
             </button>
+          </div>
 
-            <button className="list-item list-item--link" onClick={() => navigate('/support')}>
-              <span className="list-item__label">고객센터</span>
+          <div className="list-item">
+            <span className="list-item__label">고객센터</span>
+            <button 
+              className="chev-button" 
+              onClick={() => navigate('/support')}
+            >
               <ChevronRight className="chev" />
             </button>
           </div>

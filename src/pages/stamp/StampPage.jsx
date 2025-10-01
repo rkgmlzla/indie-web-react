@@ -1,7 +1,6 @@
 // src/pages/stamp/StampPage.jsx
 import styled from "styled-components";
 import React, { useState, useEffect } from "react";
-
 import Header from "../../components/layout/Header";
 import PeriodModal from "../../components/modals/PeriodModal";
 import StampButtonIcon from "../../assets/icons/icon_s_stamp.svg";
@@ -54,14 +53,15 @@ export default function StampPage() {
       }
     };
     loadCollectedStamps();
-  }, [startMonth, endMonth, startYear, endYear]); 
+  }, [startMonth, endMonth, startYear, endYear]);
 
+  // ✅ 사용 가능한 스탬프 목록 로드 (팝업 열렸을 때)
   useEffect(() => {
     if (!isStampPopupOpen) return;
 
     (async () => {
       try {
-        const list = await fetchAvailableStamps({ days: 30 }); 
+        const list = await fetchAvailableStamps({ days: 30 });
         console.log("🎯 available stamps:", list);
         setAvailableStamps(Array.isArray(list) ? list : []);
       } catch (e) {
@@ -126,13 +126,14 @@ export default function StampPage() {
         <img src={StampButtonIcon} alt="스탬프 찍기" />
       </StampButton>
 
+      {/* ✅ 스탬프 팝업 */}
       {isStampPopupOpen && (
         <StampPopup
           onClose={() => setIsStampPopupOpen(false)}
           stamps={availableStamps}
           onStampSelect={(stamp) => {
             if (stamp.is_collected) {
-              setIsStampSmall2Open(true); 
+              setIsStampSmall2Open(true);
             } else {
               setSelectedStamp(stamp);
               setIsConfirmPopupOpen(true);
@@ -141,6 +142,7 @@ export default function StampPage() {
         />
       )}
 
+      {/* ✅ 수집 확인 팝업 */}
       {isConfirmPopupOpen && (
         <StampPopupSmall
           onConfirm={() => handleStampCollect(selectedStamp)}
@@ -148,10 +150,12 @@ export default function StampPage() {
         />
       )}
 
+      {/* ✅ 이미 수집된 스탬프 팝업 */}
       {isStampSmall2Open && (
         <StampPopupSmall2 onClose={() => setIsStampSmall2Open(false)} />
       )}
 
+      {/* ✅ 스탬프 상세 팝업 */}
       {selectedStampDetail && (
         <StampDetailPopup
           concert={selectedStampDetail}
@@ -159,13 +163,13 @@ export default function StampPage() {
         />
       )}
 
+      {/* ✅ 기간 설정 모달 */}
       {isPeriodModalOpen && (
         <PeriodModal
           startYear={startYear}
           startMonth={startMonth}
           endYear={endYear}
           endMonth={endMonth}
-
           onChange={({ startYear, startMonth, endYear, endMonth }) => {
             setStartYear(startYear);
             setStartMonth(startMonth);
@@ -202,25 +206,28 @@ const PageWrapper = styled.div`
 `;
 
 const StampButton = styled.button`
-  position: absolute;
-  right: 8px;
-  bottom: 108px;
-  transform: translateY(-50%);
+  position: fixed; 
   background: none;
   border: none;
   cursor: pointer;
+  right: 0px;
+  bottom: 108px;
 
   img {
     width: 72px;
     height: 72px;
     display: block;
   }
+
+  @media (min-width: ${({ theme }) => theme.layout.maxWidth}) {
+    right: calc((100vw - ${({ theme }) => theme.layout.maxWidth}) / 2);
+  }
 `;
 
 const StampBoard = styled.div`
   position: absolute;
-  top: 80px;
-  bottom: 64px;
+  top: 78.5px;
+  bottom: 60px;
   left: 16px;
   right: 16px;
   display: flex;
@@ -229,11 +236,12 @@ const StampBoard = styled.div`
 
 const StampPageContainer = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  row-gap: 48px;
-  padding: 0 8px 64px 0;
+  grid-template-columns: repeat(3, 1fr);
+  row-gap: 40px;
   width: 100%;
   box-sizing: border-box;
+
+  justify-items: center; 
 `;
 
 const StampItem = styled.div`

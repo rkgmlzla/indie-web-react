@@ -44,7 +44,6 @@ const PopupContainer = styled.div`
   align-items: center;
 `;
 
-
 const ButtonGroup = styled.div`
   display: flex;
   width: 24%; 
@@ -63,6 +62,6 @@ const ConfirmButton = styled.button`
   cursor: pointer;
 
   &:hover {
-    background-color: #216840ff;
+    background-color: #2a8a55ff;
   }
 `;

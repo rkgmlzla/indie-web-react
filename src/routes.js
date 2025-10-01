@@ -29,7 +29,7 @@ import AllReview from './pages/review/AllReview';
 
 const routes = [
   { path: '/home', element: <HomePage /> },
-  { path: '/notification', element: <NotificationPage /> },
+  { path: '/alarm', element: <NotificationPage /> },
   { path: '/calendar', element: <CalendarPage /> },
   { path: '/performance', element: <PerformanceListPage /> },
   { path: '/performance/:id', element: <PerformanceDetailPage /> },

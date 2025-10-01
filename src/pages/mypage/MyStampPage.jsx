@@ -139,9 +139,11 @@ const StampGrid = styled.div`
 `;
 
 const Message = styled.div`
-  font-size: ${({ theme }) => theme.fontSizes.base};
-  font-weight: ${({ theme }) => theme.fontWeights.semibold};
+  padding: 16px 16px;
+  font-size: ${({ theme }) => theme.fontSizes.sm};
+  font-weight: ${({ theme }) => theme.fontWeights.medium};
   color: ${({ theme }) => theme.colors.darkGray};
-  text-align: center;
-  margin: 16px 0;
+  display: flex;
+  justify-content: center; 
+  align-items: center;  
 `;

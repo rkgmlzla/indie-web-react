@@ -1,23 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { LocateFixed, RotateCw } from 'lucide-react';
-import { MapPin as LucideMapPin } from 'lucide-react';
 import ReactDOMServer from 'react-dom/server';
+import pinImg from '../../assets/icons/icon_map_pin.svg';
 
-const PIN_COLOR = '#d55a1f';
+const PIN_COLOR = '#3C9C68';
 const PIN_SIZE = 28;
 
-function svgPin(color = PIN_COLOR, size = PIN_SIZE) {
-  const svg = ReactDOMServer.renderToStaticMarkup(
-    <LucideMapPin
-      size={size}
-      stroke={color}
-      strokeWidth={2}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-  );
+function svgPin(size = PIN_SIZE) {
   return {
-    content: svg,
+    content: `<img src="${pinImg}" width="${size}" height="${size}" />`,
     size: new window.naver.maps.Size(size, size),
     anchor: new window.naver.maps.Point(size / 2, size),
   };
@@ -50,12 +41,10 @@ const MapView = ({
       const marker = new window.naver.maps.Marker({
         position: userLocation,
         map: mapRef.current,
-        icon: {
-          content:
-            '<div style="background:#007bff;border-radius:50%;width:14px;height:14px;border:2px solid white;"></div>',
-          size: new window.naver.maps.Size(14, 14),
-          anchor: new window.naver.maps.Point(7, 7),
-        },
+        icon: { 
+          content: '<div style="background:#007bff;border-radius:50%;width:14px;height:14px;border:2px solid white;"></div>', 
+          size: new window.naver.maps.Size(14, 14), 
+          anchor: new window.naver.maps.Point(7, 7), },
       });
       setCurrentMarker(marker);
     };
@@ -199,7 +188,7 @@ const MapView = ({
         onClick={handleSearchHere}
         style={{
           position: 'absolute',
-          top: '28px',
+          top: '24px',
           left: '50%',
           transform: 'translateX(-50%)',
           display: 'flex',

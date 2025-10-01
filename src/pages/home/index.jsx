@@ -1,50 +1,29 @@
 import React, { useState, useRef, useEffect } from 'react';
+import styled from 'styled-components';
 import TodayConcertCarousel from '../../components/performance/TodayConcertCarousel';
 import NewConcertList from '../../components/performance/NewConcertList';
 import TicketOpenList from '../../components/performance/TicketOpenList';
-// [DISABLED] 맞춤 추천 섹션 사용 중단
-// import RecommendedConcertList from '../../components/performance/RecommendedConcertList';
 import styles from './home.module.css';
 // import iconCalendar from '../../assets/icons/icon_calendar_hyunjin.svg'; // [DISABLED] 캘린더 아이콘 임포트 (렌더 비활성화)
 import Sidebar from '../../components/sidebar/Sidebar';
 import { useNavigate } from 'react-router-dom';
-//import Header from '../../components/layout/Header';
-
-///헤더 아이코이녕
-// ✅ SVG를 React 컴포넌트로 임포트해서 색상을 theme처럼 제어
+import Header from '../../components/layout/Header';
 import { ReactComponent as IconWeb } from '../../assets/icons/icon_heart_outline.svg';   // ← 좌측 웹아이콘(임시)
 import { ReactComponent as IconSearch } from '../../assets/icons/icon_y_search.svg';      // ← 검색
 import { ReactComponent as IconNotify } from '../../assets/icons/icon_notify_on.svg';     // ← 알림
-
-// [PICK] pick 카드 컴포넌트 추가 임포트 (기존 코드 보존)
 import PickCard from '../../components/performance/Pick/PickCard';
-
-// ✅ [MOOD] 무드별 공연 섹션 추가 (기존 코드 보존)
 import MoodSection from '../../components/performance/mood/MoodSection';
-
-// ✅ [POPULAR] 인기 많은 공연 섹션 컴포넌트 추가 (기존 코드 보존)
 import PopularConcertList from '../../components/performance/popular/PopularConcertList';
-
-// ✅ [NAV] 홈 간이 이동 메뉴 (새로 추가)
 import HomeNaviBar from '../../components/home_navibar/HomeNaviBar';
-
 import axios from 'axios';
 import { baseUrl } from '../../api/config';
-
+import { fetchMagazineList } from '../../api/magazineApi';
 import {
   fetchTodayPerformances,
   fetchRecentPerformances,
   fetchTicketOpeningPerformances,
-  // [DISABLED] 맞춤 추천 API 호출 중단
-  // fetchRecommendedPerformances,
-  // ✅ [POPULAR] 인기 많은 공연 API 추가 (기존 코드 보존)
   fetchPopularPerformances,
 } from '../../api/performanceApi';
-
-// ✅ [PICK] 매거진 API (신규) - 기존 스타일 준수
-import { fetchMagazineList } from '../../api/magazineApi';
-
-// ⬇️ theme 최대폭 사용
 import { theme } from '../../styles/theme';
 
 const HomePage = () => {
@@ -55,21 +34,12 @@ const HomePage = () => {
   const [todayPerformances, setTodayPerformances] = useState([]);
   const [recentPerformances, setRecentPerformances] = useState([]);
   const [ticketOpenPerformances, setTicketOpenPerformances] = useState([]);
-  // [DISABLED] 맞춤 추천 상태 중단
-  // const [recommendedPerformances, setRecommendedPerformances] = useState([]);
-  // ✅ [POPULAR] 인기 많은 공연 상태
   const [popularPerformances, setPopularPerformances] = useState([]);
-
-  // ✅ [PICK] 매거진 카드를 API로 채움 (더미 제거)
   const [pickItem, setPickItem] = useState(null);
-
   const fetchedRef = useRef(false);
 
-  const todayStr = new Intl.DateTimeFormat('ko-KR', {
-    month: 'numeric',
-    day: 'numeric',
-  }).format(new Date());
-
+  const now = new Date();
+  const todayStr = `${now.getMonth() + 1}월 ${now.getDate()}일 공연`;
   const handleGoNext = () => {
     if (carouselRef.current) carouselRef.current.slickNext();
   };
@@ -225,75 +195,30 @@ const HomePage = () => {
       {/* <Header title="김삼문" onMenuClick={() => setIsSidebarOpen(true)} /> */}
       {isSidebarOpen && <Sidebar onClose={() => setIsSidebarOpen(false)} />}
 
-      {/* ✅ 커스텀 헤더: 가로 한 줄, 구분선 없음, 회색 아이콘, 가운데 텍스트 제거 */}
-      <div className={styles.headerOuter}>
-        <div className={styles.headerInner} style={{ maxWidth: theme.layout.maxWidth }}>
-          {/* 좌측 아이콘 (클릭 불가) */}
-          <span className={styles.iconButton} style={{ pointerEvents: 'none' }} aria-hidden>
-            <IconWeb className={`${styles.iconSvg} ${styles.iconGray}`} />
-          </span>
+      <Header title="홈" />
+      <div style={{ height: "16px" }} />
 
-          {/* <div className={styles.title} aria-hidden>김삼문</div> */} {/* ← 요구: 텍스트 제거 */}
-
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <button
-              type="button"
-              className={styles.iconButton}
-              aria-label="검색"
-              onClick={() => navigate('/search')}
-            >
-              <IconSearch className={`${styles.iconSvg} ${styles.iconGray}`} />
-            </button>
-            <button
-              type="button"
-              className={styles.iconButton}
-              aria-label="알림"
-              onClick={() => navigate('/notification')}
-            >
-              <IconNotify className={`${styles.iconSvg} ${styles.iconGray}`} />
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div className={styles.pageContainer}>
-        {/* 섹션 간격: 기본은 위 32 / 아래 32 */}
-        <section
-          className={styles.todaySection}
-          /* ⬇️ 헤더와 거의 붙게: 4px */
-          style={{ margin: '4px 0 16px 0', display: 'flow-root' }}
-        >
-          {/* 섹션 제목과 콘텐츠 간 간격: 16 */}
-          <div className={styles.todayHeader} style={{ marginBottom: 16 }}>
-            <h2 className={styles.todayTitle}>{todayStr} 공연</h2>
-          </div>
+      <>
+        <TodaySection>
+          <TodayTitle>{todayStr}</TodayTitle>
           <TodayConcertCarousel
             ref={carouselRef}
             performances={todayPerformances}
-            onGoClick={handleGoNext}
             onClickPerformance={(id) => navigate(`/performance/${id}`)}
           />
-        </section>
+        </TodaySection>
 
-        {/* ✅ [NAV] 홈 간이 이동 메뉴: 캘린더 섹션 대신 노출 */}
-        {/*
-        <section style={{ margin: '32px 0' }}>
-          <HomeNaviBar />
-        </section>
-        */}
-        {/* ⬆️ 위 블록은 중복 렌더를 막기 위해 렌더만 주석 처리 (코드/주석 보존) */}
-
-        {/* 오늘의 공연 아래에 (네비바: 위 0 / 아래 40 → 인기공연과 간격 살짝 증가) */}
-        <section style={{ margin: '0 0 40px 0' }}>
+        <NaviBarSection>
           <HomeNaviBar
             routes={{
               performance: '/performance',
-              venues: '/venue',   // ✅ 라우터 경로에 맞게 단수(/venue)
-              artists: '/artist', // ✅ 라우터 경로에 맞게 단수(/artist)
+              venues: '/venue',
+              artists: '/artist',
               review: '/venue/reviews'
             }}
           />
-        </section>
+        </NaviBarSection>
+
 
         {/* ✅ [POPULAR] 인기 많은 공연 섹션: 네비바 아래, NEW 업로드 위 */}
         <section style={{ margin: '32px 0' }}>
@@ -347,16 +272,26 @@ const HomePage = () => {
         <section style={{ margin: '32px 0' }}>
           <MoodSection />
         </section>
-
-        {/* [DISABLED] 맞춤 추천 섹션 렌더 비활성화 */}
-        {/*
-        <section style={{ margin: '16px 0' }}>
-          <RecommendedConcertList performances={recommendedPerformances} />
-        </section>
-        */}
-      </div>
+      </>
     </>
   );
 };
 
 export default HomePage;
+
+const TodayTitle = styled.div`
+  margin-top: 9px;
+  font-size: ${({ theme }) => theme.fontSizes.base}; 
+  font-weight: ${({ theme }) => theme.fontWeights.semibold};  
+  color: ${({ theme }) => theme.colors.black}; 
+`;
+
+const TodaySection = styled.section`
+  margin: 4px 0 16px 0;
+  display: flow-root;
+`;
+
+const NaviBarSection = styled.section`
+  margin-top: 29px; //-19
+`;
+
