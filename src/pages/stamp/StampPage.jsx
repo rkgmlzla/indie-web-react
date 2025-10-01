@@ -1,7 +1,11 @@
 // src/pages/stamp/StampPage.jsx
 import styled from "styled-components";
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+
 import Header from "../../components/layout/Header";
+import StampLogin from "../../components/stamp/StampLogin";
+import { fetchUserInfo } from "../../api/userApi";
 import PeriodModal from "../../components/modals/PeriodModal";
 import StampButtonIcon from "../../assets/icons/icon_s_stamp.svg";
 import FilterButtonNone from "../../components/common/FilterButtonNone";
@@ -18,6 +22,11 @@ import {
 } from "../../api/stampApi";
 
 export default function StampPage() {
+
+  const navigate = useNavigate();
+  
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
   const [isPeriodModalOpen, setIsPeriodModalOpen] = useState(false);
   const currentYear = new Date().getFullYear();
   const [startYear, setStartYear] = useState(currentYear);
@@ -38,8 +47,35 @@ export default function StampPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const me = await fetchUserInfo();
+        if (!mounted) return;
+        setIsLoggedIn(!!me?.id);
+      } catch {
+        if (!mounted) return;
+        setIsLoggedIn(false);
+      }
+    })();
+    // 다른 탭/화면에서 로그인 상태가 바뀐 경우 대비
+    const sync = async () => {
+      try {
+        const me = await fetchUserInfo();
+        setIsLoggedIn(!!me?.id);
+      } catch {
+        setIsLoggedIn(false);
+      }
+    };
+    window.addEventListener("focus", sync);
+    window.addEventListener("storage", sync);
+    return () => { mounted = false; window.removeEventListener("focus", sync); window.removeEventListener("storage", sync); };
+  }, []);
+
   // ✅ 수집한 스탬프 목록 로드
   useEffect(() => {
+     if (!isLoggedIn) return;  
     const loadCollectedStamps = async () => {
       try {
         setLoading(true);
@@ -47,17 +83,21 @@ export default function StampPage() {
         setCollectedStamps(stamps);
       } catch (e) {
         console.error("📛 수집한 스탬프 로딩 실패:", e);
+        if (e?.response?.status === 401) { // 토큰 만료 등
+          setIsLoggedIn(false);
+          return;
+        }
         setError("스탬프를 불러오는데 실패했습니다.");
       } finally {
         setLoading(false);
       }
     };
     loadCollectedStamps();
-  }, [startMonth, endMonth, startYear, endYear]);
+  }, [isLoggedIn, startMonth, endMonth, startYear, endYear]); 
 
   // ✅ 사용 가능한 스탬프 목록 로드 (팝업 열렸을 때)
   useEffect(() => {
-    if (!isStampPopupOpen) return;
+    if (!isLoggedIn || !isStampPopupOpen) return;
 
     (async () => {
       try {
@@ -66,14 +106,20 @@ export default function StampPage() {
         setAvailableStamps(Array.isArray(list) ? list : []);
       } catch (e) {
         console.error("❌ available 오류", e?.response?.data || e.message);
+        if (e?.response?.status === 401) {
+          setIsLoggedIn(false);
+          return;
+        }
         setAvailableStamps([]);
       }
     })();
-  }, [isStampPopupOpen]);
+  }, [isLoggedIn, isStampPopupOpen]);
 
   // ✅ 스탬프 수집 처리
   const handleStampCollect = async (stampData) => {
-    try {
+    
+      if (!isLoggedIn) return;
+      try {
       await collectStamp(stampData.id);
       // 성공 후 수집한 스탬프 목록 새로고침
       const updatedStamps = await fetchCollectedStamps(startMonth, endMonth);
@@ -83,6 +129,7 @@ export default function StampPage() {
       setIsStampPopupOpen(false);
       setSelectedStamp(null);
     } catch (e) {
+      if (e?.response?.status === 401) { setIsLoggedIn(false); return; }
       console.error("📛 스탬프 수집 실패:", e);
       alert("스탬프 수집에 실패했습니다.");
     }
@@ -90,8 +137,11 @@ export default function StampPage() {
 
   return (
     <PageWrapper>
+       <div className="App">
       <Header title="스탬프" />
       <div style={{ height: "16px" }} />
+
+       <main className="app-scroll">
 
       <FilterBar>
         <FilterGroup>
@@ -160,6 +210,11 @@ export default function StampPage() {
         <StampDetailPopup
           concert={selectedStampDetail}
           onClose={() => setSelectedStampDetail(null)}
+          onPosterClick={(pid) => {
+             if (!pid) return;
+             setSelectedStampDetail(null);         // 팝업 닫고
+             navigate(`/performance/${pid}`);      // 상세로 이동
+   }}
         />
       )}
 
@@ -179,6 +234,9 @@ export default function StampPage() {
           onClose={() => setIsPeriodModalOpen(false)}
         />
       )}
+      {!isLoggedIn && <StampLogin />}
+      </main>
+      </div>
     </PageWrapper>
   );
 }
@@ -199,10 +257,12 @@ const PageWrapper = styled.div`
   width: 100%;
   max-width: ${({ theme }) => theme.layout.maxWidth};
   margin: 0 auto;
-  min-height: 100vh;
-  position: relative;
+  height: 100dvh; 
+  position: fixed;
+  display: flex;
+  flex-direction: column;
   background: ${({ theme }) => theme.colors.bgWhite};
-  overflow-y: auto;
+  overflow: hidden;   
 `;
 
 const StampButton = styled.button`

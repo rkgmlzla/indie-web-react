@@ -1,4 +1,4 @@
-//src/components/performance/PerformanceListCard.js
+// src/components/performance/PerformanceListCard.js
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
@@ -67,11 +67,25 @@ const RightSectionWrapper = styled.div`
   margin-left: auto;
 `;
 
+// ---- helpers ----
+const toAbs = (url) => {
+  if (!url) return '';
+  const s = String(url).trim().replace(/^"+|"+$/g, '');
+  if (!s) return '';
+  if (s.startsWith('http://') || s.startsWith('https://') || s.startsWith('data:')) return s;
+  if (s.startsWith('/')) return `${window.location.origin}${s}`;
+  return `${window.location.origin}/${s}`;
+};
+
+const pickPoster = (p) =>
+  p?.thumbnail || p?.posterUrl || p?.poster_url || p?.image || p?.image_url || '';
+
 export default function PerformanceListCard({ performance, onToggleLike }) {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { posterUrl, title, venue, date, isLiked } = performance;
+  const posterSrc = toAbs(pickPoster(performance));
+  const { title, venue, date, isLiked } = performance;
 
   const handleClick = () => {
     navigate(`/performance/${performance.id}`);
@@ -80,19 +94,25 @@ export default function PerformanceListCard({ performance, onToggleLike }) {
   return (
     <Card onClick={handleClick}>
       <LeftSection>
-        <Poster src={posterUrl} alt={title} referrerPolicy="no-referrer" />
+        <Poster
+          src={posterSrc || undefined}
+          alt={title}
+          referrerPolicy="no-referrer"
+          onError={(e) => {
+            // 깨진 이미지 아이콘 숨김(투명 1px)
+            e.currentTarget.src = 'data:image/gif;base64,R0lGODlhAQABAAAAACw=';
+          }}
+        />
         <Info>
           <Title>{title}</Title>
           <Venue>{venue}</Venue>
           <Date>{date}</Date>
         </Info>
       </LeftSection>
+
       {location.pathname === '/favorite' && (
         <RightSectionWrapper onClick={(e) => e.stopPropagation()}>
-          <HeartButton
-            isLiked={isLiked}
-            onClick={() => onToggleLike(performance.id)}
-          />
+          <HeartButton isLiked={isLiked} onClick={() => onToggleLike(performance.id)} />
         </RightSectionWrapper>
       )}
     </Card>

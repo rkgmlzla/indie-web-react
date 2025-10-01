@@ -5,30 +5,25 @@ import React from 'react';
 import styled from "styled-components";
 import { useNavigate } from 'react-router-dom';
 
-const StampDetailCard = ({ id, posterUrl, title, date, venue, onClick }) => {
-  const navigate = useNavigate();
+const StampDetailCard = ({ id, posterUrl, title, date, venue, onPosterClick }) => {
 
-  const handleClick = () => {
-    if (onClick) {
-      onClick();
-    } else {
-      navigate(`/stamp/${id}`);
-    }
-  };
-
-  return (
-    <CardContainer onClick={handleClick}>
-      <PosterWrapper>
-        <Poster src={posterUrl} alt={venue} />
-      </PosterWrapper>
-      <Date>{date}</Date>
-      <InfoWrapper>
-        <Title>{title}</Title>
-        <Venue>{venue}</Venue>
-      </InfoWrapper>
-    </CardContainer>
-  );
-};
+   return (
+    <CardContainer>
+      <PosterWrapper
+        onClick={() => onPosterClick?.(id)}
+        role="button"
+        aria-label={`${title || venue || '공연'} 상세보기`}
+      >
+         <Poster src={posterUrl} alt={venue} />
+       </PosterWrapper>
+       <Date>{date}</Date>
+       <InfoWrapper>
+         <Title>{title}</Title>
+         <Venue>{venue}</Venue>
+       </InfoWrapper>
+     </CardContainer>
+   );
+ };
 
 export default StampDetailCard;
 
@@ -45,6 +40,7 @@ const PosterWrapper = styled.div`
   overflow: hidden;
   border-radius: 10px;
   margin-bottom: 8px;
+  cursor: pointer;
 `;
 
 const Poster = styled.img`

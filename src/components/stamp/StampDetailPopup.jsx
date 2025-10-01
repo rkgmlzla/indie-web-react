@@ -3,18 +3,21 @@ import React from "react";
 import styled from "styled-components";
 import StampDetailCard from '../stamp/StampDetailCard';
 
-function StampDetailPopup({ concert, onClose }) {
+function StampDetailPopup({ concert, onClose, onPosterClick }) {
   return (
     <ModalBackground>
       <PopupContainer>
         <StampDetailCard 
+         id={concert?.performanceId ?? concert?.performance?.id}
           posterUrl={concert.posterUrl}
           title={concert.title}
           date={concert.date}
           venue={concert.venue}
+          onPosterClick={onPosterClick} 
+
         />
         <ButtonGroup>
-          <ConfirmButton onClick={onClose}>확인</ConfirmButton>
+           <ConfirmButton type="button" onClick={onClose}>확인</ConfirmButton>
         </ButtonGroup>
       </PopupContainer>
     </ModalBackground>

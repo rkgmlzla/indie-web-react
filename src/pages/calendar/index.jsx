@@ -135,16 +135,18 @@ function CalendarPage() {
         {/* 구분선 */}
         <div className={styles.divider} />
 
-        {/* 날짜별 공연 리스트 */}
-        {selectedDate ? (
-          <>
-            <h3 className={styles.dailyTitle}>{format(selectedDate, 'M월 d일')} 공연</h3>
-            <DailyConcertList concerts={dailyConcerts} />
-          </>
-        ) : (
-          // 날짜 선택 해제 시 아무것도 보이지 않게 처리
-          <div style={{ height: '0px' }} />
-        )}
+        {/* 날짜별 공연 리스트 (구분선 아래만 스크롤 가능) */}
+        <div className={styles.scrollArea}>
+          {selectedDate ? (
+            <>
+              <h3 className={styles.dailyTitle}>{format(selectedDate, 'M월 d일')} 공연</h3>
+              <DailyConcertList concerts={dailyConcerts} />
+            </>
+          ) : (
+            // 날짜 선택 해제 시 아무것도 보이지 않게 처리
+            <div style={{ height: '0px' }} />
+          )}
+        </div>
       </div>
     </>
   );

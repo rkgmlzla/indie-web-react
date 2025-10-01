@@ -64,6 +64,7 @@ export default function MyStampPage() {
             .map(stamp => (
                 <StampMyCard
                 key={stamp.id}
+                id={stamp.performanceId}
                 posterUrl={stamp.posterUrl} 
                 title={stamp.title}              
                 venue={stamp.venue}              

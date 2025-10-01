@@ -2,6 +2,11 @@
 .calendarPage {
   padding: 24px;
   background: white;
+
+  /* 📌 전체 레이아웃을 위/아래 분리 (위는 고정, 아래는 스크롤) */
+  display: flex;
+  flex-direction: column;
+  height: 100vh; /* 화면 전체 높이 기준 */
 }
 
 .header {
@@ -87,4 +92,11 @@
   background: var(--outlineGray);
   margin: 12px 0 8px;
   border: 0;
+}
+
+/* ✅ 구분선 아래 영역만 세로 스크롤 */
+.scrollArea {
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: 80px; /* 하단 여백 */
 }
