@@ -201,77 +201,50 @@ const HomePage = () => {
       <>
         <TodaySection>
           <TodayTitle>{todayStr}</TodayTitle>
-          <TodayConcertCarousel
-            ref={carouselRef}
-            performances={todayPerformances}
-            onClickPerformance={(id) => navigate(`/performance/${id}`)}
-          />
+          <FullWidthSection>
+            <TodayConcertCarousel
+              ref={carouselRef}
+              performances={todayPerformances}
+              onClickPerformance={(id) => navigate(`/performance/${id}`)}
+            />
+          </FullWidthSection>
         </TodaySection>
 
-        <NaviBarSection>
-          <HomeNaviBar
-            routes={{
-              performance: '/performance',
-              venues: '/venue',
-              artists: '/artist',
-              review: '/venue/reviews'
-            }}
-          />
-        </NaviBarSection>
+        <HomeNaviBar
+          routes={{
+            performance: '/performance',
+            venues: '/venue',
+            artists: '/artist',
+            review: '/venue/reviews'
+          }}
+        />
 
-
-        {/* ✅ [POPULAR] 인기 많은 공연 섹션: 네비바 아래, NEW 업로드 위 */}
-        <section style={{ margin: '32px 0' }}>
-          {/* (PopularConcertList 내부에서 섹션 제목과 리스트 간 간격 처리) */}
+        <FullWidthSectionBack>
+          <SectionTitle>인기 많은 공연</SectionTitle>
           <PopularConcertList performances={popularPerformances} />
-        </section>
 
-        {/* 섹션 간격: 위 32 / 아래 32 */}
-        <section style={{ margin: '32px 0' }}>
-          {/* (NewConcertList 내부에서 섹션 제목과 리스트 간 간격 처리) */}
+          <SectionTitle>NEW 업로드</SectionTitle>
           <NewConcertList performances={recentPerformances} />
-        </section>
+        </FullWidthSectionBack>
 
-        {/* 섹션 간격: 위 32 / 아래 32 */}
-        <section style={{ margin: '32px 0' }}>
-          {/* (TicketOpenList 내부에서 섹션 제목과 리스트 간 간격 처리) */}
-          <TicketOpenList performances={ticketOpenPerformances} />
-        </section>
+        <SectionTitle>티켓 오픈 예정</SectionTitle>
+        <TicketOpenList performances={ticketOpenPerformances} />
 
-        {/* [PICK] pick 섹션: 제목 중앙, 섹션 위/아래 32, 카드 1개 */}
-        <section style={{ margin: '32px 0' }}>
-          {/* 섹션 제목과 콘텐츠 간 간격: 16 */}
-          <div style={{ textAlign: 'center', marginBottom: 16 }}>
-            <h2
-              style={{
-                fontSize: 16,
-                fontWeight: 700,
-                margin: 0,
-                userSelect: 'none',
-                cursor: 'default',
-              }}
-            >
-              김삼문 pick !
-            </h2>
-          </div>
-          {pickItem && (
+        {pickItem && (
+          <>
+            <SectionTitle>김삼문 pick !</SectionTitle>
             <PickCard
               id={pickItem.id}
               title={pickItem.title}
               content={pickItem.content}
               imageUrl={pickItem.imageUrl}
-              onClick={() => {
-                // 상세 페이지 연결 예정: navigate(`/pick/${pickItem.id}`, { state: pickItem })
-                navigate(`/pick/${pickItem.id}`, { state: pickItem });
-              }}
+              onClick={() => navigate(`/pick/${pickItem.id}`, { state: pickItem })}
             />
-          )}
-        </section>
+          </>
+        )}
 
-        {/* ✅ [MOOD] 무드별 공연 섹션: 김삼문 pick! 바로 아래, 섹션 간격 32 */}
-        <section style={{ margin: '32px 0' }}>
-          <MoodSection />
-        </section>
+        <SectionTitle>분위기별 공연</SectionTitle>
+        <MoodSection />
       </>
     </>
   );
@@ -282,17 +255,35 @@ export default HomePage;
 const TodayTitle = styled.div`
   margin-top: 17px;
   margin-left: 16px;
-  font-size: ${({ theme }) => theme.fontSizes.md}; 
+  font-size: ${({ theme }) => theme.fontSizes.lg}; 
   font-weight: ${({ theme }) => theme.fontWeights.semibold};  
   color: ${({ theme }) => theme.colors.darkblack}; 
 `;
 
 const TodaySection = styled.section`
-  margin: 4px 0 16px 0;
+  margin: 4px 0 52px 0; // 8px
   display: flow-root;
 `;
 
-const NaviBarSection = styled.section`
-  margin-top: 29px; //-19
+const FullWidthSection = styled.section`
+  margin-left: -16px;
+  margin-right: -16px;
 `;
 
+const FullWidthSectionBack = styled.section`
+  background-color: #F7F7F8;
+  margin-left: -16px;
+  margin-right: -16px;
+  margin-top: 44px;
+  margin-bottom: 44px;
+  padding: 32px 0;
+`;
+
+const SectionTitle = styled.div`
+  font-size: ${({ theme }) => theme.fontSizes.lg};            
+  font-weight: ${({ theme }) => theme.fontWeights.medium};        
+  margin: 0 0 20px 0;   
+  text-align: center;       
+  cursor: default;           
+  color: ${({ theme }) => theme.colors.darkblack};
+`;
