@@ -17,6 +17,7 @@ const TodayConcertCard = ({ title, posterUrl, place, date, onClick }) => {
 export default TodayConcertCard;
 
 const CardContainer = styled.div`
+  width: 96%;
   display: flex;
   align-items: center;
   background: ${({ theme }) => theme.colors.bgWhite};
@@ -24,7 +25,6 @@ const CardContainer = styled.div`
   border-radius: 5px;
   padding: 12px;
   margin-right: 8px;
-  min-width: 320px;
   cursor: pointer;
   height: 180px;
   box-sizing: border-box;
