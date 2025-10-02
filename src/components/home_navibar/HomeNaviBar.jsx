@@ -42,10 +42,11 @@ export default function HomeNaviBar({
             aria-label={item.label}
             aria-disabled={item.disabled}
           >
-            <div className={styles.tile}>
+            {/* ✅ tile 대신 itemContent로 교체 (아이콘+텍스트 감쌈) */}
+            <div className={styles.itemContent}>
               <img src={item.icon} alt="" className={styles.iconImg} />
+              <span className={styles.label}>{item.label}</span>
             </div>
-            <span className={styles.label}>{item.label}</span>
           </button>
         ))}
       </div>

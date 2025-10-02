@@ -282,8 +282,8 @@ export default HomePage;
 const TodayTitle = styled.div`
   margin-top: 9px;
   font-size: ${({ theme }) => theme.fontSizes.base}; 
-  font-weight: ${({ theme }) => theme.fontWeights.semibold};  
-  color: ${({ theme }) => theme.colors.black}; 
+  font-weight: ${({ theme }) => theme.fontWeights.medium};  
+  color: ${({ theme }) => theme.colors.darkblack}; 
 `;
 
 const TodaySection = styled.section`
