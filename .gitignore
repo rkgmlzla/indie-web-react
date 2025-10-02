@@ -34,3 +34,5 @@ yarn-error.log*
 
 # system
 Thumbs.db
+.env.production
+.vercel
