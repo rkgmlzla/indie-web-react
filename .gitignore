@@ -36,3 +36,4 @@ yarn-error.log*
 Thumbs.db
 .env.production
 .vercel
+/public/index.html
