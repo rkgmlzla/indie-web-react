@@ -280,9 +280,10 @@ const HomePage = () => {
 export default HomePage;
 
 const TodayTitle = styled.div`
-  margin-top: 9px;
-  font-size: ${({ theme }) => theme.fontSizes.base}; 
-  font-weight: ${({ theme }) => theme.fontWeights.medium};  
+  margin-top: 17px;
+  margin-left: 16px;
+  font-size: ${({ theme }) => theme.fontSizes.md}; 
+  font-weight: ${({ theme }) => theme.fontWeights.semibold};  
   color: ${({ theme }) => theme.colors.darkblack}; 
 `;
 

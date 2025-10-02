@@ -1,3 +1,4 @@
+// src/components/performance/TodayConcertCard.jsx
 import React from 'react';
 import styled from 'styled-components';
 
@@ -17,16 +18,16 @@ const TodayConcertCard = ({ title, posterUrl, place, date, onClick }) => {
 export default TodayConcertCard;
 
 const CardContainer = styled.div`
-  width: 96%;
+  width: calc(100% - 16px);
+  margin: 0 auto;
   display: flex;
   align-items: center;
   background: ${({ theme }) => theme.colors.bgWhite};
   border: 1px solid ${({ theme }) => theme.colors.outlineGray};
   border-radius: 5px;
-  padding: 12px;
-  margin-right: 8px;
+  padding: 0 16px;
   cursor: pointer;
-  height: 180px;
+  height: 192px;
   box-sizing: border-box;
 `;
 
@@ -57,7 +58,7 @@ const Title = styled.h2`
 const Place = styled.p`
   font-size: ${({ theme }) => theme.fontSizes.sm};
   font-weight: ${({ theme }) => theme.fontWeights.medium};
-  color: ${({ theme }) => theme.colors.themeGreen};
+  color: ${({ theme }) => theme.colors.darkGray};
   margin-top: 11px;
   display: -webkit-box;
   -webkit-line-clamp: 2; 
