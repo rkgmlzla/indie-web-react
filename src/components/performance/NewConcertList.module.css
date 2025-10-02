@@ -1,25 +1,5 @@
 .sectionContainer {
-  margin-top: 24px;
   caret-color: transparent;
-}
-
-.titleRow {
-  display: flex;
-  align-items: center;
-}
-
-.sectionTitle {
-  font-size: 16px;
-  font-weight: 700;
-  color: #1c1c1e;
-  cursor: default;
-}
-
-.goIcon {
-  width: 14px;
-  height: 14px;
-  cursor: pointer;
-  margin-left: 8px; /* 텍스트와 간격 */
 }
 
 .listContainer {

@@ -1,7 +1,6 @@
 /* src/components/home_navibar/HomeNaviBar.module.css */
 .wrap {
   width: 100%;
-  margin: 0; 
 }
 
 .row {
@@ -38,12 +37,12 @@
   height: 64px;  /* 정사각형 높이 */
   box-sizing: border-box;
 
-  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1); 
+  box-shadow: 1.5px 2px 2px rgba(0, 0, 0, 0.1); 
   transition: all 0.2s ease; 
 }
 
 .itemContent:hover {
-  transform: translateY(-2px); /* 살짝 올라가는 느낌 */
+  transform: translateY(-2px); 
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 

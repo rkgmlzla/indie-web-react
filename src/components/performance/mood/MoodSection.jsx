@@ -52,12 +52,7 @@ export default function MoodSection() {
   const items = useMemo(() => performances ?? [], [performances]);
 
   return (
-    <section className={styles.section} style={{ margin: '16px 0' }}>
-      {/* 타이틀 */}
-      <div className={styles.titleWrap}>
-        <h2 className={styles.title}>분위기별 공연</h2>
-      </div>
-
+    <section>
       {/* 무드 버튼 */}
       <div className={styles.pillRow}>
         {moods.map((m) => {

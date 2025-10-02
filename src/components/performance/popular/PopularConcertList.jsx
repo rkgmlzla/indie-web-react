@@ -24,12 +24,6 @@ const PopularConcertList = ({ performances = [] }) => {
 
   return (
     <div className={styles.sectionContainer}>
-      <div className={styles.titleRow} style={{ textAlign: 'center' }}>
-        <h2 className={styles.sectionTitle} style={{ textAlign: 'center', width: '100%' }}>
-          인기 많은 공연
-        </h2>
-      </div>
-
       <div className={styles.listContainer}>
         {performances.map((item) => (
           <ConcertCard
