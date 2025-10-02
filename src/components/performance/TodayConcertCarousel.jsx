@@ -1,3 +1,4 @@
+// src/components/performance/TodayConcertCarousel.jsx
 import React, { forwardRef, useImperativeHandle, useRef } from 'react';
 import styled from 'styled-components';
 import Slider from 'react-slick';
@@ -55,16 +56,19 @@ const TodayConcertCarousel = forwardRef(({ performances = [], onClickPerformance
   }
 
   const settings = {
-  dots: performances.length > 1,
-  infinite: performances.length > 1,
-  speed: 400,
-  slidesToShow: 1,
-  slidesToScroll: 1,
-  adaptiveHeight: true,
-  arrows: true,
-  centerMode: true,         
-  centerPadding: '40px',     
-};
+    dots: performances.length > 1,
+    infinite: performances.length > 1,
+    speed: 400,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    adaptiveHeight: true,
+    arrows: true,
+    centerMode: true,         
+    centerPadding: '24px',     
+    autoplay: true,          
+    autoplaySpeed: 3000,     
+    pauseOnHover: true, 
+  };
 
   return (
     <div
