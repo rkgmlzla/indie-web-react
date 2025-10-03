@@ -274,14 +274,14 @@ const FullWidthSectionBack = styled.section`
   background-color: #F7F7F8;
   margin-left: -16px;
   margin-right: -16px;
-  margin-top: 44px;
+  margin-top: 20px;
   margin-bottom: 44px;
-  padding: 32px 0;
+  padding: 40px 0;
 `;
 
 const SectionTitle = styled.div`
   font-size: ${({ theme }) => theme.fontSizes.lg};            
-  font-weight: ${({ theme }) => theme.fontWeights.medium};        
+  font-weight: ${({ theme }) => theme.fontWeights.regular};        
   margin: 0 0 20px 0;   
   text-align: center;       
   cursor: default;           
