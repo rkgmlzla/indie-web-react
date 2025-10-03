@@ -14,10 +14,6 @@ export default function MoodSection() {
   const [activeMood, setActiveMood] = useState(null);   // ✅ 선택된 무드
   const [performances, setPerformances] = useState([]); // ✅ 선택된 무드별 공연
 
-  // 테마 안전 폴백
-  const ORANGE = theme?.colors?.maybethemeOrange ?? '#F68B4D';
-  const WHITE  = theme?.colors?.bgWhite ?? '#FFFFFF';
-
   // ✅ 최초 로드 시 무드 목록 조회
   useEffect(() => {
     const loadMoods = async () => {
@@ -61,13 +57,8 @@ export default function MoodSection() {
             <button
               key={m.id}
               type="button"
-              className={styles.pill}
+              className={`${styles.pill} ${active ? styles.pillActive : ''}`}
               onClick={() => setActiveMood(m)}
-              style={
-                active
-                  ? { background: ORANGE, color: WHITE, borderColor: ORANGE }
-                  : { background: WHITE, color: ORANGE, borderColor: ORANGE }
-              }
               aria-pressed={active}
             >
               {m.name}

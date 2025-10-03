@@ -233,7 +233,7 @@ const HomePage = () => {
         </FullWidthSection>
         {pickItem && (
           <>
-            <SectionTitle>김삼문 pick !</SectionTitle>
+            <SectionTitle>modie 추천공연</SectionTitle>
             <PickCard
               id={pickItem.id}
               title={pickItem.title}
@@ -244,8 +244,10 @@ const HomePage = () => {
           </>
         )}
 
-        <SectionTitle>분위기별 공연</SectionTitle>
-        <MoodSection />
+        <FullWidthSection>
+          <SectionTitle>키워드별 공연</SectionTitle>
+          <MoodSection />
+        </FullWidthSection>
       </>
     </>
   );
