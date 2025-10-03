@@ -227,9 +227,10 @@ const HomePage = () => {
           <NewConcertList performances={recentPerformances} />
         </FullWidthSectionBack>
 
-        <SectionTitle>티켓 오픈 예정</SectionTitle>
-        <TicketOpenList performances={ticketOpenPerformances} />
-
+        <FullWidthSection>
+          <SectionTitle>티켓 오픈 예정</SectionTitle>
+          <TicketOpenList performances={ticketOpenPerformances} />
+        </FullWidthSection>
         {pickItem && (
           <>
             <SectionTitle>김삼문 pick !</SectionTitle>
@@ -275,8 +276,8 @@ const FullWidthSectionBack = styled.section`
   margin-left: -16px;
   margin-right: -16px;
   margin-top: 20px;
-  margin-bottom: 44px;
-  padding: 40px 0;
+  margin-bottom: 32px;
+  padding: 32px 0 8px 0;
 `;
 
 const SectionTitle = styled.div`

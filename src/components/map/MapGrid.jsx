@@ -35,7 +35,7 @@ const CardWrapper = styled.div`
   cursor: pointer;
   box-sizing: border-box;
   background-color: ${({ $isSelected, theme }) =>
-    $isSelected ? 'rgba(60, 156, 103, 0.5)' : 'white'}; 
+    $isSelected ? 'rgba(60, 156, 103, 0.2)' : 'white'}; 
   position: relative;
   flex-shrink: 0;
 `;
