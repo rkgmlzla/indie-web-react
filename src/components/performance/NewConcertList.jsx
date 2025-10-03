@@ -20,11 +20,6 @@ const NewConcertList = ({ performances = [] }) => {
 
   return (
     <div className={styles.sectionContainer}>
-      <div className={styles.titleRow} style={{ textAlign: 'center' }}>
-        <h2 className={styles.sectionTitle} style={{ textAlign: 'center', width: '100%' }}>
-          NEW 업로드 공연
-        </h2>
-      </div>
       <div className={styles.listContainer}>
         {performances.map((item) => (
           <ConcertCard

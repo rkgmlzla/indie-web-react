@@ -11,6 +11,7 @@ export const theme = {
 
     // 회색 계열
     darkGray: '#4B4B4B',
+    midGray: '#808080',
     lightGray: '#B0B0B0',
     outlineGray: '#E4E4E4',
     popupGray: '#edededff',

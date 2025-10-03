@@ -30,35 +30,7 @@
 }
 
 /* -------------------- 섹션 -------------------- */
-/* 캘린더 섹션 (보존) */
-.calendarSection {
-  margin-bottom: 24px;
+.bgGraySection {
+  background-color: #F7F7F8;
 }
 
-.calendarBox {
-  display: flex;
-  align-items: center;
-  background: #ffffff;
-  border: 1px solid #cccccc;
-  border-radius: 8px;
-  padding: 12px;
-  cursor: pointer;
-}
-
-.calendarIcon {
-  width: 20px;
-  height: 20px;
-  margin-right: 12px;
-}
-
-.calendarText {
-  font-size: 14px;
-  color: #1c1c1e;
-  flex: 1;
-}
-
-.calendarGoIcon {
-  width: 12px;
-  height: 12px;
-  margin-left: 8px;
-}

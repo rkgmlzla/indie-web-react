@@ -1,11 +1,5 @@
 /* ✅ src/components/performance/mood/MoodSection.module.css */
 /* - 섹션, 타이틀, 버튼, 리스트(가로 스크롤) 스타일 */
-/* - 기존 NewConcertList의 리스트 스타일과 톤을 맞춤 */
-
-.section {
-  margin: 16px 0; /* 안전 기본값 (Home에서 inline으로도 16px 지정 예정) */
-}
-
 .titleWrap {
   display: flex;
   justify-content: center;
