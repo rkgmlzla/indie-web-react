@@ -3,7 +3,7 @@
 /* - 섹션 제목 ↔ 리스트 간격 16px */
 
 .sectionContainer {
-  margin-bottom: 48px; /*-8px*/
+  margin-bottom: 40px; /*-8px*/
   caret-color: transparent;
 }
 
