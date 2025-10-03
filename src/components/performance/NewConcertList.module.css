@@ -5,7 +5,6 @@
 .listContainer {
   display: flex;
   overflow-x: auto;
-  padding-bottom: 8px;
   scrollbar-width: none;
   -ms-overflow-style: none;
   caret-color: transparent;

@@ -3,17 +3,19 @@
 /* - 섹션 제목 ↔ 리스트 간격 16px */
 
 .sectionContainer {
-  margin-top: 0;  /* Home에서 섹션 여백(32px)으로 감쌉니다 */
+  margin-bottom: 48px; /*-8px*/
   caret-color: transparent;
 }
 
 .listContainer {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   overflow-x: auto;
   scrollbar-width: none;
   -ms-overflow-style: none;
   caret-color: transparent;
+  padding-left: 4px;
+  padding-right: 12px;
 }
 .listContainer::-webkit-scrollbar {
   display: none;
