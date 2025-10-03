@@ -3,7 +3,7 @@ import axios from 'axios';
 import { authBaseUrl } from './config';
 
 const http = axios.create({
-  baseURL: '/api',
+  baseURL: apiBaseUrl,
   withCredentials: true,
   validateStatus: (s) => s < 500,
 });
