@@ -1,12 +1,13 @@
 .grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 8px;
+  gap: 16px;
 }
 
 .dayLabel {
   text-align: center;
-  font-weight: bold;
+  font-weight: 600;
+  font-size: 18px;
 }
 
 /* ✅ 기본 날짜 스타일 */
@@ -20,19 +21,16 @@
   position: relative;
   font-size: 14px;
 
-  /* 클릭 시 border 생겨도 흔들림 없게 */
   border: 2px solid transparent;
   box-sizing: border-box;
 
-  /* ✅ 세로/가로 완전 중앙 정렬 */
   display: flex;
   align-items: center;
   justify-content: center;
-
-  /* line-height 제거 */
   line-height: normal;
-}
 
+  transition: background 0.2s, color 0.2s, border 0.2s;
+}
 
 /* 빈 칸 */
 .blank {
@@ -41,26 +39,26 @@
   margin: auto;
 }
 
-/* ✅ ○ 공연 있는 날짜 (테두리만) */
+/* ✅ 1. 공연 있는 날짜: 연한 초록 배경 */
 .concert {
-  border: 2px solid var(--accent);
+  background-color: rgba(60, 156, 103, 0.2);
 }
 
-/* ✅ ● 선택된 날짜 (공연 없음) */
+/* ✅ 2. 선택한 날짜 (공연 없어도): 진한 초록 배경 */
 .selectedOnly {
-  background: var(--accent);
+  background-color: #3C9C68;
   color: white;
-  border: 2px solid var(--accent);
+  border: 2px solid #3C9C68;
 }
 
-/* ✅ ● 선택된 날짜 (공연 있음) */
+/* ✅ 3. 선택한 날짜가 공연 있는 경우 (덮어쓰기용) */
 .selectedAndHasConcert {
-  background: var(--accent);
+  background-color: #3C9C68;
   color: white;
-  border: 2px solid var(--accent);
+  border: 2px solid #3C9C68;
 }
 
-/* ✅ 오늘 날짜 (공연 유무 무관): 빨간 점만 표시, border는 concert와 동일 */
+/* ✅ 오늘 날짜 (공연 유무 무관): 빨간 점만 표시 */
 .today {
   font-weight: bold;
 }
@@ -69,7 +67,7 @@
 .redDot {
   width: 6px;
   height: 6px;
-  background: rgb(226, 226, 226);
+  background: rgb(255, 105, 163);
   border-radius: 45%;
   position: absolute;
   top: 1px;

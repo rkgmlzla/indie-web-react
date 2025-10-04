@@ -4,9 +4,9 @@ import styled from 'styled-components';
 const CardWrapper = styled.div`
   display: flex;
   align-items: center;
-  padding: 12px 4px 0 4px;
+  margin-bottom: 24px;
   gap: 12px;
-  height: 56px;
+  height: 44px;
 `;
 
 const ProfileImage = styled.img`
