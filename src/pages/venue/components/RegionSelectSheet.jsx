@@ -10,7 +10,6 @@ const Overlay = styled.div`
 `;
 
 const Frame = styled.div`
-  /* 화면 전체를 덮되, 내부 컨텐츠를 앱 폭에 맞춰 가운데 정렬 */
   position: fixed;
   left: 0;
   right: 0;
@@ -56,7 +55,7 @@ const Title = styled.div`
 
 const RegionListWrapper = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(84px, 1fr)); /* 앱 폭 내에서 균등 채움 */
+  grid-template-columns: repeat(auto-fit, minmax(84px, 1fr)); 
   column-gap: 12px;
   row-gap: 16px;
   padding: 12px 16px 24px 16px;
@@ -68,11 +67,12 @@ const RegionButton = styled.button`
   width: 100%;
   border-radius: 16px;
   background-color: ${({ selected, theme }) =>
-    selected ? 'rgba(241, 79, 33, 0.3)' : theme.colors.white};
+    selected ? 'rgba(60, 156, 103, 0.2)' : theme.colors.white};
   border: 1px solid
-    ${({ selected, theme }) => (selected ? theme.colors.themeOrange : theme.colors.outlineGray)};
-  color: ${({ selected, theme }) => (selected ? theme.colors.themeOrange : theme.colors.darkGray)};
+    ${({ selected, theme }) => (selected ? theme.colors.themeGreen : theme.colors.outlineGray)};
+  color: ${({ selected, theme }) => (selected ? theme.colors.themeGreen : theme.colors.darkGray)};
   font-size: 14px;
+  font-weight: ${({ selected, theme }) => (selected ? theme.fontWeights.semibold : theme.fontWeights.medium)};
   text-align: center;
   line-height: 30px;
   cursor: pointer;

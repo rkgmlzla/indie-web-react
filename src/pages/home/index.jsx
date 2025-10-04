@@ -192,13 +192,10 @@ const HomePage = () => {
 
   return (
     <>
-      {/* <Header title="김삼문" onMenuClick={() => setIsSidebarOpen(true)} /> */}
-      {isSidebarOpen && <Sidebar onClose={() => setIsSidebarOpen(false)} />}
-
       <Header title="홈" />
       <div style={{ height: "16px" }} />
 
-      <>
+      <ScrollableContent>
         <TodaySection>
           <TodayTitle>{todayStr}</TodayTitle>
           <FullWidthSection>
@@ -248,12 +245,25 @@ const HomePage = () => {
           <SectionTitle>키워드별 공연</SectionTitle>
           <MoodSection />
         </FullWidthSection>
-      </>
+      </ScrollableContent>
     </>
   );
 };
 
 export default HomePage;
+
+const ScrollableContent = styled.div`
+  height: calc(100vh - 80px);
+  overflow-y: auto;
+  padding: 0 16px; 
+  margin: 0 -16px; 
+  
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+`;
 
 const TodayTitle = styled.div`
   margin-top: 17px;

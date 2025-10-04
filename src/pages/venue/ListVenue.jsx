@@ -16,8 +16,16 @@ const PageWrapper = styled.div`
 `;
 
 const ScrollableList = styled.div`
+  margin-bottom: 125px;
   flex-grow: 1;
   overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    display: none; 
+  }
+
+  -ms-overflow-style: none; 
+  scrollbar-width: none;
 `;
 
 function ListVenue() {
@@ -72,15 +80,10 @@ function ListVenue() {
   return (
     <PageWrapper>
       <Header title="공연장" initialSearchTab="공연/공연장" />
-      <div style={{ height: '30px' }} />
+      <div style={{ height: '16px' }} />
 
       <RegionSelectButton onClick={() => setIsSheetOpen(true)} selectedRegions={selectedRegions} />
-      <Divider $mt="16px" />
-
-
-      {/* ✅ 공연장 목록 렌더링 - 안전한 조건 추가 */}
       <ScrollableList>
-
         {Array.isArray(venues) &&
           venues.map((venue) => (
 
