@@ -11,7 +11,7 @@ const CardWrapper = styled.div`
   width: 100%;
   margin: 0 auto;
   box-sizing: border-box;
-  border: 1.4px solid ${({ theme }) => theme.colors.outlineGray};
+  border: 1.4px solid rgba(60, 156, 103);
   border-radius: 10px;
   padding: 8px;
 `;

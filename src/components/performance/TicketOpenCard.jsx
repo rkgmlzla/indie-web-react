@@ -26,7 +26,6 @@ const TicketOpenCard = ({
 
   return (
     <div className={styles.cardContainer} onClick={onClick}>
-      {/* ▶ 포스터: 카드 내부 세로 88px을 '꽉' 채움 (아래 흰 여백 제거) */}
       <img
         className={styles.poster}
         src={posterUrl || 'https://placehold.co/300x400?text=No+Image'}
@@ -36,19 +35,13 @@ const TicketOpenCard = ({
       <div className={styles.textContainer}>
         <h3 className={styles.title}>{title}</h3>
         <p className={styles.place}>{place}</p>
-
-        {/* ▶ 주황색 직사각형 배지 + 흰 글씨 */}
         <span
           className={styles.badge}
-          style={{ backgroundColor: theme.colors.maybethemeOrange }}
         >
           예매 오픈
         </span>
-
-        {/* ▶ 날짜/시각: 주황색 */}
         <p
           className={styles.ticketDate}
-          style={{ color: theme.colors.maybethemeOrange }}
         >
           {dateText ? `${dateText}${timeText ? ` ${timeText}` : ''}` : ''}
         </p>
