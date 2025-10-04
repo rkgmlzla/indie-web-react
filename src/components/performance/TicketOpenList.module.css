@@ -1,9 +1,12 @@
 .listContainer {
   display: flex;
   overflow-x: auto;
-  flex-wrap: nowrap; /* 한 줄로 고정 */
-  padding-bottom: 8px;
-  gap: 12px;
+  flex-wrap: nowrap;
+  padding-bottom: 56px;
+  padding-left: 16px;
+  padding-right: 16px;
+  gap: 16px;
   scrollbar-width: none;
-  -ms-overflow-style: none; /* 카드 사이 간격 */
+  -ms-overflow-style: none; 
 }
+

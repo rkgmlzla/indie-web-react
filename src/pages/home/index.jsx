@@ -227,12 +227,13 @@ const HomePage = () => {
           <NewConcertList performances={recentPerformances} />
         </FullWidthSectionBack>
 
-        <SectionTitle>티켓 오픈 예정</SectionTitle>
-        <TicketOpenList performances={ticketOpenPerformances} />
-
+        <FullWidthSection>
+          <SectionTitle>티켓 오픈 예정</SectionTitle>
+          <TicketOpenList performances={ticketOpenPerformances} />
+        </FullWidthSection>
         {pickItem && (
           <>
-            <SectionTitle>김삼문 pick !</SectionTitle>
+            <SectionTitle>modie 추천공연</SectionTitle>
             <PickCard
               id={pickItem.id}
               title={pickItem.title}
@@ -243,8 +244,10 @@ const HomePage = () => {
           </>
         )}
 
-        <SectionTitle>분위기별 공연</SectionTitle>
-        <MoodSection />
+        <FullWidthSection>
+          <SectionTitle>키워드별 공연</SectionTitle>
+          <MoodSection />
+        </FullWidthSection>
       </>
     </>
   );
@@ -274,14 +277,14 @@ const FullWidthSectionBack = styled.section`
   background-color: #F7F7F8;
   margin-left: -16px;
   margin-right: -16px;
-  margin-top: 44px;
-  margin-bottom: 44px;
-  padding: 32px 0;
+  margin-top: 20px;
+  margin-bottom: 32px;
+  padding: 32px 0 8px 0;
 `;
 
 const SectionTitle = styled.div`
   font-size: ${({ theme }) => theme.fontSizes.lg};            
-  font-weight: ${({ theme }) => theme.fontWeights.medium};        
+  font-weight: ${({ theme }) => theme.fontWeights.regular};        
   margin: 0 0 20px 0;   
   text-align: center;       
   cursor: default;           
