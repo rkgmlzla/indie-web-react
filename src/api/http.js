@@ -1,11 +1,10 @@
-// src/api/http.js
 import axios from 'axios';
 import { authBaseUrl } from './config';
 
 const http = axios.create({
   baseURL: '/',
   withCredentials: true,
-  validateStatus: (s) => s < 500,
+  validateStatus: (s) => s < 500, 
 });
 
 http.interceptors.request.use((cfg) => {

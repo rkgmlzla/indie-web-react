@@ -76,7 +76,7 @@ function ListVenue() {
             />
           ))
         ) : (
-          <EmptyMessage>해당하는 공연장이 없습니다.</EmptyMessage>
+          <EmptyMessage>해당되는 공연장이 없습니다.</EmptyMessage>
         )}
       </ScrollableList>
 

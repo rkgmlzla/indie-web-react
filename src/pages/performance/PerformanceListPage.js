@@ -110,7 +110,6 @@ export default function PerformanceListPage() {
                 : '인기순'}
             </FilterButton>
 
-            {/* 기존 FilterButton 삭제하고 RegionSelectButton 사용 */}
             <RegionSelectButton 
               selectedRegions={selectedRegions}
               onClick={() => setIsRegionSheetOpen(true)}
@@ -129,7 +128,7 @@ export default function PerformanceListPage() {
               />
             ))
           ) : (
-            <EmptyMessage>해당 지역에 공연이 없습니다.</EmptyMessage>
+            <EmptyMessage>해당되는 공연이 없습니다.</EmptyMessage>
           )}
         </ScrollableContent>
 
