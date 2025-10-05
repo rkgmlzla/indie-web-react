@@ -8,25 +8,7 @@ import RegionSelectSheet from './components/RegionSelectSheet';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { fetchVenueList } from '../../api/venueApi'; // ✅ 공연장 목록 API import
-
-const PageWrapper = styled.div`
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-`;
-
-const ScrollableList = styled.div`
-  margin-bottom: 125px;
-  flex-grow: 1;
-  overflow-y: auto;
-
-  &::-webkit-scrollbar {
-    display: none; 
-  }
-
-  -ms-overflow-style: none; 
-  scrollbar-width: none;
-`;
+import { div } from 'framer-motion/client';
 
 function ListVenue() {
   const navigate = useNavigate();
@@ -84,16 +66,18 @@ function ListVenue() {
 
       <RegionSelectButton onClick={() => setIsSheetOpen(true)} selectedRegions={selectedRegions} />
       <ScrollableList>
-        {Array.isArray(venues) &&
+        {Array.isArray(venues) && venues.length > 0 ? (
           venues.map((venue) => (
-
             <VenueItem
               key={venue.id}
               image={venue.image_url}
               name={venue.name}
               onClick={() => navigate(`/venue/${venue.id}`)}
             />
-          ))}
+          ))
+        ) : (
+          <EmptyMessage>해당하는 공연장이 없습니다.</EmptyMessage>
+        )}
       </ScrollableList>
 
       {isSheetOpen && (
@@ -108,3 +92,32 @@ function ListVenue() {
 }
 
 export default ListVenue;
+
+const PageWrapper = styled.div`
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+`;
+
+const ScrollableList = styled.div`
+  margin-bottom: 125px;
+  flex-grow: 1;
+  overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    display: none; 
+  }
+
+  -ms-overflow-style: none; 
+  scrollbar-width: none;
+`;
+
+const EmptyMessage = styled.div`
+padding: 16px 16px;
+  font-size: ${({ theme }) => theme.fontSizes.sm};
+  font-weight: ${({ theme }) => theme.fontWeights.medium};
+  color: ${({ theme }) => theme.colors.darkGray};
+  display: flex;
+  justify-content: center; 
+  align-items: center;  
+`;
