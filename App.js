@@ -21,7 +21,7 @@ import routes from './routes';
 function App() {
   useEffect(() => {
     const script = document.createElement('script');
-    script.src = `https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=${process.env.REACT_APP_NAVER_MAP_KEY}`;
+    script.src = `https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=a0xuvmp3pj`;
     script.async = true;
     document.head.appendChild(script);
   }, []);
