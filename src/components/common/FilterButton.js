@@ -11,7 +11,7 @@ const Button = styled.button`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 8px 12px;
+  padding: 6px 12px;
   margin: 0;
   cursor: pointer;
 `;

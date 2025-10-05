@@ -13,7 +13,7 @@ export default function StampLogin() {
 const Overlay = styled.div`
   position: fixed;
   top: 56px;
- bottom: 84px;  /* ✅ 실제 하단바 높이에 맞춰 증가 */
+  bottom: 84px;
   left: 50%;
   transform: translateX(-50%);
   width: 100%;
@@ -24,7 +24,7 @@ const Overlay = styled.div`
   justify-content: center;
   align-items: center;
   text-align: center;
-  z-index: 9999;
+  z-index: 998;  /* 하단바(999)보다 낮게 */
   pointer-events: all;
 `;
 
