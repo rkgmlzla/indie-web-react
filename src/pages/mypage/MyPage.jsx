@@ -15,17 +15,14 @@ import {
 
 function MyPage() {
   const navigate = useNavigate(); 
-
   const [profileImage, setProfileImage] = useState('');
   const [nickname, setNickname] = useState('');
   const [editingNickname, setEditingNickname] = useState(false);
   const [alarmEnabled, setAlarmEnabled] = useState(false);
   const [locationEnabled, setLocationEnabled] = useState(false);
   const [imageError, setImageError] = useState(false);
-
   const [loading, setLoading] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-
   const fileInputRef = useRef(null);
 
   useEffect(() => {

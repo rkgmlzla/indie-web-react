@@ -50,29 +50,31 @@ export default function MyStampPage() {
         </FilterGroup>
       </FilterBar>
 
-      <Content>
-        {loading && <Message>불러오는 중...</Message>}
-        {error && <Message>{error}</Message>}
-        {!loading && !error && stamps.length === 0 && (
-          <Message>수집한 스탬프가 없습니다.</Message>
-        )}
+      <ScrollableContent>
+        <Content>
+          {loading && <Message>불러오는 중...</Message>}
+          {error && <Message>{error}</Message>}
+          {!loading && !error && stamps.length === 0 && (
+            <Message>수집한 스탬프가 없습니다.</Message>
+          )}
 
-        <StampGrid>
-          {stamps
-            .slice()
-            .sort((a, b) => new Date(b.date) - new Date(a.date))
-            .map(stamp => (
-                <StampMyCard
-                key={stamp.id}
-                id={stamp.performanceId}
-                posterUrl={stamp.posterUrl} 
-                title={stamp.title}              
-                venue={stamp.venue}              
-                date={stamp.date}                
-                />
-            ))}
-        </StampGrid>
-      </Content>
+          <StampGrid>
+            {stamps
+              .slice()
+              .sort((a, b) => new Date(b.date) - new Date(a.date))
+              .map(stamp => (
+                  <StampMyCard
+                  key={stamp.id}
+                  id={stamp.performanceId}
+                  posterUrl={stamp.posterUrl} 
+                  title={stamp.title}              
+                  venue={stamp.venue}              
+                  date={stamp.date}                
+                  />
+              ))}
+          </StampGrid>
+        </Content>
+      </ScrollableContent>
 
       {isPeriodModalOpen && (
         <PeriodModal
@@ -129,8 +131,7 @@ const PageWrapper = styled.div`
 `;
 
 const Content = styled.div`
-  padding-top: 16px;
-  padding-bottom: 64px;
+  padding-bottom: 174px; //158
 `;
 
 const StampGrid = styled.div`
@@ -147,4 +148,16 @@ const Message = styled.div`
   display: flex;
   justify-content: center; 
   align-items: center;  
+`;
+
+const ScrollableContent = styled.div`
+  margin-top: 16px;
+  height: calc(100vh - 80px); 
+  overflow-y: auto;
+  
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 `;
