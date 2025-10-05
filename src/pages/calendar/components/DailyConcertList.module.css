@@ -1,6 +1,28 @@
-
 .grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.cardContainer {
+  width: 30%;
+  display: flex;
+  justify-content: center;
+  margin: 0 8px;
+  flex-direction: column;
+}
+
+.emptyMessage {
+  padding: 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #666;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

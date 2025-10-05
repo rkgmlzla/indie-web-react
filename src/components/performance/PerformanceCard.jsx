@@ -11,14 +11,14 @@ function PerformanceCard({ concert }) {
   };
 
   return (
-    <div className={styles.card} onClick={handleClick}>
-      <div className={styles.thumbnail}>
-        <img src={concert.posterUrl || concert.thumbnail} alt={concert.title} className={styles.poster} />
-      </div>
-      <div className={styles.info}>
-        <h3 className={styles.title}>{concert.title}</h3>
-        <p className={styles.location}>{concert.venue || concert.place}</p>
-      </div>
+    <div className={styles.cardWrapper} onClick={handleClick}>
+      <img 
+        src={concert.posterUrl || concert.thumbnail} 
+        alt={concert.title} 
+        className={styles.poster} 
+      />
+      <div className={styles.title}>{concert.title}</div>
+      <div className={styles.venue}>{concert.venue || concert.place}</div>
     </div>
   );
 }

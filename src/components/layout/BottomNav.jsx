@@ -29,12 +29,12 @@ const NavItem = styled(NavLink)`
   align-items: center;
   margin-top: 8px; 
   text-decoration: none;
-  color: ${({ theme }) => theme.colors.themeGreen};
+  color: ${({ theme }) => theme.colors.lightGray};
   font-size: ${({ theme }) => theme.fontSizes.xs}; /* 12px */
   font-weight: ${({ theme }) => theme.fontWeights.medium};
 
   &.active {
-    color: ${({ theme }) => theme.colors.themePink};
+    color: ${({ theme }) => theme.colors.themeGreen};
   }
 
   svg {

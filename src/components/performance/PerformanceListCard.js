@@ -4,14 +4,86 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import HeartButton from '../common/HeartButton';
 
+// ---- helpers ----
+const toAbs = (url) => {
+  if (!url) return '';
+  const s = String(url).trim().replace(/^"+|"+$/g, '');
+  if (!s) return '';
+  if (s.startsWith('http://') || s.startsWith('https://') || s.startsWith('data:')) return s;
+  if (s.startsWith('/')) return `${window.location.origin}${s}`;
+  return `${window.location.origin}/${s}`;
+};
+
+const pickPoster = (p) =>
+  p?.thumbnail || p?.posterUrl || p?.poster_url || p?.image || p?.image_url || '';
+
+export default function PerformanceListCard({ performance, onToggleLike }) {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const posterSrc = toAbs(pickPoster(performance));
+  const { title, venue, date, isLiked } = performance;
+
+  const handleClick = () => {
+    navigate(`/performance/${performance.id}`);
+  };
+
+  return (
+    <Card onClick={handleClick}>
+      <LeftSection>
+        <Poster
+          src={posterSrc || undefined}
+          alt={title}
+          referrerPolicy="no-referrer"
+          onError={(e) => {
+            e.currentTarget.src = 'data:image/gif;base64,R0lGODlhAQABAAAAACw=';
+          }}
+        />
+        <Info>
+          <Title>{title}</Title>
+          <Venue>{venue}</Venue>
+          <Date>{date}</Date>
+        </Info>
+      </LeftSection>
+
+      {location.pathname === '/favorite' && (
+        <RightSectionWrapper onClick={(e) => e.stopPropagation()}>
+          <HeartButton isLiked={isLiked} onClick={() => onToggleLike(performance.id)} />
+        </RightSectionWrapper>
+      )}
+    </Card>
+  );
+}
+
 const Card = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 1.25rem;
   background-color: ${({ theme }) => theme.colors.bgWhite};
-  border-bottom: 1px solid ${({ theme }) => theme.colors.outlineGray};
   cursor: pointer;
+  position: relative;
+  padding-bottom: 16px;
+  margin-bottom: 16px;
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background-color: ${({ theme }) => theme.colors.outlineGray};
+  }
+  
+  /* 마지막 카드: 하단 선, 여백, 마진 모두 제거 */
+  &:last-child {
+    padding-bottom: 0;
+    margin-bottom: 16px;  /* 하단바 위로 16px만 유지 */
+    
+    &::after {
+      display: none;
+    }
+  }
 `;
 
 const LeftSection = styled.div`
@@ -23,7 +95,7 @@ const Poster = styled.img`
   max-width: 5rem;
   height: auto;
   aspect-ratio: 0.8;
-  border-radius: 0.5rem;
+  border-radius: 5px;
   border: 1px solid ${({ theme }) => theme.colors.outlineGray};
   object-fit: cover;
 `;
@@ -31,7 +103,8 @@ const Poster = styled.img`
 const Info = styled.div`
   display: flex;
   flex-direction: column;
-  margin: 0.5rem 1rem;
+  margin: 8px 0;
+  margin-left: 12px;
   flex: 1;
 `;
 
@@ -66,55 +139,3 @@ const RightSectionWrapper = styled.div`
   align-items: center;
   margin-left: auto;
 `;
-
-// ---- helpers ----
-const toAbs = (url) => {
-  if (!url) return '';
-  const s = String(url).trim().replace(/^"+|"+$/g, '');
-  if (!s) return '';
-  if (s.startsWith('http://') || s.startsWith('https://') || s.startsWith('data:')) return s;
-  if (s.startsWith('/')) return `${window.location.origin}${s}`;
-  return `${window.location.origin}/${s}`;
-};
-
-const pickPoster = (p) =>
-  p?.thumbnail || p?.posterUrl || p?.poster_url || p?.image || p?.image_url || '';
-
-export default function PerformanceListCard({ performance, onToggleLike }) {
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  const posterSrc = toAbs(pickPoster(performance));
-  const { title, venue, date, isLiked } = performance;
-
-  const handleClick = () => {
-    navigate(`/performance/${performance.id}`);
-  };
-
-  return (
-    <Card onClick={handleClick}>
-      <LeftSection>
-        <Poster
-          src={posterSrc || undefined}
-          alt={title}
-          referrerPolicy="no-referrer"
-          onError={(e) => {
-            // 깨진 이미지 아이콘 숨김(투명 1px)
-            e.currentTarget.src = 'data:image/gif;base64,R0lGODlhAQABAAAAACw=';
-          }}
-        />
-        <Info>
-          <Title>{title}</Title>
-          <Venue>{venue}</Venue>
-          <Date>{date}</Date>
-        </Info>
-      </LeftSection>
-
-      {location.pathname === '/favorite' && (
-        <RightSectionWrapper onClick={(e) => e.stopPropagation()}>
-          <HeartButton isLiked={isLiked} onClick={() => onToggleLike(performance.id)} />
-        </RightSectionWrapper>
-      )}
-    </Card>
-  );
-}
