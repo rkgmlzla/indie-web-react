@@ -1,13 +1,14 @@
 .grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 16px;
+  gap: 10px;
 }
 
 .dayLabel {
   text-align: center;
   font-weight: 600;
   font-size: 18px;
+  color: #1C1C1E;
 }
 
 /* ✅ 기본 날짜 스타일 */
@@ -20,6 +21,8 @@
   margin: auto;
   position: relative;
   font-size: 14px;
+  font-weight: 500;
+  color: #2F2F2F;
 
   border: 2px solid transparent;
   box-sizing: border-box;
@@ -49,6 +52,7 @@
   background-color: #3C9C68;
   color: white;
   border: 2px solid #3C9C68;
+  font-weight: 600;
 }
 
 /* ✅ 3. 선택한 날짜가 공연 있는 경우 (덮어쓰기용) */
@@ -56,11 +60,12 @@
   background-color: #3C9C68;
   color: white;
   border: 2px solid #3C9C68;
+  font-weight: 600;
 }
 
 /* ✅ 오늘 날짜 (공연 유무 무관): 빨간 점만 표시 */
 .today {
-  font-weight: bold;
+  font-weight: 500;
 }
 
 /* 오늘 날짜의 빨간 점 */
