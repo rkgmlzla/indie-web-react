@@ -137,7 +137,6 @@ export default function StampPage() {
 
   return (
     <PageWrapper>
-       <div className="App">
       <Header title="스탬프" />
       <div style={{ height: "16px" }} />
 
@@ -236,7 +235,6 @@ export default function StampPage() {
       )}
       {!isLoggedIn && <StampLogin />}
       </main>
-      </div>
     </PageWrapper>
   );
 }
@@ -271,7 +269,7 @@ const StampButton = styled.button`
   border: none;
   cursor: pointer;
   right: 0px;
-  bottom: 108px;
+  bottom: 100px;
 
   img {
     width: 72px;
@@ -287,7 +285,7 @@ const StampButton = styled.button`
 const StampBoard = styled.div`
   position: absolute;
   top: 78.5px;
-  bottom: 60px;
+  bottom: 108px;
   left: 16px;
   right: 16px;
   display: flex;
@@ -297,10 +295,9 @@ const StampBoard = styled.div`
 const StampPageContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  row-gap: 40px;
+  row-gap: 24px;
   width: 100%;
   box-sizing: border-box;
-
   justify-items: center; 
 `;
 
@@ -332,6 +329,7 @@ const StampImage = styled.img`
 
 const StampDate = styled.div`
   margin-top: 12px;
+  margin-bottom: 16px;
   font-size: ${({ theme }) => theme.fontSizes.sm};
   font-weight: ${({ theme }) => theme.fontWeights.semibold};
   color: ${({ theme }) => theme.colors.stampGray};
@@ -343,13 +341,8 @@ const ScrollArea = styled.div`
   margin-bottom: 16px;
 
   &::-webkit-scrollbar {
-    width: 4px;
+    display: none;
   }
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  &::-webkit-scrollbar-thumb {
-    background-color: rgba(0, 0, 0, 0.3);
-    border-radius: 2px;
-  }
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 `;
