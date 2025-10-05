@@ -46,7 +46,8 @@ export default function PerformanceListPage() {
 
   const [performances, setPerformances] = useState([]);
   const [page, setPage] = useState(1);
-  const size = 20;
+  const [hasMore, setHasMore] = useState(true);
+  const size = 15;
 
   const handleSelectRegion = (region) => {
     if (region === '전체') {
@@ -61,7 +62,7 @@ export default function PerformanceListPage() {
     }
   };
   
-  const loadPerformances = async () => {
+  const loadPerformances = async (append = false) => {
     try {
       const sortMapping = { latest: 'created_at', popular: 'likes', date: 'date' };
       const sortParam = sortMapping[sortOption] || 'created_at';
@@ -83,7 +84,17 @@ export default function PerformanceListPage() {
       list = list.map(normalizePoster);
 
       console.log('🎯 [공연 목록] 최종 리스트:', list);
-      setPerformances(list);
+
+      if (append) {
+        setPerformances((prev) => [...prev, ...list]);
+      } else {
+        setPerformances(list);
+      }
+
+      // ✅ 다음 데이터가 더 이상 없으면 더보기 버튼 숨기기
+      if (list.length < size) setHasMore(false);
+      else setHasMore(true);
+
     } catch (err) {
       console.error('📛 공연 목록 API 호출 실패:', err?.response?.data || err.message);
       setPerformances([]);
@@ -91,7 +102,7 @@ export default function PerformanceListPage() {
   };
 
   useEffect(() => {
-    loadPerformances();
+    loadPerformances(page > 1);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sortOption, selectedRegions, page]);
 
@@ -120,13 +131,20 @@ export default function PerformanceListPage() {
 
         <ScrollableContent>
           {performances.length > 0 ? (
-            performances.map((p) => (
-              <PerformanceListCard
-                key={p.id}
-                performance={p}
-                onClick={() => navigate(`/performance/${p.id}`)}
-              />
-            ))
+            <>
+              {performances.map((p) => (
+                <PerformanceListCard
+                  key={p.id}
+                  performance={p}
+                  onClick={() => navigate(`/performance/${p.id}`)}
+                />
+              ))}
+              {hasMore && (
+                <MoreButton onClick={() => setPage((prev) => prev + 1)}>
+                  더보기
+                </MoreButton>
+              )}
+            </>
           ) : (
             <EmptyMessage>해당되는 공연이 없습니다.</EmptyMessage>
           )}
@@ -209,7 +227,7 @@ const ModalBackground = styled.div`
 const ScrollableContent = styled.div`
   height: calc(100vh - 84px); 
   margin-bottom: 84px;
-  padding-bottom: -16px;
+  padding-bottom: 120px; /* ✅ 언더바 겹침 방지 */
   overflow-y: auto;
   
   &::-webkit-scrollbar {
@@ -217,6 +235,23 @@ const ScrollableContent = styled.div`
   }
   -ms-overflow-style: none;
   scrollbar-width: none;
+`;
+
+const MoreButton = styled.button`
+  width: 100%;
+  height: 48px;
+  margin: 16px 0;
+  background-color: ${({ theme }) => theme.colors.bgWhite};
+  color: ${({ theme }) => theme.colors.darkGray};
+  border: 1px solid ${({ theme }) => theme.colors.outlineGray};
+  border-radius: 12px;
+  font-size: ${({ theme }) => theme.fontSizes.base};
+  font-weight: ${({ theme }) => theme.fontWeights.medium};
+  cursor: pointer;
+  transition: all 0.2s ease;
+  &:hover {
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  }
 `;
 
 const EmptyMessage = styled.div`
