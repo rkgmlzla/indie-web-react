@@ -190,7 +190,7 @@ const DividerWrapper = styled.div`
 `;
 
 const ScrollableList = styled.div`
-  margin-bottom: 100px;
+  margin-bottom: 140px;
 
   flex: 1 1 0;
   min-height: 0;

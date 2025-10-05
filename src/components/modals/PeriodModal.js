@@ -1,3 +1,4 @@
+// src/components/modals/PeriodModal.js
 import styled from 'styled-components';
 import React, { useState } from 'react';
 
@@ -22,9 +23,8 @@ export default function PeriodModal({ startYear, startMonth, endYear, endMonth, 
   };
 
   return (
-    <>
-      <Backdrop onClick={onClose} />
-      <Sheet onClick={(e) => e.stopPropagation()}>
+    <Backdrop onClick={onClose}>
+      <BottomSheet onClick={(e) => e.stopPropagation()}>
         <Title>기간 설정</Title>
 
         <PickerRow>
@@ -88,54 +88,69 @@ export default function PeriodModal({ startYear, startMonth, endYear, endMonth, 
         </PickerRow>
 
         <CloseButton onClick={handleApply}>적용</CloseButton>
-      </Sheet>
-    </>
+      </BottomSheet>
+    </Backdrop>
   );
 }
-
 const Backdrop = styled.div`
   position: fixed;
   inset: 0;
   background-color: rgba(0,0,0,0.3);
-  z-index: 999;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  z-index: 1001;
 `;
 
-const Sheet = styled.div`
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
+const BottomSheet = styled.div`
+  position: relative;
   width: 100%;
-  max-width: var(--app-max-width, 512px);
-  margin: 0 auto;
-  background: #fff;
+  max-width: var(--app-max-width, ${({ theme }) => theme.layout.maxWidth});
+  background: ${({ theme }) => theme.colors.bgWhite};
   border-radius: 12px 12px 0 0;
+  padding: 16px;
+  padding-bottom: 40px;
   box-sizing: border-box;
-  padding: 24px 16px 32px 16px;
   animation: slideUp 0.3s ease-out;
-  z-index: 1000;
-
-  /* ✅ 긴 화면 대응 */
-  max-height: 90dvh;
-  overflow-y: auto;
 
   @keyframes slideUp {
     from { transform: translateY(100%); }
-    to { transform: translateY(0); }
+    to   { transform: translateY(0); }
+  }
+`;
+
+const CloseButton = styled.button`
+  display: block;
+  margin-top: 16px;
+  margin-bottom: 0px;
+  margin-left: auto;
+  margin-right: 4px;
+  padding: 6px 12px;
+  background-color: ${({ theme }) => theme.colors.themeGreen};
+  color: ${({ theme }) => theme.colors.white};
+  border: none;
+  border-radius: 8px;
+  font-size: ${({ theme }) => theme.fontSizes.base};
+  font-weight: ${({ theme }) => theme.fontWeights.medium};
+  cursor: pointer;
+
+  &:hover {
+    background-color: #2a8a55ff;
   }
 `;
 
 const Title = styled.div`
-  font-size: ${({ theme }) => theme.fontSizes.base};
+  line-height: 24px;
   font-weight: ${({ theme }) => theme.fontWeights.semibold};
-  margin-bottom: 16px;
+  font-size: ${({ theme }) => theme.fontSizes.base};
+  color: ${({ theme }) => theme.colors.black};
 `;
 
 const PickerRow = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 8px; 
+  margin-top: 16px; 
 `;
 
 const PickerGroup = styled.div`
@@ -165,7 +180,15 @@ const SelectWrapper = styled.div`
     font-weight: ${({ theme }) => theme.fontWeights.medium};
     color: ${({ theme }) => theme.colors.darkGray};
     text-align: center;
+
     appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+
+    /* IE 전용 */
+    &::-ms-expand {
+      display: none;
+    }
   }
 `;
 
@@ -173,22 +196,6 @@ const Divider = styled.span`
   font-size: ${({ theme }) => theme.fontSizes.base};
   font-weight: ${({ theme }) => theme.fontWeights.semibold};
   color: ${({ theme }) => theme.colors.darkGray};
-  margin: 0 24px;
+  margin: 0 44px;
 `;
 
-const CloseButton = styled.button`
-  width: 100%;
-  margin-top: 24px;
-  padding: 12px;
-  background-color: ${({ theme }) => theme.colors.themeGreen};
-  color: ${({ theme }) => theme.colors.white};
-  border: none;
-  border-radius: 8px;
-  font-size: ${({ theme }) => theme.fontSizes.base};
-  font-weight: ${({ theme }) => theme.fontWeights.medium};
-  cursor: pointer;
-
-  &:hover {
-    background-color: #2a8a55;
-  }
-`;

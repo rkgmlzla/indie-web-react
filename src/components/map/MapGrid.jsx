@@ -5,80 +5,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import styled from 'styled-components';
 import MapWideSelectCard from './MapWideSelectCard';
 
-const Container = styled.div`
-  width: 100%;
-  position: relative;
-  z-index: 1;
-`;
-
-const Row = styled.div`
-  display: flex;
-  justify-content: space-between;
-  margin-top: 8px;
-`;
-
-const CardContainer = styled.div`
-  width: 30%;
-  display: flex;
-  justify-content: center;
-  margin: 0 8px;
-  flex-direction: column;
-  caret-color: transparent;
-`;
-
-const CardWrapper = styled.div`
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  padding: 8px;
-  border-radius: 10px;
-  cursor: pointer;
-  box-sizing: border-box;
-  background-color: ${({ $isSelected, theme }) =>
-    $isSelected ? 'rgba(60, 156, 103, 0.2)' : 'white'}; 
-  position: relative;
-  flex-shrink: 0;
-`;
-
-const Poster = styled.img`
-  width: 100%;
-  aspect-ratio: 3 / 4;
-  border-radius: 10px;
-  object-fit: cover;
-`;
-
-const Venue = styled.div`
-  margin-top: 6px;
-  font-weight: ${({ theme }) => theme.fontWeights.semibold};
-  font-size: ${({ theme }) => theme.fontSizes.xs};
-  color: ${({ theme }) => theme.colors.black};
-  line-height: 16px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-`;
-
-const Time = styled.div`
-  margin-top: 4px;
-  font-weight: ${({ theme }) => theme.fontWeights.regular};
-  font-size: ${({ theme }) => theme.fontSizes.xs};
-  color: ${({ theme }) => theme.colors.darkGray};
-  line-height: 12px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-`;
-
-const EmptyMessage = styled.div`
-  padding: 16px 16px;
-  font-size: ${({ theme }) => theme.fontSizes.sm};
-  font-weight: ${({ theme }) => theme.fontWeights.medium};
-  color: ${({ theme }) => theme.colors.darkGray};
-  display: flex;
-  justify-content: center; 
-  align-items: center;  
-`;
-
 const formatOnlyTime = (timeStr) => {
   if (!timeStr) return '-';
   const [hourStr, minuteStr = '00'] = timeStr.split(':');
@@ -235,3 +161,78 @@ const MapCard = ({ poster, venue, time, onClick, isSelected }) => (
 );
 
 export default MapGrid;
+
+const Container = styled.div`
+  width: 100%;
+  position: relative;
+  padding-bottom: 132px;
+  z-index: 1;
+`;
+
+const Row = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+`;
+
+const CardContainer = styled.div`
+  width: 30%;
+  display: flex;
+  justify-content: center;
+  margin: 0 8px;
+  flex-direction: column;
+  caret-color: transparent;
+`;
+
+const CardWrapper = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 8px;
+  border-radius: 10px;
+  cursor: pointer;
+  box-sizing: border-box;
+  background-color: ${({ $isSelected, theme }) =>
+    $isSelected ? 'rgba(60, 156, 103, 0.2)' : 'white'}; 
+  position: relative;
+  flex-shrink: 0;
+`;
+
+const Poster = styled.img`
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  border-radius: 10px;
+  object-fit: cover;
+`;
+
+const Venue = styled.div`
+  margin-top: 6px;
+  font-weight: ${({ theme }) => theme.fontWeights.semibold};
+  font-size: ${({ theme }) => theme.fontSizes.xs};
+  color: ${({ theme }) => theme.colors.black};
+  line-height: 16px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
+
+const Time = styled.div`
+  margin-top: 4px;
+  font-weight: ${({ theme }) => theme.fontWeights.regular};
+  font-size: ${({ theme }) => theme.fontSizes.xs};
+  color: ${({ theme }) => theme.colors.darkGray};
+  line-height: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
+
+const EmptyMessage = styled.div`
+  padding: 16px 16px;
+  font-size: ${({ theme }) => theme.fontSizes.sm};
+  font-weight: ${({ theme }) => theme.fontWeights.medium};
+  color: ${({ theme }) => theme.colors.darkGray};
+  display: flex;
+  justify-content: center; 
+  align-items: center;  
+`;
