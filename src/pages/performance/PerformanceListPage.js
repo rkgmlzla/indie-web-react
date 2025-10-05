@@ -244,7 +244,7 @@ const MoreButton = styled.button`
   background-color: ${({ theme }) => theme.colors.bgWhite};
   color: ${({ theme }) => theme.colors.darkGray};
   border: 1px solid ${({ theme }) => theme.colors.outlineGray};
-  border-radius: 12px;
+  border-radius: 8px;
   font-size: ${({ theme }) => theme.fontSizes.base};
   font-weight: ${({ theme }) => theme.fontWeights.medium};
   cursor: pointer;

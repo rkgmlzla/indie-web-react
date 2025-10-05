@@ -23,6 +23,7 @@ export default function ArtistListPage() {
       });
 
       const list = Array.isArray(chunk) ? chunk : [];
+console.log(`🎯 [아티스트 목록] page=${page}, count=${list.length}`, list);
 
       if (append) {
         setArtists((prev) => [...prev, ...list]);
