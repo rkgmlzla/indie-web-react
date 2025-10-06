@@ -62,7 +62,7 @@
   box-sizing: border-box;
 }
 
-/* ✅ 공연 있는 날짜: 테두리만 강조 (색은 theme 주황) */
+/* ✅ 공연 있는 날짜: 테두리만 강조 */
 .circleBorder {
   border-color: var(--accent);
   background: transparent;

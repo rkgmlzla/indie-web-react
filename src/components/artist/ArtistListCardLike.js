@@ -1,20 +1,16 @@
-// ✅ src/components/artist/ArtistListCardLikeOnly.js
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import ArtistProfileCard from './ArtistProfileCard';
 import HeartFilledIcon from '../../assets/icons/icon_heart_filled.svg';
 import HeartOutlineIcon from '../../assets/icons/icon_heart_outline.svg';
 import { likeArtist, unlikeArtist } from '../../api/likeApi';
 
-export default function ArtistListCardLikeOnly({ artist }) {
-  // ✅ accessToken만 사용 (하드코딩 제거)
+export default function ArtistListCardLike({ artist }) {
   const accessToken = localStorage.getItem('accessToken');
-
   const [isLiked, setIsLiked] = useState(!!artist?.isLiked);
   const [loading, setLoading] = useState(false);
 
   const toggleLike = async (e) => {
-    e.stopPropagation(); // 카드 클릭 전파 방지
+    e.stopPropagation();
     if (loading) return;
 
     try {
@@ -33,35 +29,54 @@ export default function ArtistListCardLikeOnly({ artist }) {
     }
   };
 
+  const safeImage =
+    artist?.image_url && artist.image_url.trim() !== ''
+      ? artist.image_url
+      : '/default_profile.png';
+
   return (
-    <CardContainer>
-      <ArtistProfileCard artist={artist} />
-      <Info>
-        <Name>{artist?.name || '이름 없음'}</Name>
-      </Info>
+    <CardWrapper>
+      <ProfileImage 
+        src={safeImage} 
+        alt={artist?.name}
+        onError={(e) => {
+          if (e.target.src !== window.location.origin + '/default_profile.png') {
+            e.target.src = '/default_profile.png';
+          }
+        }}
+      />
+      <ArtistName>{artist?.name || '이름 없음'}</ArtistName>
       <LikeButton onClick={toggleLike} disabled={loading}>
         <HeartIcon $isLiked={isLiked} />
       </LikeButton>
-    </CardContainer>
+    </CardWrapper>
   );
 }
 
-/* ==== 스타일 ==== */
-const CardContainer = styled.div`
+const CardWrapper = styled.div`
   display: flex;
   align-items: center;
-  padding: 0.5rem 1rem;
-  border-bottom: 1px solid #eee;
+  margin-bottom: 24px;
+  gap: 12px;
+  height: 44px;
 `;
 
-const Info = styled.div`
-  margin-left: 1rem;
+const ProfileImage = styled.img`
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid ${({ theme }) => theme.colors.outlineGray};
+  object-fit: cover;
+`;
+
+const ArtistName = styled.div`
+  font-weight: ${({ theme }) => theme.fontWeights.medium};
+  font-size: ${({ theme }) => theme.fontSizes.base};
+  color: ${({ theme }) => theme.colors.black};
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   flex: 1;
-`;
-
-const Name = styled.div`
-  font-size: 1rem;
-  font-weight: bold;
 `;
 
 const LikeButton = styled.button`
