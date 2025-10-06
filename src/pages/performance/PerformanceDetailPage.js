@@ -81,7 +81,7 @@ export default function PerformanceDetailPage() {
   return (
     <>
       <Header title="공연" />
-      <div style={{ height: '56px' }} />
+      <div style={{ height: '16px' }} />
       <Container>
         <PosterSection>
           <PosterWrapper>
@@ -146,14 +146,11 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   max-width: ${({ theme }) => theme.layout.maxWidth};
-  margin: 0 auto;
   background-color: ${({ theme }) => theme.colors.bgWhite};
 `;
 
 const PosterSection = styled.div`
   display: flex;
-  gap: 1rem 0.25rem;
-  padding: 1rem 0;
 `;
 
 const PosterWrapper = styled.div`
@@ -161,7 +158,6 @@ const PosterWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.5rem;
 `;
 
 const Poster = styled.img`
@@ -169,7 +165,7 @@ const Poster = styled.img`
   max-width: 8rem;
   height: auto;
   aspect-ratio: 0.8;
-  border-radius: 0.5rem;
+  border-radius: 5px;
   border: 1px solid ${({ theme }) => theme.colors.outlineGray};
   object-fit: cover;
 `;
