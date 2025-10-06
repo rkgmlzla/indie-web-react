@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Header from '../../components/layout/Header';
-import ArtistListCardLikeOnly from '../../components/artist/ArtistListCardLike.js';
+import ArtistListCardLike from '../../components/artist/ArtistListCardLike.js';
 import { fetchArtistList } from '../../api/artistApi';
 import { useNavigate } from 'react-router-dom';
 
@@ -37,25 +37,23 @@ export default function ArtistListPage() {
   return (
     <PageWrapper>
       <Header title="아티스트" initialSearchTab="아티스트" />
-      <Spacer />
-
-      {/* ✅ 스크롤 가능한 영역 추가 */}
+      <div style={{ height: "16px" }} />
       <ScrollableList>
-        {artists.length > 0 ? (
-          <>
-            {artists.map((artist) => (
-              <CardWrapper
-                key={artist.id}
-                onClick={() => navigate(`/artist/${artist.id}`)}>
-                <ArtistListCardLikeOnly artist={artist} />
-              </CardWrapper>
-            ))}
+          {artists.length > 0 ? (
+            <Container>
+          {artists.map((artist) => (
+            <CardWrapper
+              key={artist.id}
+              onClick={() => navigate(`/artist/${artist.id}`)}>
+              <ArtistListCardLike artist={artist} />
+            </CardWrapper>
+          ))}
             {hasMore && (
               <MoreButton onClick={() => setPage((prev) => prev + 1)}>
                 더보기
               </MoreButton>
             )}
-          </>
+          </Container>
         ) : (
           <Empty>해당되는 아티스트가 없습니다.</Empty>
         )}
@@ -64,9 +62,11 @@ export default function ArtistListPage() {
   );
 }
 
-const Spacer = styled.div`
-  height: 56px;
-`;
+
+const Container = styled.div`display:flex; flex-direction:column;`;
+const Loader = styled.div`text-align:center; padding:16px; color:#999;`;
+const End = styled.div`text-align:center; padding:16px; color:#bbb;`;
+const Sentinel = styled.div`height:1px;`;
 
 const PageWrapper = styled.div`
   height: 100vh;
@@ -74,16 +74,17 @@ const PageWrapper = styled.div`
   flex-direction: column;
 `;
 
-/* ✅ 공연장 페이지에서 가져온 ScrollableList 스타일 */
 const ScrollableList = styled.div`
+  margin-top: 16px;
+  margin-bottom: 125px;
   flex-grow: 1;
   overflow-y: auto;
-  padding-bottom: 120px;
 
   &::-webkit-scrollbar {
-    display: none;
+    display: none; 
   }
-  -ms-overflow-style: none;
+
+  -ms-overflow-style: none; 
   scrollbar-width: none;
 `;
 
@@ -109,8 +110,4 @@ const MoreButton = styled.button`
   font-weight: ${({ theme }) => theme.fontWeights.medium};
   cursor: pointer;
   transition: all 0.2s ease;
-
-  &:hover {
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-  }
 `;

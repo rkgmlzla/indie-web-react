@@ -5,7 +5,7 @@ export default function getDday(dateString) {
   const performanceDate = dayjs(dateString).startOf('day');
   const diff = performanceDate.diff(today, 'day');
 
-  if (diff > 0) return `D - ${diff}`;
-  if (diff === 0) return 'D - day';
+  if (diff > 0) return `D-${diff}`;
+  if (diff === 0) return 'D-Day';
   return '종료됨';
 }
