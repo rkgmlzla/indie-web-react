@@ -1,5 +1,5 @@
-// src/pages/artist/ArtistListPage.jsx
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+// ✅ src/pages/artist/ArtistListPage.jsx
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Header from '../../components/layout/Header';
 import ArtistListCardLike from '../../components/artist/ArtistListCardLike.js';
@@ -11,83 +11,36 @@ const PAGE_SIZE = 20;
 export default function ArtistListPage() {
   const [artists, setArtists] = useState([]);
   const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [loading, setLoading] = useState(false);
-  const [done, setDone] = useState(false);   
-  const sentinelRef = useRef(null);
+  const [hasMore, setHasMore] = useState(true);
   const navigate = useNavigate();
-  const seenIds = useRef(new Set());          
 
-  const load = useCallback(async (nextPage) => {
-  if (loading || done) return;
-  setLoading(true);
+  const loadArtists = async (append = false) => {
+    try {
+      const { artists: chunk } = await fetchArtistList({ page, size: PAGE_SIZE });
+      const list = Array.isArray(chunk) ? chunk : [];
 
-  const { artists: chunk, totalPages: tp } =
-    await fetchArtistList({ page: nextPage, size: PAGE_SIZE });
+      if (append) setArtists((prev) => [...prev, ...list]);
+      else setArtists(list);
 
-  setTotalPages(tp ?? 1);
-
-  // 중복 방지해서 추가
-  const deduped = chunk.filter(a => {
-    if (!a?.id || seenIds.current.has(a.id)) return false;
-    seenIds.current.add(a.id);
-    return true;
-  });
-
-  // ✅ 이름으로 정렬 추가
-  const sorted = deduped.sort((a, b) => {
-  const nameA = a?.name || '';
-  const nameB = b?.name || '';
-  
-  // 한글 여부 체크 (ㄱ-ㅎ, ㅏ-ㅣ, 가-힣)
-  const isKoreanA = /[ㄱ-ㅎㅏ-ㅣ가-힣]/.test(nameA);
-  const isKoreanB = /[ㄱ-ㅎㅏ-ㅣ가-힣]/.test(nameB);
-  
-  // 둘 다 한글이거나 둘 다 아니면 일반 정렬
-  if (isKoreanA === isKoreanB) {
-    return nameA.localeCompare(nameB, 'ko-KR');
-  }
-  
-  // 한글이 먼저 오도록
-  return isKoreanA ? -1 : 1;
-});
-
-  setArtists(prev => [...prev, ...sorted]);
-  setLoading(false);
-
-  // 마지막 페이지 판단
-  if (nextPage >= (tp ?? 1) || sorted.length === 0) {
-    setDone(true);
-  }
-}, [loading, done]);
-
-  // 최초 로드
-  useEffect(() => {
-    load(1);
-  }, [load]);
+      setHasMore(list.length >= PAGE_SIZE);
+      console.log(`🎯 [아티스트 목록] page=${page}, count=${list.length}`, list);
+    } catch (err) {
+      console.error('📛 아티스트 목록 API 호출 실패:', err);
+      setArtists([]);
+    }
+  };
 
   useEffect(() => {
-    const node = sentinelRef.current;
-    if (!node) return;
-    const io = new IntersectionObserver((entries) => {
-      const [ent] = entries;
-      if (ent.isIntersecting && !loading && !done) {
-        const next = page + 1;
-        setPage(next);
-        load(next);
-      }
-    }, { rootMargin: '600px 0px' }); // 미리 당겨 로드
-
-    io.observe(node);
-    return () => io.disconnect();
-  }, [page, load, loading, done]);
+    loadArtists(page > 1);
+  }, [page]);
 
   return (
     <PageWrapper>
       <Header title="아티스트" initialSearchTab="아티스트" />
       <div style={{ height: "16px" }} />
       <ScrollableList>
-        <Container>
+          {artists.length > 0 ? (
+            <Container>
           {artists.map((artist) => (
             <CardWrapper
               key={artist.id}
@@ -95,21 +48,24 @@ export default function ArtistListPage() {
               <ArtistListCardLike artist={artist} />
             </CardWrapper>
           ))}
-
-          {/* 로딩/끝 표시 + 관찰용 센티넬 */}
-          {!done && <Loader>불러오는 중…</Loader>}
-          <Sentinel ref={sentinelRef} />
-        </Container>
+            {hasMore && (
+              <MoreButton onClick={() => setPage((prev) => prev + 1)}>
+                더보기
+              </MoreButton>
+            )}
+          </Container>
+        ) : (
+          <Empty>해당되는 아티스트가 없습니다.</Empty>
+        )}
       </ScrollableList>
     </PageWrapper>
   );
 }
 
+
 const Container = styled.div`display:flex; flex-direction:column;`;
-const CardWrapper = styled.div`cursor:pointer; caret-color:transparent;`;
 const Loader = styled.div`text-align:center; padding:16px; color:#999;`;
 const End = styled.div`text-align:center; padding:16px; color:#bbb;`;
-const Empty = styled.div`padding:24px; text-align:center;`;
 const Sentinel = styled.div`height:1px;`;
 
 const PageWrapper = styled.div`
@@ -130,4 +86,28 @@ const ScrollableList = styled.div`
 
   -ms-overflow-style: none; 
   scrollbar-width: none;
+`;
+
+const CardWrapper = styled.div`
+  cursor: pointer;
+  caret-color: transparent;
+`;
+
+const Empty = styled.div`
+  padding: 24px;
+  text-align: center;
+`;
+
+const MoreButton = styled.button`
+  width: 100%;
+  height: 48px;
+  margin: 16px 0;
+  background-color: ${({ theme }) => theme.colors.bgWhite};
+  color: ${({ theme }) => theme.colors.darkGray};
+  border: 1px solid ${({ theme }) => theme.colors.outlineGray};
+  border-radius: 8px;
+  font-size: ${({ theme }) => theme.fontSizes.base};
+  font-weight: ${({ theme }) => theme.fontWeights.medium};
+  cursor: pointer;
+  transition: all 0.2s ease;
 `;
