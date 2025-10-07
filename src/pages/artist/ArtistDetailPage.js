@@ -98,7 +98,7 @@ export default function ArtistDetailPage() {
 
   return (
     <>
-      <Header title="아티스트" initialSearchTab="아티스트" />
+      <Header title={artist.name} initialSearchTab="아티스트" />
         <ScrollableContent>
         <div style={{ height: '16px' }} />
         <Container>
@@ -148,7 +148,7 @@ export default function ArtistDetailPage() {
                     />
                   ))
                 ) : (
-                  <div>예정 공연 없음</div>
+                  <EmptyMessage>예정 공연 없음</EmptyMessage>
                 )}
               </HorizontalScroll>
             </PerformanceSection>
@@ -165,7 +165,7 @@ export default function ArtistDetailPage() {
                     />
                   ))
                 ) : (
-                  <div>지난 공연 없음</div>
+                  <EmptyMessage>지난 공연 없음</EmptyMessage>
                 )}
               </HorizontalScroll>
             </PerformanceSection>
@@ -264,7 +264,7 @@ const Value = styled.div`
 const PerformanceSection = styled.div`padding: 0.25rem 0;`;
 
 const HorizontalScroll = styled.div`
-  margin-top: 16px;
+  margin-top: 8px;
   display: flex;
   overflow-x: auto;
   gap: 16px;
@@ -272,12 +272,22 @@ const HorizontalScroll = styled.div`
 `;
 
 const ScrollableContent = styled.div`
-  height: calc(100vh - 80px); /* 헤더 + 여백 고려 */
-  overflow-y: auto;
+  overflow-y: scroll;
+  height: 100dvh;
+  -webkit-overflow-scrolling: touch;
   
   &::-webkit-scrollbar {
     display: none;
   }
   -ms-overflow-style: none;
   scrollbar-width: none;
+`;
+
+const EmptyMessage = styled.div`
+  font-size: ${({ theme }) => theme.fontSizes.sm};
+  font-weight: ${({ theme }) => theme.fontWeights.medium};
+  color: ${({ theme }) => theme.colors.darkGray};
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;

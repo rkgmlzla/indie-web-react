@@ -111,9 +111,9 @@ const MapView2 = ({
       id="map"
       style={{
         width: '100%',
-        aspectRatio: 5 / 3,
-        marginTop: '16px',
-        marginBottom: '16px',
+        aspectRatio: 16 / 9,
+        marginTop: '-16px',
+        marginBottom: '0px',
         boxSizing: 'border-box',
         borderRadius: '5px',
       }}

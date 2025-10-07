@@ -41,7 +41,10 @@ const Title = styled.h1`
   font-weight: ${({ theme }) => theme.fontWeights.medium};
   color: ${({ theme }) => theme.colors.darkblack};
   caret-color: transparent;
-  cursor: default;
+  white-space: nowrap;        /* 한 줄만 표시 */
+  overflow: hidden;           /* 넘치는 텍스트 숨기기 */
+  text-overflow: ellipsis;    /* … 처리 */
+  max-width: 50%;
 `;
 
 const IconButton = styled.button`

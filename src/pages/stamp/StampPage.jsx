@@ -18,7 +18,6 @@ import {
   fetchCollectedStamps,
   fetchAvailableStamps,
   collectStamp,
-  fetchStampDetail,
 } from "../../api/stampApi";
 
 export default function StampPage() {
@@ -329,6 +328,7 @@ const StampItem = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  cursor: pointer;
 
   &:nth-child(3n + 1) {
     justify-self: start;
