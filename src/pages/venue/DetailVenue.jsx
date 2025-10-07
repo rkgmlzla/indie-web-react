@@ -147,7 +147,7 @@ const ReviewMoreCard = styled.button`
   width: auto;
   flex-shrink: 0;
   border: 1px solid ${({ theme }) => theme.colors.outlineGray };
-  background: ${({ theme }) => theme.colors.bgWhite };
+  background: #e4e4e45a;
   border-radius: 8px;
   padding: 8px 8px;
   display: flex;
