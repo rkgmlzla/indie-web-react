@@ -2,14 +2,13 @@ import React, { useMemo, useState, useEffect } from 'react';
 import defaultAvatar from '../../assets/icons/icon_b_my.svg';
 import styled, { css } from 'styled-components';
 
-/* ==================== 스타일 ==================== */
 const Card = styled.article.withConfig({
   shouldForwardProp: (prop) => prop !== 'variant',
 })`
   width: 100%;
   box-sizing: border-box;
   background: #fff;
-  border: 1px solid #eee;
+  border: 1px solid #E4E4E4;
   border-radius: 10px;
   padding: 12px;
   display: flex;
@@ -31,14 +30,10 @@ const DeleteBtn = styled.button`
   top: 6px;
   font-size: 16px;
   line-height: 1;
-  color: #9ca3af;
+  color: #4B4B4B;
   background: transparent;
   border: 0;
   cursor: pointer;
-
-  &:hover {
-    color: #ef4444;
-  }
 `;
 
 const ThumbRow = styled.div`
@@ -59,7 +54,7 @@ const ThumbItem = styled.img`
   border-radius: 8px;
   object-fit: cover;
   cursor: pointer;
-  border: 1px solid #eee;
+  border: 1px solid #E4E4E4;
   background: #f2f2f2;
 `;
 
@@ -68,10 +63,10 @@ const MoreBtn = styled.button`
   width: 140px;
   height: 100px;
   border-radius: 8px;
-  border: 1px solid #ddd;
-  background: #f7f7f7;
+  border: 1px solid #E4E4E4;
+  background: #FFF;
   font-size: 14px;
-  color: #555;
+  color: #3333;
   cursor: pointer;
 `;
 
@@ -79,9 +74,9 @@ const BodyText = styled.p.withConfig({
   shouldForwardProp: (prop) => prop !== 'variant',
 })`
   font-size: 14px;
-  color: #444;
+  font-weight: 400;
+  color: #4B4B4B;
   line-height: 1.4;
-  white-space: pre-wrap;
   margin: 0;
 
   ${({ variant }) =>
@@ -93,6 +88,8 @@ const BodyText = styled.p.withConfig({
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: normal;
+
+      min-height: calc(1.4em * 2);
     `}
 `;
 
@@ -113,14 +110,14 @@ const Avatar = styled.img`
   height: 20px;
   border-radius: 50%;
   object-fit: cover;
-  border: 1px solid #e5e7eb;
+  border: 1px solid #E4E4E4;
   flex-shrink: 0;
 `;
 
 const MetaName = styled.span`
   font-size: 12px;
-  font-weight: 600;
-  color: #111827;
+  font-weight: 500;
+  color: #4B4B4B;
 `;
 
 const MetaDate = styled.time`
@@ -162,7 +159,6 @@ const LikeBtn = styled.button.withConfig({
 
 `;
 
-/* 라이트박스 */
 const Lightbox = styled.div`
   position: fixed;
   inset: 0;
@@ -219,7 +215,6 @@ const NavBtn = styled.button`
         `}
 `;
 
-/* ==================== 컴포넌트 ==================== */
 export default function ReviewCard({
   review,
   variant = 'compact',
@@ -228,7 +223,6 @@ export default function ReviewCard({
   onToggleLike,
   onDelete,
 }) {
-  // snake_case, camelCase 모두 지원
   const {
     id,
     user,
@@ -245,10 +239,7 @@ export default function ReviewCard({
   const created = created_at ?? createdAt ?? null;
   const liked = (liked_by_me ?? likedByMe) ?? false;
   const count = (like_count ?? likeCount) ?? 0;
-
-  // 문자열/객체 형태 모두 대응
   const getImgUrl = (im) => (typeof im === 'string' ? im : im?.image_url || '');
-
   const [viewerOpen, setViewerOpen] = useState(false);
   const [viewerIdx, setViewerIdx] = useState(0);
 
@@ -322,7 +313,6 @@ export default function ReviewCard({
                 alt={`리뷰 이미지 ${idx + 1}`}
                 onClick={() => openViewer(idx)}
                 onError={(e) => {
-                  // 불러오기 실패 시 썸네일까지 비우지 말고 숨김 처리
                   e.currentTarget.style.visibility = 'hidden';
                 }}
               />
