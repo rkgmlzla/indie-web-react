@@ -15,6 +15,7 @@ const ProfileImage = styled.img`
   border-radius: 50%;
   border: 1px solid ${({ theme }) => theme.colors.outlineGray};
   object-fit: cover;
+  cursor: pointer;
 `;
 
 const Venuename = styled.div`
@@ -25,6 +26,7 @@ const Venuename = styled.div`
   overflow: hidden;
   text-overflow: ellipsis;
   flex: 1;
+  cursor: pointer;
 `;
 
 function VenueItem({ image, name, onClick }) {

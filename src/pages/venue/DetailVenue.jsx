@@ -1,6 +1,9 @@
 // ✅ src/pages/venue/DetailVenue.jsx
 import styled from 'styled-components';
+import dayjs from 'dayjs';
 import Header from '../../components/layout/Header';
+import Divider from '../../components/common/Divider';
+import toast, { Toaster } from 'react-hot-toast';
 import IconCopy from '../../assets/icons/icon_y_copy.svg';
 import ChevronRightIcon from '../../assets/icons/icon_go.svg';
 import MapView2 from '../../components/map/MapView2';
@@ -9,20 +12,17 @@ import { useEffect, useState } from 'react';
 import { fetchVenueDetail } from '../../api/venueApi'; // ✅ API import
 import { fetchReviewPreview } from '../../api/reviewApi'; // ✅ 미리보기 API
 import ReviewCard from '../../components/review/ReviewCard';
-import { formatKoreanDateTime } from '../../utils/dateUtils';
 
 const Container = styled.div`
   width: 100%;
-  margin: 0;donteai
+  margin: 0;
   padding: 0;
 
-  /* 헤더 spacer(28px) 제외한 높이에서 내부 스크롤 */
   height: calc(100dvh - 28px);
-  min-height: calc(100vh - 28px);  /* 구형 브라우저 대비 */
+  min-height: calc(100vh - 28px);  
   display: flex;
   flex-direction: column;
-  overflow: hidden; /* 바깥(문서) 스크롤 방지 */
-
+  overflow: hidden; 
 `;
 
 const ScrollableList = styled.div`
@@ -39,245 +39,300 @@ const ScrollableList = styled.div`
   -ms-overflow-style: none;
   scrollbar-width: none;
 `;
+const ProfileSection = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+const ProfileWrapper = styled.div`
+  position: relative;
+  width: 5rem;
+  height: 5rem;
+  aspect-ratio: 1 / 1;
+  flex-shrink: 0;
+`;
+
+const ProfileImage = styled.img`
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid ${({ theme }) => theme.colors.outlineGray};
+`;
+
+const ProfileInfo = styled.div`
+  flex: 1;
+  display: flex;
+  margin-left: 22px;
+  flex-direction: column;
+  justify-content: center;
+`;
+
+const VenueName = styled.div`
+  font-size: ${({ theme }) => theme.fontSizes.md};
+  font-weight: ${({ theme }) => theme.fontWeights.semibold};
+  color: ${({ theme }) => theme.colors.darkblack};
+  margin-bottom: 8px;
+`;
 
 const InnerWrapper = styled.div`
   padding: 16px 0;
 `;
-const Row = styled.div`
-  display: flex;
-  margin-bottom: 12px;
-`;
-const ProfileImage = styled.img`
-  width: 16%;
-  aspect-ratio: 1 / 1;
-  border-radius: 50%;
-  object-fit: cover;
-  flex-shrink: 0;
-  margin-right: 12px;
-`;
-const VenueName = styled.div`
-  font-weight: ${({ theme }) => theme.fontWeights.semibold};
-  font-size: ${({ theme }) => theme.fontSizes.md};
-  line-height: 24px;
-  color: ${({ theme }) => theme.colors.black};
-  display: flex;
+
+const LabelRow = styled.div`
+  display: grid;
+  grid-template-columns: 6rem 1fr;
   align-items: center;
-`;
-const LabelTag = styled.div`
-  width: 72px;
-  margin-right: 20px;
-  font-weight: ${({ theme }) => theme.fontWeights.medium};
-  font-size: ${({ theme }) => theme.fontSizes.sm};
-  color: ${({ theme }) => theme.colors.darkGray};
-  line-height: 20px;
-  display: flex;
-  align-items: center;
-`;
-const InstagramTag = styled(LabelTag)``;
-const InstagramLabel = styled.div`
-  font-weight: ${({ theme }) => theme.fontWeights.regular};
-  font-size: ${({ theme }) => theme.fontSizes.sm};
-  color: ${({ theme }) => theme.colors.darkGray};
-  line-height: 20px;
-  text-decoration: underline;
-  cursor: pointer;
-`;
-const AddressTag = styled(LabelTag)`
-  align-self: flex-start;
-`;
-const AddressContentWrapper = styled.div`
-  flex: 1;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 8px;
-`;
-const AddressLabelWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  flex: 1;
-  gap: 8px;
-`;
-const AddressLabel = styled.div`
-  font-weight: ${({ theme }) => theme.fontWeights.regular};
-  font-size: ${({ theme }) => theme.fontSizes.sm};
-  color: ${({ theme }) => theme.colors.darkGray};
-  line-height: 20px;
-  cursor: pointer;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: normal;
-  word-break: break-word;
-  flex: 1;
-`;
-const CopyIcon = styled.img`
-  width: 16px;
-  height: 16px;
-  cursor: pointer;
-  flex-shrink: 0;
-  margin-top: 2px;
-`;
-const UpcomingTag = styled(LabelTag)`
-  margin-bottom: 8px;
-`;
-const PastTag = styled(LabelTag)`
-  margin-bottom: 8px;
-`;
-const UpcomingScrollWrapper = styled.div`
-  overflow-x: auto;
-  &::-webkit-scrollbar {
-    display: none;
-  }
-  margin-bottom: 8px;
-`;
-const PastScrollWrapper = styled.div`
-  overflow-x: auto;
-  &::-webkit-scrollbar {
-    display: none;
-  }
-`;
-const UpcomingCardRow = styled.div`
-  display: flex;
-  width: max-content;
-`;
-const PastCardRow = styled.div`
-  display: flex;
-  width: max-content;
-`;
-const UpcomingCardWrapper = styled.div`
-  width: 81px;
-  flex-shrink: 0;
-  margin-right: 24px;
-`;
-const PastCardWrapper = styled.div`
-  width: 81px;
-  flex-shrink: 0;
-  margin-right: 24px;
-`;
-const Poster = styled.img`
-  width: 100%;
-  aspect-ratio: 3 / 4;
-  border-radius: 5px;
-  object-fit: cover;
-`;
-const Title = styled.div`
-  margin-top: 4px;
-  font-weight: ${({ theme }) => theme.fontWeights.medium};
-  font-size: ${({ theme }) => theme.fontSizes.xs};
-  color: ${({ theme }) => theme.colors.darkGray};
-  line-height: 18px;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
-`;
-const Date = styled.div`
-  margin-top: 2px;
-  font-weight: ${({ theme }) => theme.fontWeights.regular};
-  font-size: ${({ theme }) => theme.fontSizes.xxs};
-  color: ${({ theme }) => theme.colors.lightGray};
-  line-height: 14px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 `;
 
-/* ============================
- *  ⬇️ 리뷰 섹션 스타일 추가
- * ============================ */
-const ReviewTag = styled(LabelTag)`
-  margin: 16px 0 8px;
+const Label = styled.div`
+  font-size: ${({ theme }) => theme.fontSizes.base};
+  font-weight: ${({ theme }) => theme.fontWeights.medium};
+  color: ${({ theme }) => theme.colors.darkblack};
 `;
+
+const Value = styled.div`
+  font-size: ${({ theme }) => theme.fontSizes.base};
+  font-weight: ${({ theme }) => theme.fontWeights.regular};
+  color: ${({ theme }) => theme.colors.darkGray};
+
+  word-break: break-all;
+  overflow-wrap: break-word;
+
+  a {
+    color: ${({ theme }) => theme.colors.darkGray};
+    text-decoration: underline;
+    word-break: break-all; 
+  }
+`;
+
+const InfoSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-top: 16px;
+  gap: 24px;
+`;
+
+const CopyIcon = styled.img`
+  width: 0.95rem;
+  height: 0.95rem;
+  margin-left: 4px;
+  margin-bottom: -2px;
+  cursor: pointer;
+`;
+
 const ReviewScrollWrapper = styled.div`
   display: flex;
   overflow-x: auto;
-  gap: 8px; /* 카드 간격 (기존보다 좁게) */
-  padding: 8px 0 80px; /* 하단 패딩 추가 (탭바와 겹치지 않게) */
+  gap: 8px;
   &::-webkit-scrollbar {
     display: none;
+  }
 `;
 const ReviewRow = styled.div`
   display: flex;
   width: max-content;
+  padding-bottom: 88px;
   gap: 12px;
-  padding-right: 8px;
-  align-items: flex-start;       /* 자식이 세로로 늘어나지 않게 */
+  align-items: flex-start;      
 `;
 
 const ReviewCardWrapper = styled.div`
-  width: 220px;          /* 카드 폭(모바일 1.1~1.2장 보이게) */
+  width: 220px;         
   flex-shrink: 0;
 `;
 
 const ReviewMoreCard = styled.button`
   width: auto;
-  min-width: 112px;
   flex-shrink: 0;
-  border: 1px solid ${({ theme }) => theme.colors.border || '#eee'};
-  background: ${({ theme }) => theme.colors.white || '#fff'};
+  border: 1px solid ${({ theme }) => theme.colors.outlineGray };
+  background: #e4e4e45a;
   border-radius: 8px;
-  padding: 8px 10px;
+  padding: 8px 8px;
   display: flex;
-  align-items: center;            /* 내부 컨텐츠 수직 가운데 정렬 */
+  align-items: center;
   gap: 4px;
   cursor: pointer;
-  height: auto;                   /*  높이 고정 해제 */
-  align-self: center;             /*  row에서 가운데 맞춤 (stretch 방지) */
-
-  &:hover {
-    background: ${({ theme }) => theme.colors.bgGray || '#fafafa'};
-  }
+  height: 100%;
 `;
 
 const ReviewMoreText = styled.span`
   font-size: ${({ theme }) => theme.fontSizes.sm};
+  font-weight: ${({ theme }) => theme.fontWeights.regular};
   color: ${({ theme }) => theme.colors.darkGray};
-  white-space: nowrap;
+  white-space: normal;       
+  line-height: 1.4;          
+  display: inline-block;    
+  text-align: left;
 `;
 
 const ChevronImg = styled.img`
+  margin-top: 18px;
   width: 14px;
   height: 14px;
 `;
 
-/* ============================ */
+const PerformanceSection = styled.div`padding: 0.25rem 0;`;
+
+const HorizontalScroll = styled.div`
+  margin-top: 8px;
+  display: flex;
+  overflow-x: auto;
+  gap: 16px;
+  &::-webkit-scrollbar { display: none; }
+`;
+
+const EmptyMessage = styled.div`
+  font-size: ${({ theme }) => theme.fontSizes.sm};
+  font-weight: ${({ theme }) => theme.fontWeights.medium};
+  color: ${({ theme }) => theme.colors.darkGray};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
 
 const UpcomingCard = ({ data, onClick }) => {
   if (!data) return null;
+
+  function toAbs(url) {
+    if (!url) return '';
+    const s = String(url).trim().replace(/^"+|"+$/g, '');
+    if (!s) return '';
+    if (s.startsWith('http://') || s.startsWith('https://') || s.startsWith('data:')) return s;
+    if (s.startsWith('/')) return `${window.location.origin}${s}`;
+    return `${window.location.origin}/${s}`;
+  }
+
+  function pickPoster(p) {
+    return (
+      p?.posterUrl ||
+      p?.poster_url ||
+      p?.thumbnail ||
+      p?.image ||
+      p?.image_url ||
+      ''
+    );
+  }
+
+  const rawPoster = pickPoster(data);
+  const posterSrc = toAbs(rawPoster);
+
   return (
-    <div onClick={onClick}>
-      <Poster src={data.image_url || ''} alt={data.title || '공연명'} />
-      <Title>{data.title || '제목 없음'}</Title>
-      <Date>{formatKoreanDateTime(data.date)}</Date>
-    </div>
+    <UpcomingCardContainer onClick={onClick}>
+      <Poster
+        src={posterSrc || undefined}
+        alt={data?.title || 'poster'}
+        referrerPolicy="no-referrer"
+        onError={(e) => {
+          // 깨진 이미지 방지
+          e.currentTarget.src =
+            'data:image/gif;base64,R0lGODlhAQABAAAAACw=';
+        }}
+      />
+      <Title>{data?.title}</Title>
+      <Date>{dayjs(data.date).format('YYYY-MM-DD')}</Date>
+    </UpcomingCardContainer>
   );
 };
 
+const UpcomingCardContainer = styled.div`
+  width: 5rem;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+`;
+
 const PastCard = ({ data, onClick }) => {
   if (!data) return null;
+
+  // URL 처리 함수
+  function toAbs(url) {
+    if (!url) return '';
+    const s = String(url).trim().replace(/^"+|"+$/g, '');
+    if (!s) return '';
+    if (s.startsWith('http://') || s.startsWith('https://') || s.startsWith('data:')) return s;
+    if (s.startsWith('/')) return `${window.location.origin}${s}`;
+    return `${window.location.origin}/${s}`;
+  }
+
+  function pickPoster(p) {
+    return (
+      p?.posterUrl ||
+      p?.poster_url ||
+      p?.thumbnail ||
+      p?.image ||
+      p?.image_url ||
+      ''
+    );
+  }
+
+  const rawPoster = pickPoster(data);
+  const posterSrc = toAbs(rawPoster);
+
   return (
-    <div onClick={onClick}>
-      <Poster src={data.image_url || ''} alt={data.title || '공연명'} />
-      <Title>{data.title || '제목 없음'}</Title>
-      <Date>{formatKoreanDateTime(data.date)}</Date>
-    </div>
+    <PastCardContainer onClick={onClick}>
+      <Poster
+        src={posterSrc || undefined}
+        alt={data?.title || 'poster'}
+        referrerPolicy="no-referrer"
+        onError={(e) => {
+          // 깨진 이미지 방지
+          e.currentTarget.src =
+            'data:image/gif;base64,R0lGODlhAQABAAAAACw=';
+        }}
+      />
+      <Title>{data?.title}</Title>
+      <Date>{dayjs(data.date).format('YYYY-MM-DD')}</Date>
+    </PastCardContainer>
   );
 };
+
+const PastCardContainer = styled.div`
+  width: 5rem;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+`;
+
+const Poster = styled.img`
+  width: 78px;
+  height: 104px;
+  object-fit: cover;
+  border-radius: 5px;
+  display: block;
+  flex-shrink: 0;
+  border: 1px solid ${({ theme }) => theme.colors.outlineGray};
+`;
+
+const Title = styled.div`
+  margin-top: 8px;
+  font-size: ${({ theme }) => theme.fontSizes.sm};
+  font-weight: ${({ theme }) => theme.fontWeights.regular};
+  color: ${({ theme }) => theme.colors.darkGray};
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+`;
+
+const Date = styled.div`
+  margin-top: 4px;
+  font-size: ${({ theme }) => theme.fontSizes.xs};
+  font-weight: ${({ theme }) => theme.fontWeights.regular};
+  color: ${({ theme }) => theme.colors.lightGray};
+`;
 
 const DetailVenue = () => {
   const { id } = useParams();
   const venueId = Number(id);
   const navigate = useNavigate();
-
   const [venue, setVenue] = useState(null);
   const [upcomingConcerts, setUpcomingConcerts] = useState([]);
   const [pastConcerts, setPastConcerts] = useState([]);
-
-  // ✅ 리뷰 미리보기 상태
   const [reviews, setReviews] = useState([]);
 
   useEffect(() => {
@@ -294,9 +349,7 @@ const DetailVenue = () => {
           Array.isArray(data?.pastPerformance) ? data.pastPerformance : []
         );
 
-        // ✅ 리뷰 미리보기 최대 2개
         try {
-          // fetchVenueReviewPreview(venueId, limit) 형태 가정
           const preview = await fetchReviewPreview(venueId, 2);
           const items = Array.isArray(preview?.items || preview) ? (preview.items || preview) : [];
           setReviews(
@@ -329,44 +382,58 @@ const DetailVenue = () => {
 
   return (
     <>
-      <Header title="공연장 정보" />
-      <div style={{ height: '28px' }} />
+      <Toaster />
+      <Header title={venue.name} />
+      <div style={{ height: '16px' }} />
       <Container>
-         <ScrollableList>
-        <InnerWrapper>
-          <Row>
-            <ProfileImage src={venue.image_url || ''} alt="공연장 이미지" />
-            <VenueName>{venue.name || '공연장 이름 없음'}</VenueName>
-          </Row>
+        <ScrollableList>
+          <InnerWrapper>
+            <ProfileSection>
+            <ProfileWrapper>
+              <ProfileImage src={venue.image_url || '/default_venue.png'} alt={venue.name || '공연장 이미지'} />
+            </ProfileWrapper>
+            <ProfileInfo>
+              <VenueName>{venue.name || '공연장 이름 없음'}</VenueName>
+            </ProfileInfo>
+          </ProfileSection>
 
-          <Row>
-            <InstagramTag>인스타그램</InstagramTag>
-            <InstagramLabel
-              onClick={() =>
-                venue.instagram_account &&
-                window.open(venue.instagram_account, '_blank')
-              }
-            >
-              {venue.instagram_account || '없음'}
-            </InstagramLabel>
-          </Row>
+          <Divider style={{ marginTop: '16px', marginBottom: '16px' }} />
 
-          <Row>
-            <AddressTag>주소</AddressTag>
-            <AddressContentWrapper>
-              <AddressLabelWrapper>
-                <AddressLabel>{venue.address || '주소 정보 없음'}</AddressLabel>
-                <CopyIcon
-                  src={IconCopy}
-                  alt="복사 아이콘"
-                  onClick={() => {
-                    navigator.clipboard.writeText(venue.address || '');
-                    alert('주소가 복사되었습니다');
-                  }}
-                />
-              </AddressLabelWrapper>
-            </AddressContentWrapper>
-          </Row>
+          <InfoSection>
+          <LabelRow>
+            <Label>인스타그램</Label>
+            <Value>
+              {venue.instagram_account ? (
+                <a href={`https://instagram.com/${venue.instagram_account}`} target="_blank" rel="noreferrer">
+                  @{venue.instagram_account}
+                </a>
+              ) : '정보 없음'}
+            </Value>
+          </LabelRow>
+            
+          <LabelRow>
+            <Label>주소</Label>
+            <Value>{venue.address || '주소 정보 없음'}
+              <CopyIcon
+                src={IconCopy}
+                alt="복사 아이콘"
+                onClick={() => {
+                  if (venue.address) {
+                    navigator.clipboard.writeText(venue.address);
+                    toast.success('주소가 복사되었습니다.', {
+                      position: 'bottom-center',
+                      duration: 2000,
+                      style: { marginBottom: '88px' }, 
+                      iconTheme: {
+                        primary: '#3C9C68', 
+                        secondary: '#fff',   
+                      },
+                    });
+                  }
+                }}
+              />
+            </Value>
+          </LabelRow>
 
           <MapView2
             data={
@@ -382,51 +449,41 @@ const DetailVenue = () => {
             }
           />
 
-          <UpcomingTag>예정 공연</UpcomingTag>
-          <UpcomingScrollWrapper>
-            <UpcomingCardRow>
+          <PerformanceSection>
+            <Label>예정 공연</Label>
+            <HorizontalScroll>
               {upcomingConcerts.length > 0 ? (
                 upcomingConcerts.map((item) => (
-                  <UpcomingCardWrapper key={item.id}>
-                    <UpcomingCard
-                      data={item}
-                      onClick={() => navigate(`/performance/${item.id}`)}
-                    />
-                  </UpcomingCardWrapper>
+                  <UpcomingCard
+                    key={item.id}
+                    data={item}
+                    onClick={() => navigate(`/performance/${item.id}`)}
+                  />
                 ))
               ) : (
-                <div style={{ color: '#aaa', fontSize: '12px', padding: '10px' }}>
-                  예정 공연이 없습니다.
-                </div>
+                <EmptyMessage>예정 공연 없음</EmptyMessage>
               )}
-            </UpcomingCardRow>
-          </UpcomingScrollWrapper>
-
-          <PastTag>지난 공연</PastTag>
-          <PastScrollWrapper>
-            <PastCardRow>
+            </HorizontalScroll>
+          </PerformanceSection>
+          
+          <PerformanceSection>
+            <Label>지난 공연</Label>
+            <HorizontalScroll>
               {pastConcerts.length > 0 ? (
                 pastConcerts.map((item) => (
-                  <PastCardWrapper key={item.id}>
-                    <PastCard
-                      data={item}
-                      onClick={() => navigate(`/performance/${item.id}`)}
-                    />
-                  </PastCardWrapper>
+                  <PastCard
+                  key={item.id}
+                    data={item}
+                    onClick={() => navigate(`/performance/${item.id}`)}
+                  />
                 ))
               ) : (
-                <div style={{ color: '#aaa', fontSize: '12px', padding: '10px' }}>
-                  지난 공연이 없습니다.
-                </div>
+                <EmptyMessage>지난 공연 없음</EmptyMessage>
               )}
-            </PastCardRow>
-          </PastScrollWrapper>
+            </HorizontalScroll>
+          </PerformanceSection>
 
-          {/* ============================
-              ⬇️ 리뷰 미리보기 + ‘리뷰 더보기 >’ 카드
-              ============================ */}
- 
-          <ReviewTag>리뷰</ReviewTag>
+          <Label style={{ marginBottom: '-16px' }}>리뷰</Label>
           <ReviewScrollWrapper>
             <ReviewRow>
               {reviews.length > 0 ? (
@@ -435,21 +492,20 @@ const DetailVenue = () => {
                     <ReviewCardWrapper key={r.id}>
                       <ReviewCard
                         review={r}
-                        variant="compact"     // 상세페이지용 미리보기: 날짜/좋아요/삭제 숨김
-                        isLoggedIn={false}    // 미리보기 구역에서는 토글/삭제 안 보이도록 고정
+                        variant="compact"     
+                        isLoggedIn={false}    
                         isOwner={false}
                       />
                     </ReviewCardWrapper>
                   ))}
 
-                  {/* ⬇️ 스크롤 끝에 노출되는 '리뷰 더보기 >' 카드 */}
                   <ReviewMoreCard
                     type="button"
                     onClick={() => navigate(`/venue/${venueId}/review`)}
                     aria-label="리뷰 더보기"
                     title="리뷰 더보기"
                   >
-                    <ReviewMoreText>리뷰 더보기</ReviewMoreText>
+                    <ReviewMoreText>리뷰<br />더보기</ReviewMoreText>
                     <ChevronImg src={ChevronRightIcon} alt=">" />
                   </ReviewMoreCard>
                 </>
@@ -471,7 +527,7 @@ const DetailVenue = () => {
               )}
             </ReviewRow>
           </ReviewScrollWrapper>
-          {/* ============================ */}
+          </InfoSection>
         </InnerWrapper>
         </ScrollableList>
       </Container>

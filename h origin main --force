@@ -1,0 +1,147 @@
+[33mffff713[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m 아티스트 리스트 완료
+[33m58f028e[m 마이페이지 버튼, 마이페이지 스탬프 완료
+[33mf70c50a[m 캘린더, 주변공연 완료
+[33mf65ae37[m[33m ([m[1;31mupstream/main[m[33m)[m Merge pull request #41 from bballangja/yebin-fix
+[33m8272be6[m 스탬프 기간 버튼 수정
+[33me2fc155[m Merge pull request #40 from bballangja/main
+[33me3f096d[m 네이버맵 키 환경변수 사용 X, 직접적 사용
+[33m0000fa9[m feat. 지도 키 ncpKeyId
+[33m1e15fa3[m Merge pull request #7 from bballangja/yebin-fix
+[33m4de6093[m 공연、 공연장 리스트 + 필터 버튼 완료
+[33m66fa031[m Merge pull request #6 from bballangja/yebin-fix
+[33m3582296[m 홈 수정 + 지역 리스트 완성 + 캘린더 지역 수정
+[33mff5d707[m Merge pull request #38 from rkgmlzla/main
+[33m81ff8d3[m feat. index.html에서 지도 코드 삭제
+[33m7391237[m Merge pull request #3 from capston-kimsammoon/main
+[33m7cb23ec[m Merge pull request #37 from bballangja/main
+[33ma7d3c2b[m Merge pull request #36 from rkgmlzla/main
+[33m669fec0[m Merge branch 'main' into main
+[33m79d662e[m feat. index.html, config.js 수정
+[33m63e1e42[m Merge pull request #35 from rkgmlzla/main
+[33mbd7411d[m 현진이 버전 http.js로 변경
+[33me12bf6d[m Merge pull request #5 from bballangja/yebin-fix
+[33m6294d70[m 홈 완성
+[33mf40b8cd[m Merge pull request #34 from rkgmlzla/main
+[33md9b0854[m feat. baseURL 수정 2
+[33m57d278d[m Merge pull request #33 from rkgmlzla/main
+[33m09c752f[m feat. baseURL 수정
+[33mf8cb8bb[m Merge pull request #4 from bballangja/yebin-fix
+[33me293916[m 티켓 오픈 예정 수정
+[33mfc6e09c[m Merge pull request #3 from bballangja/yebin-fix
+[33m47cc732[m 인기+NEW 수정
+[33m01b6912[m Merge pull request #2 from bballangja/yebin-fix
+[33mc4b0fec[m Merge pull request #32 from bballangja/yebin-fix
+[33mc59fe66[m 섹션 타이틀 수정
+[33m5cdfd02[m Merge pull request #1 from bballangja/yebin-fix
+[33m73141f0[m Merge pull request #31 from bballangja/yebin-fix
+[33mece795f[m 홈 슬라이드 수정
+[33mb44d7ab[m Merge pull request #30 from bballangja/yebin-fix
+[33m8f56137[m 프론트 수정 #1
+[33m6386873[m Merge pull request #29 from rkgmlzla/main
+[33m297ffbf[m feat. 네이버맵 환경변수 이름 수정
+[33mce334b4[m[33m ([m[1;31morigin/yebin[m[33m, [m[1;32myebin[m[33m)[m Update .gitignore to exclude public/index.html
+[33m61f2892[m Fix Naver Maps API Client ID
+[33md3b0ee0[m chore: add GA4 gtag & fix Naver Maps script
+[33mc4e30b0[m Fix Naver Maps: use ncpClientId
+[33m2fe7b94[m chore: update .gitignore and http.js
+[33m2b73c62[m fix: use correct env key REACT_APP_API_BASE_URL in config.js
+[33m756bd54[m Merge pull request #28 from rkgmlzla/main
+[33md0c0052[m feat. 리뷰 페이지 헤더 추가, 캘린더 색 변경
+[33m9562796[m Merge pull request #27 from rkgmlzla/main
+[33me667337[m Merge branch 'main' into main
+[33md9a0cb3[m feat. 스탬프 카드 클릭 후 공연상세페이지 이동
+[33m4c9d48a[m 배포 전 프론트 수정2
+[33md7d1767[m 배포 전 프론트 수정
+[33mfb11f18[m Merge pull request #26 from rkgmlzla/main
+[33m5168e48[m feat. 리뷰 추가 + 날짜 형식 통일
+[33m5a74963[m Merge pull request #2 from capston-kimsammoon/yebin
+[33mc582eb6[m[33m ([m[1;31mupstream/yebin[m[33m)[m 지도, 스탬프 리스트 수정
+[33maa26e3c[m Merge branch 'yebin'
+[33m5f03306[m MapPage 수정 반영
+[33m2f281d9[m feat. 스탬프 완성 + 리뷰 조금
+[33m747ecd0[m MapPage 수정 반영
+[33m4e552db[m[33m ([m[1;31mupstream/house[m[33m, [m[1;31morigin/house[m[33m)[m Merge pull request #25 from capston-kimsammoon/yebin
+[33m832a3af[m 캘린더 지역 적용 시 날짜 선택 해제 로직 추가 및 pick 페이지 일부 수정
+[33m5e438a1[m[33m ([m[1;31mupstream/gahee[m[33m, [m[1;31morigin/gahee[m[33m)[m Merge pull request #24 from rkgmlzla/gahee
+[33mad6e0f6[m feat. 스탬프 완성 + 리뷰 조금
+[33mebd49be[m Merge pull request #1 from capston-kimsammoon/yebin
+[33m9f264f0[m feat: 스탬프 완료, 홈헤더 추가
+[33m1da3526[m 홈 메인 수정 및 무드테이블 추가
+[33md75a539[m Merge pull request #23 from rkgmlzla/gahee
+[33m9286e1e[m Merge branch 'gahee' into gahee
+[33mebf57d4[m feat. 스탬프, 리뷰, 하단바 추가
+[33m064a6f7[m feat(stamp): 스탬프 API/모달/아이콘 추가 및 UI 연동
+[33m1d4d5c2[m fix: 홈 아이콘/알림 오류 및 API 호출 수정
+[33m7230bcc[m home and calendat change
+[33m1b5ca2e[m[33m ([m[1;31mupstream/feature/yebin-page2[m[33m, [m[1;31morigin/feature/yebin-page2[m[33m)[m Delete .env.local
+[33m7c8e14c[m Merge pull request #22 from capston-kimsammoon/0903
+[33mea5a769[m[33m ([m[1;31mupstream/0903[m[33m, [m[1;31morigin/0903[m[33m)[m kakao2
+[33m933c5a3[m Merge pull request #21 from capston-kimsammoon/kakao
+[33me4eba3b[m[33m ([m[1;31mupstream/kakao[m[33m, [m[1;31morigin/kakao[m[33m)[m login
+[33meb5a577[m Merge pull request #20 from capston-kimsammoon/0823
+[33m9568d99[m[33m ([m[1;31mupstream/0823[m[33m, [m[1;31morigin/0823[m[33m)[m 작업 내용 커밋
+[33mf082e42[m Merge pull request #19 from capston-kimsammoon/0817
+[33m1bdbaf5[m[33m ([m[1;31mupstream/0817[m[33m, [m[1;31morigin/0817[m[33m)[m alert not yet
+[33mb288fde[m Merge pull request #18 from capston-kimsammoon/NEW_NEW
+[33m2bf3ccc[m[33m ([m[1;31mupstream/NEW_NEW[m[33m, [m[1;31morigin/NEW_NEW[m[33m)[m feat: 8월 2번째주 프론트 수정사항 - 현진
+[33m6e20e9f[m Merge pull request #17 from capston-kimsammoon/feat/venue-marker
+[33m03464f6[m[33m ([m[1;31mupstream/feat/venue-marker[m[33m, [m[1;31morigin/feat/venue-marker[m[33m)[m config 수정
+[33m1c8db0f[m Update ArtistListCard.js
+[33mfda0390[m Update config.js
+[33m5540242[m Update MyPage.jsx
+[33m29ebebf[m Update FavoritePage.js
+[33m061df5f[m Update bulletindetail.jsx
+[33mb8d5210[m Update bulletindetail.css
+[33m67cc64b[m Update bulletinboard.jsx
+[33m00eaf16[m Update Sidebar.jsx
+[33m44e5085[m Update PerformanceListCard.js
+[33m88176da[m 검색 페이지 UI 수정 및 PostItem 연결 개선
+[33m972055e[m Merge pull request #16 from capston-kimsammoon/my-fix-branch
+[33m745ff49[m[33m ([m[1;31mupstream/my-fix-branch[m[33m, [m[1;31morigin/my-fix-branch[m[33m)[m Merge branch 'main' into my-fix-branch
+[33m7776be0[m ✨ 내 기능/버그 수정 내용 커밋
+[33m37314ee[m fix: 공연장 상세 페이지 MapView 오류 및 API 방어 처리
+[33m0308932[m Merge pull request #15 from capston-kimsammoon/feature/api-merge-prep
+[33m2419cf6[m[33m ([m[1;31mupstream/feature/api-merge-prep[m[33m, [m[1;31morigin/feature/api-merge-prep[m[33m)[m feat: api 연결 구현
+[33mabfb80b[m Merge pull request #14 from capston-kimsammoon/080508
+[33ma50e428[m[33m ([m[1;31mupstream/080508[m[33m, [m[1;31morigin/080508[m[33m)[m 이게 뭐야
+[33m39cad75[m Merge pull request #13 from capston-kimsammoon/feature/map-marker
+[33m657c4f4[m[33m ([m[1;31mupstream/feature/map-marker[m[33m, [m[1;31morigin/feature/map-marker[m[33m)[m 지도에 마커 찍는 기능 추가
+[33mbd0fe83[m 작업 내용 저장 (before merge main)
+[33m360e4bf[m Merge pull request #12 from capston-kimsammoon/feature/api-calls
+[33m10604e7[m[33m ([m[1;31mupstream/feature/api-calls[m[33m, [m[1;31morigin/feature/api-calls[m[33m)[m Refactor: DELETE 요청 type 파라미터 적용 및 아티스트 알림 추가
+[33m920c2cb[m Merge pull request #11 from capston-kimsammoon/feature/api-integration
+[33m513903b[m[33m ([m[1;31mupstream/feature/api-integration[m[33m, [m[1;31morigin/feature/api-integration[m[33m)[m Chore: remove leftover api.txt
+[33m61e263d[m Refactor: API 폴더 구조 변경 및 axios 코드 적용
+[33mb60cc6d[m Merge pull request #10 from capston-kimsammoon/0727
+[33mc807e75[m[33m ([m[1;31mupstream/0727[m[33m, [m[1;31morigin/0727[m[33m)[m 공연장 수정
+[33m4f5e2c9[m Merge pull request #9 from capston-kimsammoon/suaaa
+[33mf0405c5[m 더미 유저 찜 뭐시기들 추가
+[33md062d4b[m Merge pull request #8 from capston-kimsammoon/suaa
+[33mb7baab6[m 아 맞다 지도
+[33m8ea9183[m Merge pull request #7 from capston-kimsammoon/sua
+[33mc87e832[m Merge branch 'main' into sua
+[33md52941c[m router 완료인가?
+[33m8a043a5[m Add files via upload
+[33meb97ac5[m Merge pull request #6 from capston-kimsammoon/suajeon
+[33mec8fd8c[m Add files via upload
+[33m2b575ed[m Merge pull request #5 from capston-kimsammoon/feature/yebin-page2
+[33m86fa931[m Merge branch 'main' into feature/yebin-page2
+[33m8838173[m 공연장 세부"
+[33mbfcc84e[m Merge pull request #4 from capston-kimsammoon/suajeon
+[33m98e0f11[m Merge branch 'main' into suajeon
+[33mb688ed9[m 수아 다함
+[33m3d0c1b0[m Merge pull request #3 from capston-kimsammoon/feature/yebin-page
+[33m99da521[m[33m ([m[1;31mupstream/feature/yebin-page[m[33m, [m[1;31morigin/feature/yebin-page[m[33m)[m Merge branch 'main' into feature/yebin-page
+[33m446acf8[m 공연장 리스트 페이지, 가까운 공연 페이지
+[33m41bc7ce[m Merge pull request #2 from capston-kimsammoon/feature/home-etc-hyunjin
+[33me79a046[m[33m ([m[1;31mupstream/feature/home-etc-hyunjin[m[33m, [m[1;31morigin/feature/home-etc-hyunjin[m[33m)[m fix: resolved all merge conflicts_김현진-->문수빈 메인 충돌 해결
+[33m5c6e74d[m 현진 로컬 수정 사항일단 살림 커밋
+[33m7a9274d[m Merge pull request #1 from capston-kimsammoon/subin
+[33mbd7cce9[m[33m ([m[1;31mupstream/subin[m[33m, [m[1;31morigin/subin[m[33m)[m feat: 공연, 아티스트, 찜 페이지
+[33m92844d6[m 자게랑 찜 수정중
+[33m4aeb5c7[m 작업 중간 저장
+[33m5f0e2e2[m Merge branch 'main' of https://github.com/capston-kimsammoon/indie-web-react
+[33m280898b[m Initial commit
+[33mc12b61e[m Delete README.md
+[33mf34783e[m Initial commit
+[33m3fbb853[m Initialize project using Create React App

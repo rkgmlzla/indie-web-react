@@ -80,7 +80,7 @@ export default function PerformanceDetailPage() {
 
   return (
     <>
-      <Header title="공연" />
+      <Header title={performance.title} />
       <div style={{ height: '16px' }} />
       <Container>
         <PosterSection>
