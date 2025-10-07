@@ -29,10 +29,7 @@ export default function ArtistListCardLike({ artist }) {
     }
   };
 
-  const safeImage =
-    artist?.image_url && artist.image_url.trim() !== ''
-      ? artist.image_url
-      : '/default_profile.png';
+  const safeImage = artist?.image_url || '/default_profile.png';
 
   return (
     <CardWrapper>
