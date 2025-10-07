@@ -92,7 +92,6 @@ export default function PeriodModal({ startYear, startMonth, endYear, endMonth, 
     </Backdrop>
   );
 }
-
 const Backdrop = styled.div`
   position: fixed;
   inset: 0;
@@ -100,7 +99,7 @@ const Backdrop = styled.div`
   display: flex;
   justify-content: center;
   align-items: flex-end;
-  z-index: 999;
+  z-index: 1001;
 `;
 
 const BottomSheet = styled.div`
@@ -109,14 +108,42 @@ const BottomSheet = styled.div`
   max-width: var(--app-max-width, ${({ theme }) => theme.layout.maxWidth});
   background: ${({ theme }) => theme.colors.bgWhite};
   border-radius: 12px 12px 0 0;
-  height: 160px;
+  padding: 16px;
+  padding-bottom: 40px;
+  box-sizing: border-box;
+  animation: slideUp 0.3s ease-out;
+
+  @keyframes slideUp {
+    from { transform: translateY(100%); }
+    to   { transform: translateY(0); }
+  }
+`;
+
+const CloseButton = styled.button`
+  display: block;
+  margin-top: 16px;
+  margin-bottom: 0px;
+  margin-left: auto;
+  margin-right: 4px;
+  padding: 6px 12px;
+  background-color: ${({ theme }) => theme.colors.themeGreen};
+  color: ${({ theme }) => theme.colors.white};
+  border: none;
+  border-radius: 8px;
+  font-size: ${({ theme }) => theme.fontSizes.base};
+  font-weight: ${({ theme }) => theme.fontWeights.medium};
+  cursor: pointer;
+
+  &:hover {
+    background-color: #2a8a55ff;
+  }
 `;
 
 const Title = styled.div`
-  font-size: ${({ theme }) => theme.fontSizes.base};
+  line-height: 24px;
   font-weight: ${({ theme }) => theme.fontWeights.semibold};
-  margin-top: 16px;
-  margin-left: 16px;
+  font-size: ${({ theme }) => theme.fontSizes.base};
+  color: ${({ theme }) => theme.colors.black};
 `;
 
 const PickerRow = styled.div`
@@ -129,7 +156,7 @@ const PickerRow = styled.div`
 const PickerGroup = styled.div`
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 8px;
 `;
 
 const Picker = styled.div`
@@ -140,8 +167,8 @@ const SelectWrapper = styled.div`
   position: relative;
   display: flex;
   align-items: center;
-  padding: 4px 16px;
-  border: 1px solid ${({ theme }) => theme.colors.outlineGray};
+  padding: 6px 16px;
+  border: 1.4px solid ${({ theme }) => theme.colors.outlineGray};
   border-radius: 50px;
   background: ${({ theme }) => theme.colors.bgWhite};
 
@@ -154,7 +181,6 @@ const SelectWrapper = styled.div`
     color: ${({ theme }) => theme.colors.darkGray};
     text-align: center;
 
-    /* 기본 드롭다운 화살표 제거 */
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -173,15 +199,3 @@ const Divider = styled.span`
   margin: 0 44px;
 `;
 
-const CloseButton = styled.button`
-  position: absolute;
-  right: 16px;
-  bottom: 32px; 
-  font-size: ${({ theme }) => theme.fontSizes.base};
-  padding: 4px 8px;
-  background: ${({ theme }) => theme.colors.bgWhite};
-  color: ${({ theme }) => theme.colors.darkGray};
-  border: 2px solid ${({ theme }) => theme.colors.outlineGray};
-  border-radius: 10px;
-  cursor: pointer;
-`;

@@ -2,7 +2,7 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import styled from 'styled-components';
 import Header from '../../components/layout/Header';
-import ArtistListCardLikeOnly from '../../components/artist/ArtistListCardLike.js';
+import ArtistListCardLike from '../../components/artist/ArtistListCardLike.js';
 import { fetchArtistList } from '../../api/artistApi';
 import { useNavigate } from 'react-router-dom';
 
@@ -13,42 +13,59 @@ export default function ArtistListPage() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [done, setDone] = useState(false);    // 더 불러올 게 없으면 true
+  const [done, setDone] = useState(false);   
   const sentinelRef = useRef(null);
   const navigate = useNavigate();
-  const seenIds = useRef(new Set());          // 중복 방지
+  const seenIds = useRef(new Set());          
 
   const load = useCallback(async (nextPage) => {
-    if (loading || done) return;
-    setLoading(true);
+  if (loading || done) return;
+  setLoading(true);
 
-    const { artists: chunk, totalPages: tp } =
-      await fetchArtistList({ page: nextPage, size: PAGE_SIZE });
+  const { artists: chunk, totalPages: tp } =
+    await fetchArtistList({ page: nextPage, size: PAGE_SIZE });
 
-    setTotalPages(tp ?? 1);
+  setTotalPages(tp ?? 1);
 
-    // 중복 방지해서 추가
-    const deduped = chunk.filter(a => {
-      if (!a?.id || seenIds.current.has(a.id)) return false;
-      seenIds.current.add(a.id);
-      return true;
-    });
+  // 중복 방지해서 추가
+  const deduped = chunk.filter(a => {
+    if (!a?.id || seenIds.current.has(a.id)) return false;
+    seenIds.current.add(a.id);
+    return true;
+  });
 
-    setArtists(prev => [...prev, ...deduped]);
-    setLoading(false);
+  // ✅ 이름으로 정렬 추가
+  const sorted = deduped.sort((a, b) => {
+  const nameA = a?.name || '';
+  const nameB = b?.name || '';
+  
+  // 한글 여부 체크 (ㄱ-ㅎ, ㅏ-ㅣ, 가-힣)
+  const isKoreanA = /[ㄱ-ㅎㅏ-ㅣ가-힣]/.test(nameA);
+  const isKoreanB = /[ㄱ-ㅎㅏ-ㅣ가-힣]/.test(nameB);
+  
+  // 둘 다 한글이거나 둘 다 아니면 일반 정렬
+  if (isKoreanA === isKoreanB) {
+    return nameA.localeCompare(nameB, 'ko-KR');
+  }
+  
+  // 한글이 먼저 오도록
+  return isKoreanA ? -1 : 1;
+});
 
-    // 마지막 페이지 판단
-    if (nextPage >= (tp ?? 1) || deduped.length === 0) {
-      setDone(true);
-    }
-  }, [loading, done]);
+  setArtists(prev => [...prev, ...sorted]);
+  setLoading(false);
+
+  // 마지막 페이지 판단
+  if (nextPage >= (tp ?? 1) || sorted.length === 0) {
+    setDone(true);
+  }
+}, [loading, done]);
 
   // 최초 로드
   useEffect(() => {
     load(1);
   }, [load]);
 
-  // 인터섹션 옵저버: 바닥(sentinel) 보이면 다음 페이지 로드
   useEffect(() => {
     const node = sentinelRef.current;
     if (!node) return;
@@ -66,30 +83,51 @@ export default function ArtistListPage() {
   }, [page, load, loading, done]);
 
   return (
-    <>
+    <PageWrapper>
       <Header title="아티스트" initialSearchTab="아티스트" />
-      <Spacer />
-      <Container>
-        {artists.map((artist) => (
-          <CardWrapper
-            key={artist.id}
-            onClick={() => navigate(`/artist/${artist.id}`)}>
-            <ArtistListCardLikeOnly artist={artist} />
-          </CardWrapper>
-        ))}
+      <div style={{ height: "16px" }} />
+      <ScrollableList>
+        <Container>
+          {artists.map((artist) => (
+            <CardWrapper
+              key={artist.id}
+              onClick={() => navigate(`/artist/${artist.id}`)}>
+              <ArtistListCardLike artist={artist} />
+            </CardWrapper>
+          ))}
 
-        {/* 로딩/끝 표시 + 관찰용 센티넬 */}
-        {!done && <Loader>불러오는 중…</Loader>}
-        <Sentinel ref={sentinelRef} />
-      </Container>
-    </>
+          {/* 로딩/끝 표시 + 관찰용 센티넬 */}
+          {!done && <Loader>불러오는 중…</Loader>}
+          <Sentinel ref={sentinelRef} />
+        </Container>
+      </ScrollableList>
+    </PageWrapper>
   );
 }
 
-const Spacer = styled.div`height:56px;`;
 const Container = styled.div`display:flex; flex-direction:column;`;
 const CardWrapper = styled.div`cursor:pointer; caret-color:transparent;`;
 const Loader = styled.div`text-align:center; padding:16px; color:#999;`;
 const End = styled.div`text-align:center; padding:16px; color:#bbb;`;
 const Empty = styled.div`padding:24px; text-align:center;`;
 const Sentinel = styled.div`height:1px;`;
+
+const PageWrapper = styled.div`
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+`;
+
+const ScrollableList = styled.div`
+  margin-top: 16px;
+  margin-bottom: 125px;
+  flex-grow: 1;
+  overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    display: none; 
+  }
+
+  -ms-overflow-style: none; 
+  scrollbar-width: none;
+`;

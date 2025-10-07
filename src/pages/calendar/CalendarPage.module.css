@@ -1,51 +1,45 @@
 /* ✅ src/pages/calendar/CalendarPage.module.css */
 .calendarPage {
-  padding: 24px;
   background: white;
 
-  /* 📌 전체 레이아웃을 위/아래 분리 (위는 고정, 아래는 스크롤) */
   display: flex;
   flex-direction: column;
-  height: 100vh; /* 화면 전체 높이 기준 */
+  height: 100vh; 
 }
 
-.header {
+.monthLine {
   display: flex;
   align-items: center;
   justify-content: center;
-  /* 🔻 월 타이틀 위아래 간격 축소 */
-  margin-bottom: 8px;
+  margin-top: 5px;
 }
 
-.navIcon {
-  width: 24px;   /* ⭕ 좌/우 아이콘 동일 크기 */
-  height: 24px;  /* ⭕ 좌/우 아이콘 동일 크기 */
+.leftIcon,
+.rightIcon {
+  width: 12px;   
+  height: 14px;  
+  padding: 0 12px;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+  position: relative;
 }
-
 .leftIcon {
   transform: scaleX(-1);
-  /* ❌ 더이상 크기 다르게 하지 않음 */
 }
 
 .monthTitle {
-  font-size: 24px;
-  font-weight: bold;
-  margin: 0 12px;
+  font-size: 20px;
+  font-weight: 600;
+  color: #2F2F2F;
 }
 
 .dailyTitle {
-  font-weight: bold;
+  font-weight: 500;
   font-size: 18px;
-  margin-top: 12px;
-  margin-bottom: 8px;
-}
-
-/* 📌 달력 그리드 (CalendarGrid에서도 동일 클래스명을 사용하는 경우 맞춰서 유지) */
-.calendarGrid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 4px;
+  margin-bottom: 16px;
 }
 
 /* 주차 줄이 display: contents 로 들어올 때 높이 변동 방지 */
@@ -68,7 +62,7 @@
   box-sizing: border-box;
 }
 
-/* ✅ 공연 있는 날짜: 테두리만 강조 (색은 theme 주황) */
+/* ✅ 공연 있는 날짜: 테두리만 강조 */
 .circleBorder {
   border-color: var(--accent);
   background: transparent;
@@ -86,17 +80,3 @@
   opacity: 0.3;
 }
 
-/* ✅ 달력 ↔ 선택 날짜 섹션 구분선 */
-.divider {
-  height: 1px;
-  background: var(--outlineGray);
-  margin: 12px 0 8px;
-  border: 0;
-}
-
-/* ✅ 구분선 아래 영역만 세로 스크롤 */
-.scrollArea {
-  flex: 1;
-  overflow-y: auto;
-  padding-bottom: 80px; /* 하단 여백 */
-}

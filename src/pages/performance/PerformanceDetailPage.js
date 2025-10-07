@@ -81,7 +81,7 @@ export default function PerformanceDetailPage() {
   return (
     <>
       <Header title="공연" />
-      <div style={{ height: '56px' }} />
+      <div style={{ height: '16px' }} />
       <Container>
         <PosterSection>
           <PosterWrapper>
@@ -92,7 +92,9 @@ export default function PerformanceDetailPage() {
             </LikeButton>
           </PosterWrapper>
           <InfoWrapper>
-            <Dday>{getDday(performance.date)}</Dday>
+            <Dday $isToday={getDday(performance.date) === 'D-Day'}>
+              {getDday(performance.date)}
+            </Dday>
             <Title>{performance.title}</Title>
             <NotifyButton isNotified={isAlarmed} onClick={toggleNotify} label="예매알림" />
           </InfoWrapper>
@@ -129,11 +131,11 @@ export default function PerformanceDetailPage() {
           </LabelRow>
           <LabelRow>
             <Label>상세 정보</Label>
-            <Value>
+            <LinkValue>
               <a href={performance.detailLink} target="_blank" rel="noreferrer">
                 {performance.detailLink}
               </a>
-            </Value>
+            </LinkValue>
           </LabelRow>
         </InfoSection>
       </Container>
@@ -145,40 +147,33 @@ export default function PerformanceDetailPage() {
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  max-width: ${({ theme }) => theme.layout.maxWidth};
-  margin: 0 auto;
-  background-color: ${({ theme }) => theme.colors.bgWhite};
 `;
 
 const PosterSection = styled.div`
   display: flex;
-  gap: 1rem 0.25rem;
-  padding: 1rem 0;
+  margin: 16px 0;
 `;
 
 const PosterWrapper = styled.div`
-  flex: 2;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.5rem;
 `;
 
 const Poster = styled.img`
-  width: 20vw;
-  max-width: 8rem;
-  height: auto;
-  aspect-ratio: 0.8;
-  border-radius: 0.5rem;
-  border: 1px solid ${({ theme }) => theme.colors.outlineGray};
+  width: 120px;
+  height: 160px;
+  margin-bottom: 8px;
   object-fit: cover;
+  border-radius: 5px;
+  border: 1px solid ${({ theme }) => theme.colors.outlineGray};
 `;
 
 const LikeButton = styled.button`
   display: inline-flex;
   align-items: center;
   height: 1.5rem;
-  padding: 0.75rem 0.5rem;
+  padding: 12px 8px;
   font-size: ${({ theme }) => theme.fontSizes.xs};
   font-weight: ${({ theme }) => theme.fontWeights.regular};
   color: ${({ theme }) => theme.colors.outlineGray};
@@ -198,7 +193,9 @@ const HeartIcon = styled.span`
 `;
 
 const LikeCount = styled.span`
-  color: ${({ theme }) => theme.colors.black};
+  color: ${({ theme }) => theme.colors.darkGray};
+  font-size: ${({ theme }) => theme.fontSizes.xs};
+  font-weight: ${({ theme }) => theme.fontWeights.regular};
 `;
 
 const InfoWrapper = styled.div`
@@ -206,39 +203,42 @@ const InfoWrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  padding: 1rem;
+  margin: 4px 0;
+  margin-left: 16px;
 `;
 
 const Dday = styled.div`
-  color: ${({ theme }) => theme.colors.lightGray};
+  color: ${({ $isToday, theme }) =>
+    $isToday ? theme.colors.themeGreen : theme.colors.lightGray};
   font-size: ${({ theme }) => theme.fontSizes.sm};
+  font-weight: ${({ theme }) => theme.fontWeights.regular};
 `;
 
 const Title = styled.h1`
-  font-size: ${({ theme }) => theme.fontSizes.lg};
+  font-size: ${({ theme }) => theme.fontSizes.md};
   font-weight: ${({ theme }) => theme.fontWeights.semibold};
-  margin: 0.5rem 0;
+  color: ${({ theme }) => theme.colors.darkblack};
+  margin-top: 12px;
+  margin-bottom: 8px; 
 `;
 
 const InfoSection = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  padding: 1.25rem;
+  margin-top: 16px;
+  gap: 24px;
 `;
 
 const LabelRow = styled.div`
   display: grid;
   grid-template-columns: 6rem 1fr;
   align-items: center;
-  gap: 1rem;
-  padding: 0.25rem 0;
 `;
 
 const Label = styled.div`
   font-size: ${({ theme }) => theme.fontSizes.base};
   font-weight: ${({ theme }) => theme.fontWeights.medium};
-  color: ${({ theme }) => theme.colors.darkGray};
+  color: ${({ theme }) => theme.colors.darkblack};
 `;
 
 const Value = styled.div`
@@ -250,7 +250,7 @@ const Value = styled.div`
 const VenueValue = styled.div`
   display: flex;
   align-items: center;
-  gap: 0.25rem;
+  gap: 4px;
   font-size: ${({ theme }) => theme.fontSizes.base};
   font-weight: ${({ theme }) => theme.fontWeights.regular};
   color: ${({ theme }) => theme.colors.darkGray};
@@ -262,11 +262,26 @@ const ChevronIcon = styled.img`
   height: 0.75rem;
 `;
 
+const LinkValue = styled.div`
+  font-size: ${({ theme }) => theme.fontSizes.base};
+  font-weight: ${({ theme }) => theme.fontWeights.regular};
+  color: ${({ theme }) => theme.colors.darkGray};
+
+  word-break: break-all;
+  overflow-wrap: break-word;
+
+  a {
+    color: ${({ theme }) => theme.colors.darkGray};
+    text-decoration: underline;
+    word-break: break-all; 
+  }
+`;
+
 const ScrollContainer = styled.div`
   display: flex;
   overflow-x: auto;
-  gap: 1.5rem;
-  padding: 0.5rem;
+  margin-top: 12px;
+  gap: 24px;
   &::-webkit-scrollbar {
     display: none;
   }

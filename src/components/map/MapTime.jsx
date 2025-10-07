@@ -7,7 +7,7 @@ const TimeText = styled.div`
   font-size: ${({ theme }) => theme.fontSizes.sm};
   font-weight: ${({ theme }) => theme.fontWeights.semibold};
   color: ${({ theme }) => theme.colors.black};
-  padding: 16px 8px;
+  padding: 16px 0;
 `;
 
 const CurrentTimeText = () => {

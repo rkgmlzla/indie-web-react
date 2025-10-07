@@ -136,8 +136,8 @@ export default function StampPage() {
   };
 
   return (
+    <>
     <PageWrapper>
-       <div className="App">
       <Header title="스탬프" />
       <div style={{ height: "16px" }} />
 
@@ -154,20 +154,24 @@ export default function StampPage() {
       {/* ✅ 메인 스탬프판 */}
       <StampBoard>
         <ScrollArea>
-          <StampPageContainer>
-            {collectedStamps
-              .slice()
-              .sort((a, b) => new Date(b.date) - new Date(a.date))
-              .map((stamp) => (
-                <StampItem
-                  key={stamp.id}
-                  onClick={() => setSelectedStampDetail(stamp)}
-                >
-                  <StampImage src={stamp.venueImageUrl} alt={stamp.place} />
-                  <StampDate>{stamp.date}</StampDate>
-                </StampItem>
-              ))}
-          </StampPageContainer>
+          {collectedStamps.length > 0 ? (
+            <StampPageContainer>
+              {collectedStamps
+                .slice()
+                .sort((a, b) => new Date(b.date) - new Date(a.date))
+                .map((stamp) => (
+                  <StampItem
+                    key={stamp.id}
+                    onClick={() => setSelectedStampDetail(stamp)}
+                  >
+                    <StampImage src={stamp.venueImageUrl} alt={stamp.place} />
+                    <StampDate>{stamp.date}</StampDate>
+                  </StampItem>
+                ))}
+            </StampPageContainer>
+          ) : (
+            <EmptyMessage>해당 기간에 받은 스탬프가 없습니다.</EmptyMessage>
+          )}
         </ScrollArea>
       </StampBoard>
 
@@ -236,8 +240,26 @@ export default function StampPage() {
       )}
       {!isLoggedIn && <StampLogin />}
       </main>
-      </div>
     </PageWrapper>
+
+    {isPeriodModalOpen && (
+      <PeriodModal
+        startYear={startYear}
+        startMonth={startMonth}
+        endYear={endYear}
+        endMonth={endMonth}
+        onChange={({ startYear, startMonth, endYear, endMonth }) => {
+          setStartYear(startYear);
+          setStartMonth(startMonth);
+          setEndYear(endYear);
+          setEndMonth(endMonth);
+        }}
+        onClose={() => setIsPeriodModalOpen(false)}
+      />
+    )}
+    
+    {!isLoggedIn && <StampLogin />}
+  </>
   );
 }
 
@@ -271,7 +293,7 @@ const StampButton = styled.button`
   border: none;
   cursor: pointer;
   right: 0px;
-  bottom: 108px;
+  bottom: 100px;
 
   img {
     width: 72px;
@@ -287,7 +309,7 @@ const StampButton = styled.button`
 const StampBoard = styled.div`
   position: absolute;
   top: 78.5px;
-  bottom: 60px;
+  bottom: 108px;
   left: 16px;
   right: 16px;
   display: flex;
@@ -297,10 +319,9 @@ const StampBoard = styled.div`
 const StampPageContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  row-gap: 40px;
+  row-gap: 24px;
   width: 100%;
   box-sizing: border-box;
-
   justify-items: center; 
 `;
 
@@ -332,6 +353,7 @@ const StampImage = styled.img`
 
 const StampDate = styled.div`
   margin-top: 12px;
+  margin-bottom: 16px;
   font-size: ${({ theme }) => theme.fontSizes.sm};
   font-weight: ${({ theme }) => theme.fontWeights.semibold};
   color: ${({ theme }) => theme.colors.stampGray};
@@ -343,13 +365,18 @@ const ScrollArea = styled.div`
   margin-bottom: 16px;
 
   &::-webkit-scrollbar {
-    width: 4px;
+    display: none;
   }
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  &::-webkit-scrollbar-thumb {
-    background-color: rgba(0, 0, 0, 0.3);
-    border-radius: 2px;
-  }
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+`;
+
+const EmptyMessage = styled.div`
+padding: 16px 16px;
+  font-size: ${({ theme }) => theme.fontSizes.sm};
+  font-weight: ${({ theme }) => theme.fontWeights.medium};
+  color: ${({ theme }) => theme.colors.darkGray};
+  display: flex;
+  justify-content: center; 
+  align-items: center;  
 `;

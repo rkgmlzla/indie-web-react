@@ -2,69 +2,15 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
-
 import Header from '../../components/layout/Header';
 import PerformanceListCard from '../../components/performance/PerformanceListCard';
+import RegionSelectButton from '../venue/components/RegionSelectButton';
+import RegionSelectSheet from '../venue/components/RegionSelectSheet';
 import FilterButton from '../../components/common/FilterButton';
 import CalendarIcon from '../../assets/icons/icon_calendar.svg';
 import SortModal from '../../components/modals/SortModal';
-import RegionModal from '../../components/modals/RegionModal';
 import Divider from '../../components/common/Divider';
 import { fetchPerformances } from '../../api/performanceApi';
-
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  max-width: ${({ theme }) => theme.layout.maxWidth};
-  margin: 0 auto;
-  background-color: ${({ theme }) => theme.colors.bgWhite};
-`;
-
-const FilterBar = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: ${({ theme }) => theme.spacing.md};
-`;
-
-const FilterGroup = styled.div`
-  display: flex;
-  gap: ${({ theme }) => theme.spacing.sm};
-`;
-
-const CalendarIconButton = styled.button`
-  width: 2rem;
-  height: 2rem;
-  background-color: ${({ theme }) => theme.colors.outlineGray};
-  border-radius: 50%;
-  border: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  &::after {
-    content: '';
-    background-image: url(${CalendarIcon});
-    background-size: 100% 100%;
-    width: 1rem;
-    height: 1rem;
-  }
-`;
-
-const ModalBackground = styled.div`
-  position: fixed;
-  inset: 0;
-  background-color: rgba(0, 0, 0, 0.3);
-  z-index: 1000;
-  display: flex;
-  justify-content: center;
-  align-items: flex-end;
-`;
-
-const List = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
 
 /* ===== 날짜 파싱 ===== */
 const getDateTime = (p) => {
@@ -96,18 +42,31 @@ export default function PerformanceListPage() {
   const [sortOption, setSortOption] = useState('latest');
   const [selectedRegions, setSelectedRegions] = useState(['전체']);
   const [isSortModalOpen, setIsSortModalOpen] = useState(false);
-  const [isRegionModalOpen, setIsRegionModalOpen] = useState(false);
+  const [isRegionSheetOpen, setIsRegionSheetOpen] = useState(false);
 
   const [performances, setPerformances] = useState([]);
   const [page, setPage] = useState(1);
-  const size = 20;
+  const [hasMore, setHasMore] = useState(true);
+  const size = 15;
 
-  const loadPerformances = async () => {
+  const handleSelectRegion = (region) => {
+    if (region === '전체') {
+      setSelectedRegions(['전체']);
+    } else {
+      const alreadySelected = selectedRegions.includes(region);
+      let updated = alreadySelected
+        ? selectedRegions.filter((r) => r !== region)
+        : selectedRegions.filter((r) => r !== '전체').concat(region);
+      if (updated.length === 0) updated = ['전체'];
+      setSelectedRegions(updated);
+    }
+  };
+  
+  const loadPerformances = async (append = false) => {
     try {
       const sortMapping = { latest: 'created_at', popular: 'likes', date: 'date' };
       const sortParam = sortMapping[sortOption] || 'created_at';
       const regionParam = selectedRegions.includes('전체') ? undefined : selectedRegions;
-
       const data = await fetchPerformances({ region: regionParam, sort: sortParam, page, size });
       let list = Array.isArray(data) ? data : [];
 
@@ -125,7 +84,17 @@ export default function PerformanceListPage() {
       list = list.map(normalizePoster);
 
       console.log('🎯 [공연 목록] 최종 리스트:', list);
-      setPerformances(list);
+
+      if (append) {
+        setPerformances((prev) => [...prev, ...list]);
+      } else {
+        setPerformances(list);
+      }
+
+      // ✅ 다음 데이터가 더 이상 없으면 더보기 버튼 숨기기
+      if (list.length < size) setHasMore(false);
+      else setHasMore(true);
+
     } catch (err) {
       console.error('📛 공연 목록 API 호출 실패:', err?.response?.data || err.message);
       setPerformances([]);
@@ -133,14 +102,14 @@ export default function PerformanceListPage() {
   };
 
   useEffect(() => {
-    loadPerformances();
+    loadPerformances(page > 1);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sortOption, selectedRegions, page]);
 
   return (
     <>
       <Header title="공연" />
-      <div style={{ height: '56px' }} />
+      <div style={{ height: "16px" }} />
       <Container>
         <FilterBar>
           <FilterGroup>
@@ -152,28 +121,34 @@ export default function PerformanceListPage() {
                 : '인기순'}
             </FilterButton>
 
-            <FilterButton onClick={() => setIsRegionModalOpen(true)}>
-              {selectedRegions[0] === '전체' ? '지역 전체' : `지역: ${selectedRegions.join(', ')}`}
-            </FilterButton>
+            <RegionSelectButton 
+              selectedRegions={selectedRegions}
+              onClick={() => setIsRegionSheetOpen(true)}
+            />
           </FilterGroup>
           <CalendarIconButton onClick={() => navigate('/calendar')} />
         </FilterBar>
 
-        <Divider />
-
-        <List>
+        <ScrollableContent>
           {performances.length > 0 ? (
-            performances.map((p) => (
-              <PerformanceListCard
-                key={p.id}
-                performance={p} // ✅ p.thumbnail 이 항상 존재하도록 보정됨
-                onClick={() => navigate(`/performance/${p.id}`)}
-              />
-            ))
+            <>
+              {performances.map((p) => (
+                <PerformanceListCard
+                  key={p.id}
+                  performance={p}
+                  onClick={() => navigate(`/performance/${p.id}`)}
+                />
+              ))}
+              {hasMore && (
+                <MoreButton onClick={() => setPage((prev) => prev + 1)}>
+                  더보기
+                </MoreButton>
+              )}
+            </>
           ) : (
-            <p style={{ textAlign: 'center', padding: '20px' }}>공연이 없습니다.</p>
+            <EmptyMessage>해당되는 공연이 없습니다.</EmptyMessage>
           )}
-        </List>
+        </ScrollableContent>
 
         {isSortModalOpen && (
           <ModalBackground onClick={() => setIsSortModalOpen(false)}>
@@ -184,16 +159,108 @@ export default function PerformanceListPage() {
             />
           </ModalBackground>
         )}
-        {isRegionModalOpen && (
-          <ModalBackground onClick={() => setIsRegionModalOpen(false)}>
-            <RegionModal
-              selected={selectedRegions}
-              onChange={setSelectedRegions}
-              onClose={() => setIsRegionModalOpen(false)}
-            />
-          </ModalBackground>
+        {isRegionSheetOpen && (
+          <RegionSelectSheet
+            selectedRegions={selectedRegions}
+            onSelectRegion={handleSelectRegion}
+            onClose={() => setIsRegionSheetOpen(false)}
+          />
         )}
       </Container>
     </>
   );
 }
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 56px);
+  max-width: ${({ theme }) => theme.layout.maxWidth};
+  margin: 0 auto;
+  background-color: ${({ theme }) => theme.colors.bgWhite};
+`;
+
+const FilterBar = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+const FilterGroup = styled.div`
+  margin: 16px 0;
+  display: flex;
+  gap: 16px;
+  button {
+    margin: 0 !important;
+  }
+`;
+
+const CalendarIconButton = styled.button`
+  width: 36px;
+  height: 36px;
+  background-color: rgba(60, 156, 103, 0.2);
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  &::after {
+    content: '';
+    background-image: url(${CalendarIcon});
+    background-size: 100% 100%;
+    width: 1rem;
+    height: 1rem;
+  }
+`;
+
+const ModalBackground = styled.div`
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+`;
+
+const ScrollableContent = styled.div`
+  height: calc(100vh - 84px); 
+  margin-bottom: 84px;
+  padding-bottom: 120px; /* ✅ 언더바 겹침 방지 */
+  overflow-y: auto;
+  
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+`;
+
+const MoreButton = styled.button`
+  width: 100%;
+  height: 48px;
+  margin: 16px 0;
+  background-color: ${({ theme }) => theme.colors.bgWhite};
+  color: ${({ theme }) => theme.colors.darkGray};
+  border: 1px solid ${({ theme }) => theme.colors.outlineGray};
+  border-radius: 8px;
+  font-size: ${({ theme }) => theme.fontSizes.base};
+  font-weight: ${({ theme }) => theme.fontWeights.medium};
+  cursor: pointer;
+  transition: all 0.2s ease;
+  &:hover {
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  }
+`;
+
+const EmptyMessage = styled.div`
+  margin-top: 16px;
+  padding: 16px 16px;
+  font-size: ${({ theme }) => theme.fontSizes.sm};
+  font-weight: ${({ theme }) => theme.fontWeights.medium};
+  color: ${({ theme }) => theme.colors.darkGray};
+  display: flex;
+  justify-content: center; 
+  align-items: center;  
+`;

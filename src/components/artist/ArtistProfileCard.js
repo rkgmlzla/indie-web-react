@@ -50,8 +50,9 @@ const ProfileImage = styled.img`
 `;
 
 const Name = styled.div`
-  margin-top: 0.35rem;
+  margin-top: 8px;
   font-size: ${({ theme }) => theme.fontSizes.sm};
+  font-weight: ${({ theme }) => theme.fontWeights.regular};
   color: ${({ theme }) => theme.colors.darkGray};
   max-width: 4rem;
   text-align: center;

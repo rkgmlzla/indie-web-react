@@ -1,19 +1,16 @@
 // ✅ src/pages/calendar/index.jsx
 import React, { useState, useEffect } from 'react';
 import { format, addMonths, subMonths } from 'date-fns';
+import styled from 'styled-components';
 import CalendarGrid from './components/CalendarGrid';
 import DailyConcertList from './components/DailyConcertList';
-import RegionFilterTrigger from './components/RegionFilterTrigger';
-import RegionFilterBottomSheet from './components/RegionFilterBottomSheet';
+import RegionSelectButton from '../venue/components/RegionSelectButton'
+import RegionSelectSheet from '../venue/components/RegionSelectSheet';
 import IconGo from '../../assets/icons/icon_go_hyunjin.svg';
 import styles from './CalendarPage.module.css';
 import Header from '../../components/layout/Header';
+import Divider from '../../components/common/Divider';
 import { useNavigate } from 'react-router-dom';
-
-// ✅ theme에서 주황/아웃라인 색 호출
-import { theme } from '../../styles/theme';
-
-// ✅ API Import
 import { fetchMonthlyPerformanceDates, fetchPerformancesByDate } from '../../api/calendarApi';
 
 function CalendarPage() {
@@ -21,7 +18,7 @@ function CalendarPage() {
 
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [selectedRegions, setSelectedRegions] = useState([]);
+  const [selectedRegions, setSelectedRegions] = useState(['전체']);
   const [showRegionSheet, setShowRegionSheet] = useState(false);
 
   const [monthConcertDates, setMonthConcertDates] = useState([]);
@@ -75,52 +72,76 @@ function CalendarPage() {
   };
 
   // ✅ 지역 변경 적용 (날짜 선택도 해제)
-  const handleRegionApply = (regions) => {
-    setSelectedRegions(regions);
+  const handleSelectRegion = (region) => {
+    let newRegions;
+    
+    if (region === '전체') {
+      newRegions = ['전체'];
+    } else {
+      const alreadySelected = selectedRegions.includes(region);
+      let updated = alreadySelected
+        ? selectedRegions.filter((r) => r !== region)
+        : selectedRegions.filter((r) => r !== '전체').concat(region);
+      if (updated.length === 0) updated = ['전체'];
+      newRegions = updated;
+    }
+    
+    setSelectedRegions(newRegions);
+    
+    // ✅ 날짜가 선택되어 있으면 즉시 해당 날짜 공연 다시 로드
+    if (selectedDate) {
+      const formatted = format(selectedDate, 'yyyy-MM-dd');
+      const regionParam = newRegions.includes('전체') ? undefined : newRegions;
+      
+      // 즉시 API 호출
+      fetchPerformancesByDate(formatted, regionParam)
+        .then(data => {
+          console.log(`🎯 [캘린더] ${formatted} 공연 리스트 응답:`, data);
+          setDailyConcerts(data);
+        })
+        .catch(err => {
+          console.error('📛 날짜별 공연 리스트 API 호출 실패:', err);
+          setDailyConcerts([]);
+        });
+    }
+  };
+
+  // 날짜가 선택되어 있으면 해당 날짜 공연을 다시 로드
+  const handleCloseSheet = () => {
     setShowRegionSheet(false);
-    // 👉 날짜 선택 및 공연 카드 모두 해제
-    setSelectedDate(null);
-    setDailyConcerts([]);
   };
 
   return (
     <>
-      <Header title="공연 캘린더" showBack onBackClick={() => navigate(-1)} />
-      {/* CSS Module에서 사용할 커스텀 CSS 변수로 theme 색 주입 */}
-      <div
-        className={styles.calendarPage}
-        style={{
-          '--accent': theme.colors.maybethemeOrange,
-          '--outlineGray': theme.colors.outlineGray,
-        }}
-      >
-        {/* 🔻 헤더와 거의 맞닿도록 상단 간격 축소 */}
-        <div style={{ height: '4px' }} />
-
+      <Header title="공연 캘린더" />
+      <div style={{ height: "16px" }} />
+      <div className={styles.calendarPage}>
         {/* 월 이동 UI */}
-        <div className={styles.header}>
+        <div className={styles.monthLine}>
           <img
             src={IconGo}
             alt="이전"
             onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}
-            className={`${styles.navIcon} ${styles.leftIcon}`}
+            className={styles.leftIcon}
           />
           <h2 className={styles.monthTitle}>{format(currentMonth, 'M월')}</h2>
           <img
             src={IconGo}
             alt="다음"
             onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}
-            className={styles.navIcon}
+            className={styles.rightIcon}
           />
         </div>
 
         {/* 지역 필터 */}
-        <RegionFilterTrigger selectedRegions={selectedRegions} onOpen={() => setShowRegionSheet(true)} />
+        <RegionButtonWrapper>
+          <RegionSelectButton selectedRegions={selectedRegions} onClick={() => setShowRegionSheet(true)} />
+        </RegionButtonWrapper>
         {showRegionSheet && (
-          <RegionFilterBottomSheet
-            initialSelected={selectedRegions}
-            onClose={() => setShowRegionSheet(false)}
-            onApply={handleRegionApply}
+          <RegionSelectSheet
+            selectedRegions={selectedRegions}
+            onSelectRegion={handleSelectRegion}
+            onClose={handleCloseSheet}
           />
         )}
 
@@ -132,24 +153,53 @@ function CalendarPage() {
           concerts={monthConcertDates}
         />
 
-        {/* 구분선 */}
-        <div className={styles.divider} />
+        <DividerWrapper>
+          <Divider />
+        </DividerWrapper>
 
-        {/* 날짜별 공연 리스트 (구분선 아래만 스크롤 가능) */}
-        <div className={styles.scrollArea}>
+
+        {/* 날짜별 공연 리스트 */}
+        <div style={{ flexGrow: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
           {selectedDate ? (
             <>
               <h3 className={styles.dailyTitle}>{format(selectedDate, 'M월 d일')} 공연</h3>
-              <DailyConcertList concerts={dailyConcerts} />
+              <ScrollableList>
+                <DailyConcertList concerts={dailyConcerts} />
+              </ScrollableList>
             </>
           ) : (
-            // 날짜 선택 해제 시 아무것도 보이지 않게 처리
             <div style={{ height: '0px' }} />
           )}
         </div>
+
       </div>
     </>
   );
 }
 
 export default CalendarPage;
+
+const RegionButtonWrapper = styled.div`
+  button {
+    margin-top: 0 !important;
+  }
+`;
+
+const DividerWrapper = styled.div`
+  margin-top: 16px;
+`;
+
+const ScrollableList = styled.div`
+  margin-bottom: 140px;
+
+  flex: 1 1 0;
+  min-height: 0;
+  overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    display: none; 
+  }
+
+  -ms-overflow-style: none; 
+  scrollbar-width: none; 
+`;

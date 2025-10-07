@@ -14,15 +14,23 @@ body {
   margin: 0;
   padding: 0;
   font-family: 'Pretendard', sans-serif;
-  background-color: #dcdcdc; /* 앱 바깥 배경 */
+  background-color: #dcdcdc;
   display: flex;
   justify-content: center;
+  align-items: flex-start;  /* 추가 */
+  overflow: hidden;  
+  height: 100vh;     
 }
 
 /* 앱 전체 컨테이너 (#root) */
 #root {
   width: 100%;
-  padding: 24px;
+  max-width: 512px;
+  margin: 0;  /* margin: 0 auto 대신 */
+  padding-top: 24px;
+  overflow: hidden;  
+  height: 100vh;
+  background-color: #fff;
 }
 
 /* 추가된 캘린더 페이지 기본 스타일 */

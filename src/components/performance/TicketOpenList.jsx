@@ -1,5 +1,6 @@
 // ✅ src/components/performance/TicketOpenList.jsx
 import React from 'react';
+import styled from 'styled-components';
 import styles from './TicketOpenList.module.css';
 import TicketOpenCard from './TicketOpenCard';
 import { useNavigate } from 'react-router-dom';
@@ -16,6 +17,10 @@ const TicketOpenList = ({ performances = [] }) => {
       전체값: item,
     });
   });
+
+  if (performances.length === 0) {
+    return <EmptyMessage>티켓 오픈 예정 공연이 없습니다.</EmptyMessage>;
+  }
 
   return (
     <div className={styles.listContainer}>
@@ -35,3 +40,14 @@ const TicketOpenList = ({ performances = [] }) => {
 };
 
 export default TicketOpenList;
+
+const EmptyMessage = styled.div`
+  padding: 0 16px;
+  margin-bottom: 56px;
+  font-size: ${({ theme }) => theme.fontSizes.sm};
+  font-weight: ${({ theme }) => theme.fontWeights.medium};
+  color: ${({ theme }) => theme.colors.darkGray};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;

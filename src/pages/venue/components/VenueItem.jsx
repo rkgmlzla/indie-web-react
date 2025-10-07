@@ -4,9 +4,9 @@ import styled from 'styled-components';
 const CardWrapper = styled.div`
   display: flex;
   align-items: center;
-  padding: 12px 4px 0 4px;
+  margin-bottom: 24px;
   gap: 12px;
-  height: 56px;
+  height: 44px;
 `;
 
 const ProfileImage = styled.img`
@@ -17,7 +17,7 @@ const ProfileImage = styled.img`
   object-fit: cover;
 `;
 
-const ArtistName = styled.div`
+const Venuename = styled.div`
   font-weight: ${({ theme }) => theme.fontWeights.medium};
   font-size: ${({ theme }) => theme.fontSizes.base};
   color: ${({ theme }) => theme.colors.black};
@@ -31,7 +31,7 @@ function VenueItem({ image, name, onClick }) {
   return (
     <CardWrapper onClick={onClick}>
       <ProfileImage src={image} alt={name} />
-      <ArtistName>{name}</ArtistName>
+      <Venuename>{name}</Venuename>
     </CardWrapper>
   );
 }

@@ -18,18 +18,19 @@ const Button = styled.button`
   align-items: center;
   height: 1.25rem;
   width: fit-content;
-  padding: 0.75rem 0.5rem;
+  padding: 12px 8px;
+  padding-right: ${({ $isNotified }) => ($isNotified ? '6px' : '8px' )};
   font-size: ${({ theme }) => theme.fontSizes.xs};
   font-weight: ${({ theme }) => theme.fontWeights.regular};
   color: ${({ $isNotified, theme }) =>
-    $isNotified ? theme.colors.darkGray : theme.colors.outlineGray};
-  border: 1.5px solid
+    $isNotified ? theme.colors.darkGray : theme.colors.lightGray};
+  border: 1.2px solid
     ${({ $isNotified, theme }) =>
-      $isNotified ? theme.colors.darkGray : theme.colors.outlineGray};
-  border-radius: 1.5rem;
+      $isNotified ? theme.colors.darkGray : theme.colors.lightGray};
+  border-radius: 25px;
   background-color: ${({ theme }) => theme.colors.bgWhite};
   cursor: pointer;
-  gap: 0.25rem;
+  gap: 4px;
 `;
 
 const NotifyIcon = styled.span`
@@ -39,4 +40,6 @@ const NotifyIcon = styled.span`
   background-image: ${({ $isNotified }) =>
     $isNotified ? `url(${NotifyOnIcon})` : `url(${NotifyOffIcon})`};
   background-size: 100% 100%;
+  margin-top: ${({ $isNotified }) => ($isNotified ? '3.5px' : '0')};
+  margin-left: ${({ $isNotified }) => ($isNotified ? '1.8px' : '0')};
 `;
