@@ -15,7 +15,31 @@ const Container = styled.div`
   width: 100%;
   margin: 0;donteai
   padding: 0;
+
+  /* 헤더 spacer(28px) 제외한 높이에서 내부 스크롤 */
+  height: calc(100dvh - 28px);
+  min-height: calc(100vh - 28px);  /* 구형 브라우저 대비 */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* 바깥(문서) 스크롤 방지 */
+
 `;
+
+const ScrollableList = styled.div`
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+
+  /* 하단 탭바/버튼과 겹치지 않게 여유 */
+  padding-bottom: 88px;
+
+  /* 스크롤바 숨김 */
+  &::-webkit-scrollbar { display: none; }
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+`;
+
 const InnerWrapper = styled.div`
   padding: 16px 0;
 `;
@@ -308,6 +332,7 @@ const DetailVenue = () => {
       <Header title="공연장 정보" />
       <div style={{ height: '28px' }} />
       <Container>
+         <ScrollableList>
         <InnerWrapper>
           <Row>
             <ProfileImage src={venue.image_url || ''} alt="공연장 이미지" />
@@ -448,6 +473,7 @@ const DetailVenue = () => {
           </ReviewScrollWrapper>
           {/* ============================ */}
         </InnerWrapper>
+        </ScrollableList>
       </Container>
     </>
   );
