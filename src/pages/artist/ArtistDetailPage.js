@@ -99,91 +99,100 @@ export default function ArtistDetailPage() {
   return (
     <>
       <Header title="아티스트" initialSearchTab="아티스트" />
-      <div style={{ height: '56px' }} />
-      <Container>
-        <ProfileSection>
-          <ProfileWrapper>
-            <ProfileImage src={artist.profileImageUrl || '/default_profile.png'} alt={artist.name} />
-            <StyledHeartButton isLiked={isLiked} onClick={toggleLike} />
-          </ProfileWrapper>
-          <ProfileInfo>
-            <Name>{artist.name}</Name>
-            <NotifyButton isNotified={isNotified} onClick={toggleNotify} label="공연알림" />
-          </ProfileInfo>
-        </ProfileSection>
+        <ScrollableContent>
+        <div style={{ height: '16px' }} />
+        <Container>
+          <ProfileSection>
+            <ProfileWrapper>
+              <ProfileImage src={artist.profileImageUrl || '/default_profile.png'} alt={artist.name} />
+              <StyledHeartButton isLiked={isLiked} onClick={toggleLike} />
+            </ProfileWrapper>
+            <ProfileInfo>
+              <Name>{artist.name}</Name>
+              <NotifyButton isNotified={isNotified} onClick={toggleNotify} label="공연알림" />
+            </ProfileInfo>
+          </ProfileSection>
 
-        <Divider />
+          <Divider style={{ marginTop: '22px' }} />
 
-        <InfoSection>
-          <LabelRow>
-            <Label>스포티파이</Label>
-            <Value>
-              {artist.spotify ? (
-                <a href={artist.spotify} target="_blank" rel="noreferrer">바로가기</a>
-              ) : '정보 없음'}
-            </Value>
-          </LabelRow>
+          <InfoSection>
+            <LabelRow>
+              <Label>스포티파이</Label>
+              <Value>
+                {artist.spotify ? (
+                  <a href={artist.spotify} target="_blank" rel="noreferrer">바로가기</a>
+                ) : '정보 없음'}
+              </Value>
+            </LabelRow>
 
-          <LabelRow>
-            <Label>인스타그램</Label>
-            <Value>
-              {artist.instagram ? (
-                <a href={`https://instagram.com/${artist.instagram}`} target="_blank" rel="noreferrer">
-                  @{artist.instagram}
-                </a>
-              ) : '정보 없음'}
-            </Value>
-          </LabelRow>
+            <LabelRow>
+              <Label>인스타그램</Label>
+              <Value>
+                {artist.instagram ? (
+                  <a href={`https://instagram.com/${artist.instagram}`} target="_blank" rel="noreferrer">
+                    @{artist.instagram}
+                  </a>
+                ) : '정보 없음'}
+              </Value>
+            </LabelRow>
 
-          <PerformanceSection>
-            <Label>예정 공연</Label>
-            <HorizontalScroll>
-              {scheduledPerformances.length > 0 ? (
-                scheduledPerformances.map((p) => (
-                  <PerformanceTitleDateCard
-                    key={p.id}
-                    performance={p}
-                    onClick={() => navigate(`/performance/${p.id}`)}
-                  />
-                ))
-              ) : (
-                <div>예정 공연 없음</div>
-              )}
-            </HorizontalScroll>
-          </PerformanceSection>
+            <PerformanceSection>
+              <Label>예정 공연</Label>
+              <HorizontalScroll>
+                {scheduledPerformances.length > 0 ? (
+                  scheduledPerformances.map((p) => (
+                    <PerformanceTitleDateCard
+                      key={p.id}
+                      performance={p}
+                      onClick={() => navigate(`/performance/${p.id}`)}
+                    />
+                  ))
+                ) : (
+                  <div>예정 공연 없음</div>
+                )}
+              </HorizontalScroll>
+            </PerformanceSection>
 
-          <PerformanceSection>
-            <Label>지난 공연</Label>
-            <HorizontalScroll>
-              {pastPerformances.length > 0 ? (
-                pastPerformances.map((p) => (
-                  <PerformanceTitleDateCard
-                    key={p.id}
-                    performance={p}
-                    onClick={() => navigate(`/performance/${p.id}`)}
-                  />
-                ))
-              ) : (
-                <div>지난 공연 없음</div>
-              )}
-            </HorizontalScroll>
-          </PerformanceSection>
-        </InfoSection>
-      </Container>
+            <PerformanceSection>
+              <Label>지난 공연</Label>
+              <HorizontalScroll>
+                {pastPerformances.length > 0 ? (
+                  pastPerformances.map((p) => (
+                    <PerformanceTitleDateCard
+                      key={p.id}
+                      performance={p}
+                      onClick={() => navigate(`/performance/${p.id}`)}
+                    />
+                  ))
+                ) : (
+                  <div>지난 공연 없음</div>
+                )}
+              </HorizontalScroll>
+            </PerformanceSection>
+          </InfoSection>
+        </Container>
+      </ScrollableContent>
     </>
   );
 }
 
 // ✅ 스타일
-const Container = styled.div`display: flex; flex-direction: column; gap: 1rem;`;
-const ProfileSection = styled.div`display: flex; align-items: center; gap: 1.25rem; padding: 1.25rem;`;
+const Container = styled.div`
+  display: flex; 
+  flex-direction: column;
+  padding-top: 16px;
+`;
+const ProfileSection = styled.div`
+  display: flex; 
+  align-items: center; 
+`;
 
 const ProfileWrapper = styled.div`
   position: relative;
   width: 5rem;
   height: 5rem;
+  margin-bottom: 0px; //22 6
   aspect-ratio: 1 / 1;
-  margin-right: 1rem;
   flex-shrink: 0;
 `;
 
@@ -196,45 +205,79 @@ const ProfileImage = styled.img`
   border: 1px solid ${({ theme }) => theme.colors.outlineGray};
 `;
 
-const StyledHeartButton = styled(HeartButton)`position: absolute; bottom: -0.4rem; right: -0.4rem;`;
+const StyledHeartButton = styled(HeartButton)`
+  position: absolute; 
+  bottom: -0.4rem; 
+  right: -0.4rem;
+  background-color: ${({ theme }) => theme.colors.bgWhite};
+`;
 
 const ProfileInfo = styled.div`
   flex: 1;
   display: flex;
+  margin-left: 22px;
   flex-direction: column;
   justify-content: center;
-  gap: 0.75rem;
 `;
 
 const Name = styled.div`
-  font-size: ${({ theme }) => theme.fontSizes.lg};
+  font-size: ${({ theme }) => theme.fontSizes.md};
   font-weight: ${({ theme }) => theme.fontWeights.semibold};
+  color: ${({ theme }) => theme.colors.darkblack};
+  margin-bottom: 8px; 
 `;
 
-const InfoSection = styled.div`padding: 1.25rem;`;
+const InfoSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-top: 16px;
+  gap: 24px;
+`;
 
 const LabelRow = styled.div`
   display: grid;
   grid-template-columns: 6rem 1fr;
-  gap: 1rem;
-  padding: 0.25rem 0;
+  align-items: center;
 `;
 
 const Label = styled.div`
-  font-size: ${({ theme }) => theme.fontSizes.md};
-  font-weight: ${({ theme }) => theme.fontWeights.semibold};
+  font-size: ${({ theme }) => theme.fontSizes.base};
+  font-weight: ${({ theme }) => theme.fontWeights.medium};
+  color: ${({ theme }) => theme.colors.darkblack};
 `;
 
 const Value = styled.div`
   font-size: ${({ theme }) => theme.fontSizes.base};
   font-weight: ${({ theme }) => theme.fontWeights.regular};
+  color: ${({ theme }) => theme.colors.darkGray};
+
+  word-break: break-all;
+  overflow-wrap: break-word;
+
+  a {
+    color: ${({ theme }) => theme.colors.darkGray};
+    text-decoration: underline;
+    word-break: break-all; 
+  }
 `;
 
 const PerformanceSection = styled.div`padding: 0.25rem 0;`;
 
 const HorizontalScroll = styled.div`
+  margin-top: 16px;
   display: flex;
   overflow-x: auto;
-  gap: 1rem;
+  gap: 16px;
   &::-webkit-scrollbar { display: none; }
+`;
+
+const ScrollableContent = styled.div`
+  height: calc(100vh - 80px); /* 헤더 + 여백 고려 */
+  overflow-y: auto;
+  
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 `;

@@ -50,24 +50,24 @@ const Card = styled.div`
   cursor: pointer;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
   flex-shrink: 0;
 `;
 
 const Poster = styled.img`
-  width: 100%;
-  height: 6.75rem;
-  border-radius: 0.5rem;
+  width: 78px;
+  height: 104px;            
   object-fit: cover;
+  border-radius: 5px;
+  display: block;
+  flex-shrink: 0;
   border: 1px solid ${({ theme }) => theme.colors.outlineGray};
 `;
 
 const Title = styled.div`
+  margin-top: 8px;
   font-size: ${({ theme }) => theme.fontSizes.sm};
-  font-weight: ${({ theme }) => theme.fontWeights.medium};
+  font-weight: ${({ theme }) => theme.fontWeights.regular};
   color: ${({ theme }) => theme.colors.darkGray};
-  line-height: 1.2;
-  max-height: 2.4em;
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
@@ -76,6 +76,7 @@ const Title = styled.div`
 `;
 
 const Date = styled.div`
+  margin-top: 4px;
   font-size: ${({ theme }) => theme.fontSizes.xs};
   font-weight: ${({ theme }) => theme.fontWeights.regular};
   color: ${({ theme }) => theme.colors.lightGray};
