@@ -147,7 +147,7 @@ const ReviewMoreCard = styled.button`
   width: auto;
   flex-shrink: 0;
   border: 1px solid ${({ theme }) => theme.colors.outlineGray };
-  background: ${({ theme }) => theme.colors.bgWhite };
+  background: #e4e4e45a;
   border-radius: 8px;
   padding: 8px 8px;
   display: flex;
@@ -158,7 +158,7 @@ const ReviewMoreCard = styled.button`
 `;
 
 const ReviewMoreText = styled.span`
-  font-size: ${({ theme }) => theme.fontSizes.sm};
+  font-size: ${({ theme }) => theme.fontSizes.xs};
   font-weight: ${({ theme }) => theme.fontWeights.regular};
   color: ${({ theme }) => theme.colors.darkGray};
   white-space: normal;       
@@ -168,9 +168,9 @@ const ReviewMoreText = styled.span`
 `;
 
 const ChevronImg = styled.img`
-  margin-top: 18px;
-  width: 14px;
-  height: 14px;
+  margin-top: 14px;
+  width: 12px;
+  height: 12px;
 `;
 
 const PerformanceSection = styled.div`padding: 0.25rem 0;`;
@@ -511,16 +511,16 @@ const DetailVenue = () => {
                 </>
               ) : (
                 <>
-                  <div style={{ color: '#aaa', fontSize: '12px', padding: '10px' }}>
-                    아직 등록된 리뷰가 없습니다.
+                  <div style={{ marginTop: '8px', color: '#4B4B4B', fontSize: '14px', lineHeight: '1.4' }}>
+                    등록된 리뷰가<br />없습니다.
                   </div>
                   <ReviewMoreCard
                     type="button"
                     onClick={() => navigate(`/venue/${venueId}/review`)}
-                    aria-label="리뷰 더보기"
-                    title="리뷰 더보기"
+                    aria-label="리뷰 작성하기"
+                    title="리뷰 작성하기"
                   >
-                    <ReviewMoreText>리뷰 더보기</ReviewMoreText>
+                    <ReviewMoreText>리뷰<br />작성하기</ReviewMoreText>
                     <ChevronImg src={ChevronRightIcon} alt=">" />
                   </ReviewMoreCard>
                 </>
