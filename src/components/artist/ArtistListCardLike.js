@@ -29,7 +29,7 @@ export default function ArtistListCardLike({ artist }) {
     }
   };
 
-  const safeImage = artist?.image_url || '/default_profile.png';
+  const safeImage = artist?.image_url || 'https://via.placeholder.com/150';
 
   return (
     <CardWrapper>
