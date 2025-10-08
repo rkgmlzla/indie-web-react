@@ -3,6 +3,9 @@
   justify-content: space-between;
   margin-top: -8px;
   margin-bottom: 8px;
+  margin-right: 12px;
+  touch-action: pan-y;
+  user-select: none;
 }
 
 .cardContainer {
@@ -11,13 +14,15 @@
   justify-content: center;
   margin: 0 8px;
   flex-direction: column;
+  min-width: 0; /* flex 자식의 축소 허용 */
+  flex-shrink: 0;
 }
 
 .emptyMessage {
   padding: 16px;
   font-size: 14px;
   font-weight: 500;
-  color: #666;
+  color: #4B4B4B;
   display: flex;
   justify-content: center;
   align-items: center;

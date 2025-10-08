@@ -10,7 +10,7 @@
   -ms-overflow-style: none;
   caret-color: transparent;
   padding-left: 4px;
-  padding-right: 12px;
+  padding-right: 16px;
 }
 .listContainer::-webkit-scrollbar {
   display: none;

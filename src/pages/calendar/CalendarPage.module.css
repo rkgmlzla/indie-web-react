@@ -1,7 +1,6 @@
 /* ✅ src/pages/calendar/CalendarPage.module.css */
 .calendarPage {
   background: white;
-
   display: flex;
   flex-direction: column;
   height: 100vh; 
@@ -42,7 +41,6 @@
   margin-bottom: 16px;
 }
 
-/* 주차 줄이 display: contents 로 들어올 때 높이 변동 방지 */
 .week {
   display: contents;
 }

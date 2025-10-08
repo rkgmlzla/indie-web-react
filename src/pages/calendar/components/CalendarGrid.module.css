@@ -1,7 +1,30 @@
 .grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 10px;
+  gap: 8px;
+  transition: all 0.7s ease;
+  overflow: hidden;
+}
+
+/* 접힌 상태: 요일만 보이고 날짜들은 완전히 숨김 */
+.grid.collapsed {
+  max-height: 40px;
+  padding: 8px 16px;
+  gap: 0;
+}
+
+/* 접힌 상태에서 날짜 숫자들 완전히 숨김 */
+.collapsed .day {
+  opacity: 0;
+  height: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.collapsed .blank {
+  opacity: 0;
+  height: 0;
+  overflow: hidden;
 }
 
 .dayLabel {
@@ -32,7 +55,7 @@
   justify-content: center;
   line-height: normal;
 
-  transition: background 0.2s, color 0.2s, border 0.2s;
+  transition: all 0.3s ease;
 }
 
 /* 빈 칸 */
@@ -40,6 +63,7 @@
   width: 36px;
   height: 36px;
   margin: auto;
+  transition: all 0.3s ease;
 }
 
 /* ✅ 1. 공연 있는 날짜: 연한 초록 배경 */

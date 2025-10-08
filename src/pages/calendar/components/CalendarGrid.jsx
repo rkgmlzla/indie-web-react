@@ -2,7 +2,7 @@ import React from 'react';
 import { format, isSameDay, startOfMonth, endOfMonth, addDays, getDay } from 'date-fns';
 import styles from './CalendarGrid.module.css';
 
-function CalendarGrid({ currentMonth, selectedDate, onDateClick, concerts }) {
+function CalendarGrid({ currentMonth, selectedDate, onDateClick, concerts, isCollapsed }) {
   const monthStart = startOfMonth(currentMonth);
   const monthEnd = endOfMonth(currentMonth);
   const startWeekday = getDay(monthStart);
@@ -30,7 +30,7 @@ function CalendarGrid({ currentMonth, selectedDate, onDateClick, concerts }) {
   const today = format(new Date(), 'yyyy-MM-dd');
 
   return (
-    <div className={styles.grid}>
+     <div className={`${styles.grid} ${isCollapsed ? styles.collapsed : ''}`}>
       {['일', '월', '화', '수', '목', '금', '토'].map((d) => (
         <div key={d} className={styles.dayLabel}>{d}</div>
       ))}
