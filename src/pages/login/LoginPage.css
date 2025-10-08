@@ -1,10 +1,9 @@
 /* 화면 전체 가운데 정렬 */
 .login-page {
-  min-height: 100svh;           /* 모바일 안전 높이 */
+  min-height: 100dvh;          
   display: flex;
-  align-items: center;          /* 세로 가운데 */
-  justify-content: center;      /* 가로 가운데 */
-  padding: 24px;
+  align-items: center;         
+  justify-content: center;    
   background: #fff;
 }
 
@@ -12,15 +11,16 @@
 .login-box {
   width: 100%;
   max-width: 360px;
-  text-align: center;           /* 텍스트/버튼 중앙 정렬 */
+  text-align: center;  
+  margin-bottom: 120px;
 }
 
 /* 제목 */
 .login-title {
-  margin: 0 0 10px;
+  margin: 0 0 16px;
   font-size: 24px;
   font-weight: 700;
-  color: #111;
+  color: #1C1C1E;
 }
 
 /* 카카오 버튼 이미지 */
@@ -39,4 +39,10 @@
 .kakao-btn:focus-visible {
   outline: 3px solid rgba(0,0,0,.4);
   outline-offset: 3px;
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden; /* 스크롤 완전히 막기 */
+  overscroll-behavior: none; /* iOS에서 튕김 방지 */
 }

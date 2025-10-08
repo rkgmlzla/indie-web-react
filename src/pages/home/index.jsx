@@ -252,6 +252,10 @@ const HomePage = () => {
 
 export default HomePage;
 
+const PageWrapper = styled.div`
+  touch-action: pan-y;
+  `;
+
 const ScrollableContent = styled.div`
   height: calc(100vh - 80px);
   overflow-y: auto;

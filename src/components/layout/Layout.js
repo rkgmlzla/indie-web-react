@@ -7,7 +7,8 @@ const Wrapper = styled.div`
   min-height: 100vh;
   background-color: ${({ theme }) => theme.colors.bgWhite};
   margin: 0 auto;
-  padding: ${({ theme }) => theme.spacing.md};
+  padding: ${({ theme }) => theme.spacing.md}; /* 16px 유지 */
+  box-sizing: border-box; /* ✅ 이것만 추가하면 됨! */
 `;
 
 function Layout({ children }) {
