@@ -31,6 +31,7 @@ body {
   overflow: hidden;  
   height: 100vh;
   background-color: #fff;
+  box-sizing: border-box;
 }
 
 /* 추가된 캘린더 페이지 기본 스타일 */

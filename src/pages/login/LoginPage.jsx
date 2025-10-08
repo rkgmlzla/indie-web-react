@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import './LoginPage.css';  // ✅ 추가
+import './LoginPage.css';  
+import Header from '../../components/layout/Header';
 
 const API_BASE = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8000';
 const KAKAO_BTN_SRC =
@@ -38,6 +39,7 @@ export default function LoginPage() {
 
   return (
     <div className="login-page">
+      <Header title="로그인" />
       <div className="login-box">
         <h2 className="login-title">로그인</h2>
         <img
