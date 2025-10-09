@@ -1,5 +1,4 @@
 // src/components/map/MapGrid.jsx
-
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import styled from 'styled-components';
@@ -182,10 +181,13 @@ const CardContainer = styled.div`
   margin: 0 8px;
   flex-direction: column;
   caret-color: transparent;
+  min-width: 0; 
+  flex-shrink: 0;
 `;
 
 const CardWrapper = styled.div`
   width: 100%;
+  min-width: 0; /* 추가 */
   display: flex;
   flex-direction: column;
   padding: 8px;
@@ -203,6 +205,8 @@ const Poster = styled.img`
   aspect-ratio: 3 / 4;
   border-radius: 10px;
   object-fit: cover;
+  display: block; 
+  flex-shrink: 0; 
 `;
 
 const Venue = styled.div`
