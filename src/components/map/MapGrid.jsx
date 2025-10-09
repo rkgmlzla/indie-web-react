@@ -165,7 +165,6 @@ const Container = styled.div`
   width: 100%;
   position: relative;
   padding-bottom: 132px;
-  padding-right: 8px; /* 우측 여백 추가 (스크롤바 공간 보정) */
   z-index: 1;
   overflow-x: hidden;
   touch-action: pan-y;
@@ -175,6 +174,8 @@ const Row = styled.div`
   display: flex;
   justify-content: space-between;
   margin-top: 8px;
+  touch-action: pan-y; 
+  user-select: none;
 `;
 
 const CardContainer = styled.div`
@@ -186,6 +187,8 @@ const CardContainer = styled.div`
   caret-color: transparent;
   min-width: 0; 
   flex-shrink: 0;
+  touch-action: pan-y; 
+  user-select: none;
 `;
 
 const CardWrapper = styled.div`
