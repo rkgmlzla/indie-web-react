@@ -114,8 +114,9 @@ const MapGrid = ({
                       style={{
                         overflow: 'hidden',
                         width: '100%',
-                        padding: '0 8px',
+                        padding: '0 4px',
                         marginTop: '12px',
+                        boxSizing: 'border-box',
                       }}>
                       <MapWideSelectCard
                         title={firstUpcoming?.title ?? '공연 없음'}
@@ -172,31 +173,31 @@ const Container = styled.div`
 
 const Row = styled.div`
   display: flex;
-  justify-content: space-between;
+  gap: 8px;
   margin-top: 8px;
   touch-action: pan-y; 
   user-select: none;
 `;
 
 const CardContainer = styled.div`
-  width: 30%;
+  flex: 1; /* width: 30% 대신 flex 사용 */
+  max-width: calc(33.333% - 5.33px); /* gap 8px 분배 고려 */
   display: flex;
   justify-content: center;
-  margin: 0 8px;
   flex-direction: column;
   caret-color: transparent;
-  min-width: 0; 
+  min-width: 0;
   flex-shrink: 0;
-  touch-action: pan-y; 
+  touch-action: pan-y;
   user-select: none;
 `;
 
 const CardWrapper = styled.div`
   width: 100%;
-  min-width: 0; /* 추가 */
+  min-width: 0;
   display: flex;
   flex-direction: column;
-  padding: 8px;
+  padding: 6px; /* 8px → 6px로 줄임 */
   border-radius: 10px;
   cursor: pointer;
   box-sizing: border-box;
