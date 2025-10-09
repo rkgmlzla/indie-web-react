@@ -9,7 +9,6 @@ import RegionSelectSheet from '../venue/components/RegionSelectSheet';
 import FilterButton from '../../components/common/FilterButton';
 import CalendarIcon from '../../assets/icons/icon_calendar.svg';
 import SortModal from '../../components/modals/SortModal';
-import Divider from '../../components/common/Divider';
 import { fetchPerformances } from '../../api/performanceApi';
 
 /* ===== 날짜 파싱 ===== */
@@ -146,7 +145,7 @@ export default function PerformanceListPage() {
               )}
             </>
           ) : (
-            <EmptyMessage>해당되는 공연이 없습니다.</EmptyMessage>
+            <EmptyMessage>예정된 공연이 없습니다.</EmptyMessage>
           )}
         </ScrollableContent>
 
@@ -175,9 +174,26 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   height: calc(100vh - 56px);
+  height: calc(100dvh - 56px); 
   max-width: ${({ theme }) => theme.layout.maxWidth};
   margin: 0 auto;
   background-color: ${({ theme }) => theme.colors.bgWhite};
+`;
+
+const ScrollableContent = styled.div`
+  height: 100vh
+  height: 100dvh; 
+  padding-bottom: 68px;
+  overflow-y: auto;
+  
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
 `;
 
 const FilterBar = styled.div`
@@ -224,23 +240,10 @@ const ModalBackground = styled.div`
   align-items: flex-end;
 `;
 
-const ScrollableContent = styled.div`
-  height: calc(100vh - 84px); 
-  margin-bottom: 84px;
-  padding-bottom: 120px; /* ✅ 언더바 겹침 방지 */
-  overflow-y: auto;
-  
-  &::-webkit-scrollbar {
-    display: none;
-  }
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-`;
-
 const MoreButton = styled.button`
   width: 100%;
   height: 48px;
-  margin: 16px 0;
+  margin-bottom: 16px;
   background-color: ${({ theme }) => theme.colors.bgWhite};
   color: ${({ theme }) => theme.colors.darkGray};
   border: 1px solid ${({ theme }) => theme.colors.outlineGray};

@@ -24,7 +24,6 @@ import {
   fetchTicketOpeningPerformances,
   fetchPopularPerformances,
 } from '../../api/performanceApi';
-import { theme } from '../../styles/theme';
 
 const HomePage = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -252,12 +251,8 @@ const HomePage = () => {
 
 export default HomePage;
 
-const PageWrapper = styled.div`
-  touch-action: pan-y;
-  `;
-
 const ScrollableContent = styled.div`
-  height: calc(100vh - 80px);
+  height: calc(100dvh - 56px); 
   overflow-y: auto;
   padding: 0 16px; 
   margin: 0 -16px; 
@@ -267,6 +262,9 @@ const ScrollableContent = styled.div`
   }
   -ms-overflow-style: none;
   scrollbar-width: none;
+
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
 `;
 
 const TodayTitle = styled.div`

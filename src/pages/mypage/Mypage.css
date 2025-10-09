@@ -1,3 +1,8 @@
+.page {
+  height: 100vh;
+  height: 100dvh; 
+}
+
 /* ============== 게스트(비로그인) 레이아웃 ============== */
 .guest {
   margin-top: 70%;
@@ -124,7 +129,12 @@
   font-family: inherit; 
   font-weight: inherit;
 }
-.quick__icon { width: 28px; height: 28px; }
+.quick__icon { 
+  width: 28px; 
+  height: 28px; 
+  color: #4B4B4B; 
+  stroke: #4B4B4B;
+}
 .quick__label { font-size: 14px; font-weight: 500; color: #4B4B4B; }
 
 /* --- 설정 섹션(알림/위치) --- */
