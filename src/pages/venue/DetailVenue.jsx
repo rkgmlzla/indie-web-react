@@ -13,32 +13,32 @@ import { fetchVenueDetail } from '../../api/venueApi'; // ✅ API import
 import { fetchReviewPreview } from '../../api/reviewApi'; // ✅ 미리보기 API
 import ReviewCard from '../../components/review/ReviewCard';
 
-const Container = styled.div`
-  width: 100%;
-  margin: 0;
-  padding: 0;
-
-  height: calc(100dvh - 28px);
-  min-height: calc(100vh - 28px);  
+const PageWrapper = styled.div`
+  height: 100vh;
+  height: 100dvh;
   display: flex;
   flex-direction: column;
-  overflow: hidden; 
 `;
 
 const ScrollableList = styled.div`
-  flex: 1;
+  margin-top: -8px;
+  margin-bottom: 5px;
+  padding-top: 16px;
+  padding-bottom: 24px;
+  flex-grow: 1;
   overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  overscroll-behavior: contain;
 
-  /* 하단 탭바/버튼과 겹치지 않게 여유 */
-  padding-bottom: 88px;
+  &::-webkit-scrollbar {
+    display: none; 
+  }
 
-  /* 스크롤바 숨김 */
-  &::-webkit-scrollbar { display: none; }
-  -ms-overflow-style: none;
+  -ms-overflow-style: none; 
   scrollbar-width: none;
+
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
 `;
+
 const ProfileSection = styled.div`
   display: flex;
   align-items: center;
@@ -383,9 +383,9 @@ const DetailVenue = () => {
   return (
     <>
       <Toaster />
+      <PageWrapper>
       <Header title={venue.name} />
       <div style={{ height: '16px' }} />
-      <Container>
         <ScrollableList>
           <InnerWrapper>
             <ProfileSection>
@@ -530,7 +530,7 @@ const DetailVenue = () => {
           </InfoSection>
         </InnerWrapper>
         </ScrollableList>
-      </Container>
+      </PageWrapper>
     </>
   );
 };

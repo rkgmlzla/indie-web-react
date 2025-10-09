@@ -98,10 +98,10 @@ export default function ArtistDetailPage() {
 
   return (
     <>
+      <PageWrapper>
       <Header title={artist.name} initialSearchTab="아티스트" />
-        <ScrollableContent>
+        <ScrollableList>
         <div style={{ height: '16px' }} />
-        <Container>
           <ProfileSection>
             <ProfileWrapper>
               <ProfileImage src={artist.profileImageUrl || '/default_profile.png'} alt={artist.name} />
@@ -170,18 +170,19 @@ export default function ArtistDetailPage() {
               </HorizontalScroll>
             </PerformanceSection>
           </InfoSection>
-        </Container>
-      </ScrollableContent>
+        </ScrollableList>
+      </PageWrapper>
     </>
   );
 }
 
-// ✅ 스타일
-const Container = styled.div`
-  display: flex; 
+const PageWrapper = styled.div`
+  height: 100vh;
+  height: 100dvh;
+  display: flex;
   flex-direction: column;
-  padding-top: 16px;
 `;
+
 const ProfileSection = styled.div`
   display: flex; 
   align-items: center; 
@@ -271,16 +272,22 @@ const HorizontalScroll = styled.div`
   &::-webkit-scrollbar { display: none; }
 `;
 
-const ScrollableContent = styled.div`
-  overflow-y: scroll;
-  height: 100dvh;
-  -webkit-overflow-scrolling: touch;
-  
+const ScrollableList = styled.div`
+  margin-bottom: 102px;
+  padding-top: 16px;
+  padding-bottom: 24px;
+  flex-grow: 1;
+  overflow-y: auto;
+
   &::-webkit-scrollbar {
-    display: none;
+    display: none; 
   }
-  -ms-overflow-style: none;
+
+  -ms-overflow-style: none; 
   scrollbar-width: none;
+
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
 `;
 
 const EmptyMessage = styled.div`

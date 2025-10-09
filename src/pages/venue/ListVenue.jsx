@@ -1,14 +1,12 @@
 // ✅ src/pages/venue/ListVenue.jsx
 import React, { useState, useEffect } from 'react';
+import styled from 'styled-components';
 import Header from '../../components/layout/Header';
-import Divider from '../../components/common/Divider';
 import VenueItem from './components/VenueItem';
 import RegionSelectButton from './components/RegionSelectButton';
 import RegionSelectSheet from './components/RegionSelectSheet';
 import { useNavigate } from 'react-router-dom';
-import styled from 'styled-components';
-import { fetchVenueList } from '../../api/venueApi'; // ✅ 공연장 목록 API import
-import { div } from 'framer-motion/client';
+import { fetchVenueList } from '../../api/venueApi'; 
 
 function ListVenue() {
   const navigate = useNavigate();
@@ -95,12 +93,13 @@ export default ListVenue;
 
 const PageWrapper = styled.div`
   height: 100vh;
+  height: 100dvh;
   display: flex;
   flex-direction: column;
 `;
 
 const ScrollableList = styled.div`
-  margin-bottom: 125px;
+  padding-bottom: 109px;
   flex-grow: 1;
   overflow-y: auto;
 
@@ -110,6 +109,9 @@ const ScrollableList = styled.div`
 
   -ms-overflow-style: none; 
   scrollbar-width: none;
+
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
 `;
 
 const EmptyMessage = styled.div`

@@ -64,19 +64,17 @@ export default function ArtistListPage() {
 
 
 const Container = styled.div`display:flex; flex-direction:column;`;
-const Loader = styled.div`text-align:center; padding:16px; color:#999;`;
-const End = styled.div`text-align:center; padding:16px; color:#bbb;`;
-const Sentinel = styled.div`height:1px;`;
 
 const PageWrapper = styled.div`
   height: 100vh;
+  height: 100dvh;
   display: flex;
   flex-direction: column;
 `;
 
 const ScrollableList = styled.div`
   padding-top: 24px;
-  margin-bottom: 125px;
+  margin-bottom: 109px;
   flex-grow: 1;
   overflow-y: auto;
 
@@ -86,6 +84,9 @@ const ScrollableList = styled.div`
 
   -ms-overflow-style: none; 
   scrollbar-width: none;
+
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
 `;
 
 const CardWrapper = styled.div`
@@ -101,7 +102,7 @@ const Empty = styled.div`
 const MoreButton = styled.button`
   width: 100%;
   height: 48px;
-  margin: 16px 0;
+  margin-bottom: 16px;
   background-color: ${({ theme }) => theme.colors.bgWhite};
   color: ${({ theme }) => theme.colors.darkGray};
   border: 1px solid ${({ theme }) => theme.colors.outlineGray};

@@ -1,7 +1,7 @@
 // src/pages/notification/NotificationPage.jsx
-
 import React, { useEffect, useState } from 'react';
 import styles from './notification.module.css';
+import styled from 'styled-components';
 import NotificationCard from '../../components/notification/NotificationCard';
 import { useNavigate } from 'react-router-dom';
 import Header from '../../components/layout/Header';
@@ -78,7 +78,7 @@ function NotificationPage() {
         {loading ? (
           <div className={styles.empty}>불러오는 중…</div>
         ) : notifications.length === 0 ? (
-          <div className={styles.empty}>새 알림이 없습니다.</div>
+          <EmptyMessage>새 알림이 없습니다.</EmptyMessage>
         ) : (
           <div className={styles.list}>
             {notifications.map((n) => (
@@ -99,3 +99,13 @@ function NotificationPage() {
 }
 
 export default NotificationPage;
+
+const EmptyMessage = styled.div`
+  padding: 16px 16px;
+  font-size: ${({ theme }) => theme.fontSizes.sm};
+  font-weight: ${({ theme }) => theme.fontWeights.medium};
+  color: ${({ theme }) => theme.colors.darkGray};
+  display: flex;
+  justify-content: center; 
+  align-items: center;  
+`;

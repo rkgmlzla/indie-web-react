@@ -2,15 +2,14 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Bell, BellOff, Heart } from 'lucide-react';
 import Searchbar from '../../components/ui/searchbar';
-//import Tab from '../../components/ui/tab';
 import styled from 'styled-components';
 
 import './Search.css';
 import PostItem from '../../components/ui/postitem';
 import Header from '../../components/layout/Header';
 
-// ✅ API Import
-import { searchPerformanceAndVenue, searchArtist } from '../../api/searchApi';
+// API Import
+import {  searchPerformance, searchVenue, searchArtist } from '../../api/searchApi';
 import {
   likeArtist,
   unlikeArtist,
@@ -51,7 +50,7 @@ function Search() {
 
   const [keyword, setKeyword] = useState(keywordFromURL);
   const [recent, setRecent] = useState([]);
-  const [tab, setTab] = useState(location.state?.initialTab || '공연/공연장');
+  const [tab, setTab] = useState(location.state?.initialTab || '공연');
 
   const [concerts, setConcerts] = useState([]);
   const [venues, setVenues] = useState([]);
@@ -60,7 +59,7 @@ function Search() {
   const [alarmState, setAlarmState] = useState({});
   const [likedState, setLikedState] = useState({});
 
-  // ✅ 다른 페이지들과 동일: 컴포넌트 상단에서 accessToken 한 번 읽음
+  // 다른 페이지들과 동일: 컴포넌트 상단에서 accessToken 한 번 읽음
   const authToken = localStorage.getItem('accessToken');
 
   // ---- 헬퍼들 ----
@@ -80,7 +79,7 @@ function Search() {
       const y = date.getFullYear();
       const m = String(date.getMonth() + 1).padStart(2, '0');
       const day = String(date.getDate()).padStart(2, '0');
-      return `${y}-${m}-${day}`;   // ✅ 2025-09-25
+      return `${y}-${m}-${day}`;   // 2025-09-25
   };
 
   return startISO && endISO
@@ -88,7 +87,7 @@ function Search() {
     : toYYYYMMDD(startISO || endISO);
   };
 
-  // ✅ 공연 → PostItem 포맷 정규화 (이미지/날짜/장소 보강)
+  // 공연 → PostItem 포맷 정규화 (이미지/날짜/장소 보강)
   const toPostFromPerformance = (p) => {
     const rawThumb =
       p.poster_url ?? p.posterUrl ?? p.poster ??
@@ -127,17 +126,19 @@ function Search() {
  
 
     try {
-      if (currentTab === '공연/공연장') {
-        const res = await searchPerformanceAndVenue({ keyword: searchKeyword, page: 1, size: 10 });
+      if (currentTab === '공연') {
+        const res = await searchPerformance({ keyword: searchKeyword, page: 1, size: 10 });
         const uniqueConcerts = Array.from(new Map((res.performances || []).map(p => [p.id, p])).values());
-        const uniqueVenues = Array.from(new Map((res.venues || []).map(v => [v.id, v])).values());
         setConcerts(uniqueConcerts);
+      } else if (currentTab === '공연장') {
+        const res = await searchVenue({ keyword: searchKeyword, page: 1, size: 10 });
+        const uniqueVenues = Array.from(new Map((res.venues || []).map(v => [v.id, v])).values());
         setVenues(uniqueVenues);
       } else if (currentTab === '아티스트') {
         const artistRes = await searchArtist({ keyword: searchKeyword, page: 1, size: 10 });
         setArtists(artistRes);
 
-        // ✅ 상태 초기화
+        // 상태 초기화
         const initialLiked = {};
         const initialAlarm = {};
         artistRes.forEach((artist) => {
@@ -163,7 +164,7 @@ function Search() {
     if (keyword) fetchSearchResults(keyword, tab);
   }, [tab, keyword, fetchSearchResults]);
 
-  // ✅ 알림 토글: 다른 상세 페이지들과 동일하게 토큰 스킵 로직 제거
+  // 알림 토글: 다른 상세 페이지들과 동일하게 토큰 스킵 로직 제거
   const handleToggleAlarm = async (artistId) => {
     const isOn = alarmState[artistId];
     try {
@@ -182,7 +183,7 @@ function Search() {
     }
   };
 
-  // ✅ 찜 토글: 동일하게 스킵 로직 제거
+  // 찜 토글: 동일하게 스킵 로직 제거
   const handleToggleLike = async (artistId) => {
     const isOn = likedState[artistId];
     try {
@@ -210,9 +211,14 @@ function Search() {
     
       <TabRow>
         <TabButton
-          active={tab === '공연/공연장'}
-          onClick={()=>setTab('공연/공연장')}>
-          공연/공연장
+          active={tab === '공연'}
+          onClick={()=>setTab('공연')}>
+          공연
+        </TabButton>
+        <TabButton
+          active={tab === '공연장'}
+          onClick={()=>setTab('공연장')}>
+          공연장
         </TabButton>
         <TabButton
           active={tab === '아티스트'}
@@ -221,7 +227,7 @@ function Search() {
         </TabButton>
       </TabRow>
 
-      {/* 🔍 최근 검색어 */}
+      {/* 최근 검색어 */}
       <div className="recent">
         <h4>최근 검색어</h4>
         <div className="recent-list">
@@ -242,8 +248,8 @@ function Search() {
         </div>
       </div>
 
-      {/* 🎤 공연/공연장 */}
-      {keyword && tab === '공연/공연장' && (
+      {/* 공연 */}
+      {keyword && tab === '공연' && (
         <div className="search-section">
           <div className="section">
             <h3>공연</h3>
@@ -258,7 +264,12 @@ function Search() {
               );
             }) : <p><strong>{keyword}</strong>와(과) 일치하는 공연이 없습니다.</p>}
           </div>
+        </div>
+      )}
 
+      {/* 공연장 */}
+      {keyword && tab === '공연장' && (
+        <div className="search-section">
           <div className="section">
             <h3>공연장</h3>
             {venues.length > 0 ? venues.map((item) => (
@@ -271,7 +282,7 @@ function Search() {
         </div>
       )}
 
-      {/* 🎤 아티스트 */}
+      {/* 아티스트 */}
       {keyword && tab === '아티스트' && (
         <div className="artist-list">
           {artists.length > 0 ? artists.map((artist) => (

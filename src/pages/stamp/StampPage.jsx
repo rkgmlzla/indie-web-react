@@ -169,7 +169,7 @@ export default function StampPage() {
                 ))}
             </StampPageContainer>
           ) : (
-            <EmptyMessage>해당 기간에 받은 스탬프가 없습니다.</EmptyMessage>
+            <EmptyMessage>받은 스탬프가 없습니다.</EmptyMessage>
           )}
         </ScrollArea>
       </StampBoard>
