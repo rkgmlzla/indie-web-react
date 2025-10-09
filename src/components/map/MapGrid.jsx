@@ -165,7 +165,10 @@ const Container = styled.div`
   width: 100%;
   position: relative;
   padding-bottom: 132px;
+  padding-right: 8px; /* 우측 여백 추가 (스크롤바 공간 보정) */
   z-index: 1;
+  overflow-x: hidden;
+  touch-action: pan-y;
 `;
 
 const Row = styled.div`
