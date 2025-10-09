@@ -149,7 +149,7 @@ const PageWrapper = styled.div`
 `;
 
 const ScrollableList = styled.div`
-  margin-bottom: 124px;
+  margin-bottom: 90px;
   flex: 1 1 0;
   min-height: 0;
   overflow-y: auto;
