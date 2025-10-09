@@ -212,7 +212,7 @@ const HomePage = () => {
             performance: '/performance',
             venues: '/venue',
             artists: '/artist',
-            review: '/venue/reviews'
+            review: '/venue/reviews/all'
           }}
         />
 

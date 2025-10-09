@@ -45,7 +45,7 @@ const routes = [
   { path: '/freeboard/:id', element: <Bulletindetail /> },
   { path: '/map', element: <MapPage /> },
   { path: '/venue', element: <ListVenue /> },
-  { path: '/venue/reviews', element: <AllReview />},
+  { path: '/venue/reviews/all', element: <AllReview />},
   { path: '/venue/:id', element: <DetailVenue /> },
   { path: '/login/success', element: <LoginSuccess/> }, 
   { path: '/venue/:id/review', element: <VenueReviewListPage/> },
