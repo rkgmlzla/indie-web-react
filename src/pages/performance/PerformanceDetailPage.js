@@ -80,90 +80,95 @@ export default function PerformanceDetailPage() {
 
   return (
     <>
-      <PageWrapper>
-        <Header title={performance.title} />
-        <div style={{ height: '16px' }} />
-        <ScrollableList>
-          <PosterSection>
-            <PosterWrapper>
-              <Poster src={performance.posterUrl || performance.thumbnail || ''} alt="poster" />
-              <LikeButton onClick={toggleLike}>
-                <HeartIcon $isLiked={isLiked} />
-                <LikeCount>{likeCount}</LikeCount>
-              </LikeButton>
-            </PosterWrapper>
-            <InfoWrapper>
-              <Dday $isToday={getDday(performance.date) === 'D-Day'}>
-                {getDday(performance.date)}
-              </Dday>
-              <Title>{performance.title}</Title>
-              <NotifyButton isNotified={isAlarmed} onClick={toggleNotify} label="예매알림" />
-            </InfoWrapper>
-          </PosterSection>
+      <Header title={performance.title} />
+      <div style={{ height: '16px' }} />
+      <Container>
+        <PosterSection>
+          <PosterWrapper>
+            <Poster src={performance.posterUrl || performance.thumbnail || ''} alt="poster" />
+            <LikeButton onClick={toggleLike}>
+              <HeartIcon $isLiked={isLiked} />
+              <LikeCount>{likeCount}</LikeCount>
+            </LikeButton>
+          </PosterWrapper>
+          <InfoWrapper>
+            <Dday $isToday={getDday(performance.date) === 'D-Day'}>
+              {getDday(performance.date)}
+            </Dday>
+            <Title>{performance.title}</Title>
+            <NotifyButton isNotified={isAlarmed} onClick={toggleNotify} label="예매알림" />
+          </InfoWrapper>
+        </PosterSection>
 
-          <Divider />
+        <Divider />
 
-          <InfoSection>
-            <LabelRow>
-              <Label>공연일시</Label>
-            <Value>{formatKoreanFromParts(performance.date, performance.time)}</Value>
-            </LabelRow>
-            <LabelRow>
-              <Label>공연장</Label>
-              <VenueValue onClick={() => navigate(`/venue/${performance.venueId}`)}>
-                {performance.venue || '공연장 정보 없음'} <ChevronIcon src={ChevronRightIcon} />
-              </VenueValue>
-            </LabelRow>
-            <LabelRow style={{ display: 'block' }}>
-              <Label>출연진</Label>
-              <ScrollContainer>
-                {performance.artists?.map((artist) => (
-                  <ArtistProfileCard key={artist.id} artist={artist} onClick={() => navigate(`/artist/${artist.id}`)}  showName/>
-                ))}
-              </ScrollContainer>
-            </LabelRow>
-            <LabelRow>
-              <Label>티켓 가격</Label>
-              <Value>{performance.price}</Value>
-            </LabelRow>
-            <LabelRow>
-              <Label>티켓 오픈</Label>
-              <Value>{formatKoreanFromParts(performance.ticket_open_date, performance.ticket_open_time)}</Value>
-            </LabelRow>
-            <LabelRow>
-              <Label>상세 정보</Label>
-              <LinkValue>
-                {performance.detailLink ? (
-                  <a href={performance.detailLink} target="_blank" rel="noreferrer">
-                    공연 상세 페이지 바로가기
-                  </a>
-                ) : (
-                  <span>상세 정보 없음</span>
-                )}
-              </LinkValue>
-            </LabelRow>
-            <LabelRow>
-              <Label>예매 링크</Label>
-              <LinkValue>
-                {performance.detailLink ? (
-                  <a href={performance.detailLink.trim()} target="_blank" rel="noreferrer">
-                    예매 사이트 바로가기
-                  </a>
-                ) : (
-                  <span>예매 링크 없음</span>
-                )}
-              </LinkValue>
-            </LabelRow>
-          </InfoSection>
-        </ScrollableList>
-      </PageWrapper>
+        <InfoSection>
+          <LabelRow>
+            <Label>공연일시</Label>
+           <Value>{formatKoreanFromParts(performance.date, performance.time)}</Value>
+          </LabelRow>
+          <LabelRow>
+            <Label>공연장</Label>
+            <VenueValue onClick={() => navigate(`/venue/${performance.venueId}`)}>
+              {performance.venue || '공연장 정보 없음'} <ChevronIcon src={ChevronRightIcon} />
+            </VenueValue>
+          </LabelRow>
+          <LabelRow style={{ display: 'block' }}>
+            <Label>출연진</Label>
+            <ScrollContainer>
+              {performance.artists?.map((artist) => (
+                <ArtistProfileCard key={artist.id} artist={artist} onClick={() => navigate(`/artist/${artist.id}`)}  showName/>
+              ))}
+            </ScrollContainer>
+          </LabelRow>
+          <LabelRow>
+            <Label>티켓 가격</Label>
+            <Value>{performance.price}</Value>
+          </LabelRow>
+          <LabelRow>
+            <Label>티켓 오픈</Label>
+            <Value>{formatKoreanFromParts(performance.ticket_open_date, performance.ticket_open_time)}</Value>
+          </LabelRow>
+
+          {/* ✅ 여기부터 교체된 부분 */}
+          <LabelRow>
+            <Label>상세 정보</Label>
+            <LinkValue>
+              {performance.shortcode ? (
+                <a
+                  href={`https://www.instagram.com/p/${performance.shortcode}`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  공연 게시물 바로가기
+                </a>
+              ) : (
+                <span>상세 정보 없음</span>
+              )}
+            </LinkValue>
+          </LabelRow>
+
+          <LabelRow>
+            <Label>예매 링크</Label>
+            <LinkValue>
+              {performance.detailLink ? (
+                <a href={performance.detailLink.trim()} target="_blank" rel="noreferrer">
+                  예매 사이트 바로가기
+                </a>
+              ) : (
+                <span>예매 링크 없음</span>
+              )}
+            </LinkValue>
+          </LabelRow>
+          {/* ✅ 교체된 부분 끝 */}
+        </InfoSection>
+      </Container>
     </>
   );
 }
 
-const PageWrapper = styled.div`
-  height: 100vh;
-  height: 100dvh;
+// ✅ 스타일
+const Container = styled.div`
   display: flex;
   flex-direction: column;
 `;
@@ -305,21 +310,3 @@ const ScrollContainer = styled.div`
     display: none;
   }
 `;
-
-const ScrollableList = styled.div`
-  margin-bottom: 106px;
-  padding-bottom: 24px;
-  flex-grow: 1;
-  overflow-y: auto;
-
-  &::-webkit-scrollbar {
-    display: none; 
-  }
-
-  -ms-overflow-style: none; 
-  scrollbar-width: none;
-
-  overscroll-behavior: none;
-  -webkit-overflow-scrolling: touch;
-`;
-
