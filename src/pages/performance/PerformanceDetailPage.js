@@ -26,10 +26,6 @@ export default function PerformanceDetailPage() {
   const [likeCount, setLikeCount] = useState(0);
   const [isAlarmed, setIsAlarmed] = useState(false); // ✅ 알림
 
-   const displayPerformanceDateTime =
-   formatKoreanFromParts(performance?.date, performance?.time) ||
-   [performance?.date, performance?.time].filter(Boolean).join(' ');
-  // 🔑 하드코딩 제거 → localStorage에서 토큰 가져오기 (아티스트 상세페이지와 동일 패턴)
   const authToken = localStorage.getItem('accessToken');
 
   useEffect(() => {
@@ -40,7 +36,7 @@ export default function PerformanceDetailPage() {
         setPerformance(data);
         setIsLiked(data.isLiked || false);
         setIsAlarmed(data.isAlarmed || false);
-        setLikeCount(data.likeCount || 0); // ✅ count 반영
+        setLikeCount(data.likeCount || 0);
       } catch (err) {
         console.error('📛 공연 상세 API 호출 실패:', err);
       }
@@ -78,6 +74,16 @@ export default function PerformanceDetailPage() {
 
   if (!performance) return <div>로딩 중...</div>;
 
+  // ✅ 안전한 링크 값 처리
+  const shortcode =
+    typeof performance.shortcode === 'string'
+      ? performance.shortcode.trim()
+      : performance.shortcode || performance.short_code || '';
+  const detailUrl =
+    typeof performance.detail_url === 'string'
+      ? performance.detail_url.trim()
+      : performance.detailLink?.trim() || '';
+
   return (
     <>
       <Header title={performance.title} />
@@ -105,38 +111,49 @@ export default function PerformanceDetailPage() {
         <InfoSection>
           <LabelRow>
             <Label>공연일시</Label>
-           <Value>{formatKoreanFromParts(performance.date, performance.time)}</Value>
+            <Value>{formatKoreanFromParts(performance.date, performance.time)}</Value>
           </LabelRow>
+
           <LabelRow>
             <Label>공연장</Label>
             <VenueValue onClick={() => navigate(`/venue/${performance.venueId}`)}>
               {performance.venue || '공연장 정보 없음'} <ChevronIcon src={ChevronRightIcon} />
             </VenueValue>
           </LabelRow>
+
           <LabelRow style={{ display: 'block' }}>
             <Label>출연진</Label>
             <ScrollContainer>
               {performance.artists?.map((artist) => (
-                <ArtistProfileCard key={artist.id} artist={artist} onClick={() => navigate(`/artist/${artist.id}`)}  showName/>
+                <ArtistProfileCard
+                  key={artist.id}
+                  artist={artist}
+                  onClick={() => navigate(`/artist/${artist.id}`)}
+                  showName
+                />
               ))}
             </ScrollContainer>
           </LabelRow>
+
           <LabelRow>
             <Label>티켓 가격</Label>
             <Value>{performance.price}</Value>
           </LabelRow>
+
           <LabelRow>
             <Label>티켓 오픈</Label>
-            <Value>{formatKoreanFromParts(performance.ticket_open_date, performance.ticket_open_time)}</Value>
+            <Value>
+              {formatKoreanFromParts(performance.ticket_open_date, performance.ticket_open_time)}
+            </Value>
           </LabelRow>
 
-          {/* ✅ 여기부터 교체된 부분 */}
+          {/* ✅ 상세 정보 */}
           <LabelRow>
             <Label>상세 정보</Label>
             <LinkValue>
-              {performance.shortcode ? (
+              {shortcode ? (
                 <a
-                  href={`https://www.instagram.com/p/${performance.shortcode}`}
+                  href={`https://www.instagram.com/p/${shortcode}`}
                   target="_blank"
                   rel="noreferrer"
                 >
@@ -148,11 +165,12 @@ export default function PerformanceDetailPage() {
             </LinkValue>
           </LabelRow>
 
+          {/* ✅ 예매 링크 */}
           <LabelRow>
             <Label>예매 링크</Label>
             <LinkValue>
-              {performance.detailLink ? (
-                <a href={performance.detailLink.trim()} target="_blank" rel="noreferrer">
+              {detailUrl ? (
+                <a href={detailUrl} target="_blank" rel="noreferrer">
                   예매 사이트 바로가기
                 </a>
               ) : (
@@ -160,14 +178,13 @@ export default function PerformanceDetailPage() {
               )}
             </LinkValue>
           </LabelRow>
-          {/* ✅ 교체된 부분 끝 */}
         </InfoSection>
       </Container>
     </>
   );
 }
 
-// ✅ 스타일
+// ✅ 스타일은 그대로 유지
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -212,7 +229,8 @@ const HeartIcon = styled.span`
   display: inline-block;
   width: 1rem;
   height: 1rem;
-  background-image: ${({ $isLiked }) => $isLiked ? `url(${HeartFilledIcon})` : `url(${HeartOutlineIcon})`};
+  background-image: ${({ $isLiked }) =>
+    $isLiked ? `url(${HeartFilledIcon})` : `url(${HeartOutlineIcon})`};
   background-size: 100% 100%;
 `;
 
@@ -290,14 +308,13 @@ const LinkValue = styled.div`
   font-size: ${({ theme }) => theme.fontSizes.base};
   font-weight: ${({ theme }) => theme.fontWeights.regular};
   color: ${({ theme }) => theme.colors.darkGray};
-
   word-break: break-all;
   overflow-wrap: break-word;
 
   a {
     color: ${({ theme }) => theme.colors.darkGray};
     text-decoration: underline;
-    word-break: break-all; 
+    word-break: break-all;
   }
 `;
 
