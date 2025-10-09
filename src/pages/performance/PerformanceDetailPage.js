@@ -129,14 +129,38 @@ export default function PerformanceDetailPage() {
             <Label>티켓 오픈</Label>
             <Value>{formatKoreanFromParts(performance.ticket_open_date, performance.ticket_open_time)}</Value>
           </LabelRow>
+
+          {/* ✅ 여기부터 교체된 부분 */}
           <LabelRow>
             <Label>상세 정보</Label>
             <LinkValue>
-              <a href={performance.detailLink} target="_blank" rel="noreferrer">
-                {performance.detailLink}
-              </a>
+              {performance.shortcode ? (
+                <a
+                  href={`https://www.instagram.com/p/${performance.shortcode}`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  공연 게시물 바로가기
+                </a>
+              ) : (
+                <span>상세 정보 없음</span>
+              )}
             </LinkValue>
           </LabelRow>
+
+          <LabelRow>
+            <Label>예매 링크</Label>
+            <LinkValue>
+              {performance.detailLink ? (
+                <a href={performance.detailLink.trim()} target="_blank" rel="noreferrer">
+                  예매 사이트 바로가기
+                </a>
+              ) : (
+                <span>예매 링크 없음</span>
+              )}
+            </LinkValue>
+          </LabelRow>
+          {/* ✅ 교체된 부분 끝 */}
         </InfoSection>
       </Container>
     </>

@@ -280,7 +280,7 @@ const DragBar = styled.div`
 `;
 
 const ScrollableList = styled.div`
-  margin-bottom: 140px;
+  margin-bottom: 124px;
   flex: 1 1 0;
   min-height: 0;
   overflow-y: auto;
@@ -290,4 +290,7 @@ const ScrollableList = styled.div`
   }
   -ms-overflow-style: none;
   scrollbar-width: none;
+
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
 `;

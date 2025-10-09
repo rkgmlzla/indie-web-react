@@ -19,7 +19,6 @@ const HeaderSpacer = styled.div`
 const PageWrap = styled.div`
   max-width: 720px;
   margin: 0 auto;
-  padding: 16px 14px 150px;
 `;
 
 const Heading = styled.h1`
@@ -44,7 +43,7 @@ const Stat = styled.span`
 `;
 
 const AllText = styled.span`
-  color: #000;       /* All은 검정색 */
+  color: #4B4B4B;       /* All은 검정색 */
 `;
 
 const CountText = styled.span`
@@ -100,13 +99,15 @@ const Pager = styled.div`
   }
 `;
 
-const Empty = styled.div`
-  padding: 24px 14px;
-  text-align: center;
-  color: #6b7280;
-  border: 1px dashed #e5e7eb;
-  border-radius: 12px;
-  background: #fafafa;
+const EmptyMessage = styled.div`
+  margin-top: 16px;
+  padding: 16px 16px;
+  font-size: ${({ theme }) => theme.fontSizes.sm};
+  font-weight: ${({ theme }) => theme.fontWeights.medium};
+  color: ${({ theme }) => theme.colors.darkGray};
+  display: flex;
+  justify-content: center; 
+  align-items: center;  
 `;
 
 const ErrorBox = styled.div`
@@ -311,7 +312,7 @@ export default function AllReview({
           <Skeleton /><Skeleton /><Skeleton />
         </>
       ) : items.length === 0 ? (
-        <Empty>아직 작성된 리뷰가 없어요.</Empty>
+        <EmptyMessage>아직 작성된 리뷰가 없습니다.</EmptyMessage>
       ) : (
         <>
           <List>

@@ -9,7 +9,20 @@
   font-display: swap;
 }
 
-/* 기본 초기화 + 앱 정렬 */
+/* 전체 텍스트 선택 방지 */
+* {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none; /* iOS 롱프레스 메뉴 방지 */
+}
+
+/* input, textarea는 선택 가능하도록 예외 처리 */
+input, textarea {
+  -webkit-user-select: auto;
+  user-select: auto;
+}
+
+/* body 수정 */
 body {
   margin: 0;
   padding: 0;
@@ -17,19 +30,21 @@ body {
   background-color: #dcdcdc;
   display: flex;
   justify-content: center;
-  align-items: flex-start;  /* 추가 */
-  overflow: hidden;  
-  height: 100vh;     
+  align-items: flex-start;
+  overflow: hidden;
+  height: 100vh;
+  height: 100dvh; /* 추가: Safari 동적 뷰포트 */
 }
 
-/* 앱 전체 컨테이너 (#root) */
+/* #root 수정 */
 #root {
   width: 100%;
   max-width: 512px;
-  margin: 0;  /* margin: 0 auto 대신 */
+  margin: 0;
   padding-top: 24px;
-  overflow: hidden;  
+  overflow: hidden;
   height: 100vh;
+  height: 100dvh; /* 추가: Safari 동적 뷰포트 */
   background-color: #fff;
   box-sizing: border-box;
 }

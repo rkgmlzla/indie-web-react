@@ -14,7 +14,7 @@ const NavWrapper = styled.nav`
   right: 0;
   margin: 0 auto; 
   max-width: var(--app-max-width, ${({ theme }) => theme.layout.maxWidth});
-  height: 84px;
+  height: 68px;
   display: flex;
   justify-content: space-around;
   align-items: flex-start;
