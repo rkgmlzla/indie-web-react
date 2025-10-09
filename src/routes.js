@@ -28,6 +28,7 @@ import AllReview from './pages/review/AllReview';
 
 
 const routes = [
+   { path: '/', element: <Navigate to="/home" replace /> },
   { path: '/home', element: <HomePage /> },
   { path: '/alarm', element: <NotificationPage /> },
   { path: '/calendar', element: <CalendarPage /> },
