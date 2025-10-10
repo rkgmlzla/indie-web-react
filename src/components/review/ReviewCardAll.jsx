@@ -28,23 +28,21 @@ const Card = styled.article.withConfig({
 
 const DeleteBtn = styled.button`
   position: absolute;
-  right: 0;
-  top: 2px;
-  width: 22px;
-  height: 22px;
+  top: 4px;
+  right: 4px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
   border: none;
   background: #E4E4E4;
   color: #4B4B4B;
   font-size: 14px;
-  line-height: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: all 0.2s ease;
 `;
-
 
 const ThumbRow = styled.div`
   display: flex;
@@ -125,16 +123,8 @@ const Avatar = styled.img`
 
 const MetaName = styled.span`
   font-size: 12px;
-  font-weight: 600;
-  color: #111827;
-`;
-
-const Dot = styled.span`
-  display: inline-block;
-  width: 3px;
-  height: 3px;
-  border-radius: 50%;
-  background: #d1d5db;
+  font-weight: 500;
+  color: #2F2F2F;
 `;
 
  const VenueInline = styled(Link)`
@@ -233,6 +223,7 @@ const CloseBtn = styled.button`
   cursor: pointer;
   font-size: 18px;
   line-height: 34px;
+  text-align: center;
 `;
 
 const NavBtn = styled.button`
