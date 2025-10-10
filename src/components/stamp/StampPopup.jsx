@@ -66,15 +66,18 @@ export default function StampPopup({ onClose, stamps, onStampSelect }) {
 
 const ModalBackground = styled.div`
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 68px;                      /* ✅ 하단바 높이만큼 제외 */
   display: flex;
-  justify-content: center;
-  align-items: flex-start;
+  justify-content: center;           /* ✅ 좌우 중앙 */
+  align-items: center;               /* ✅ 상하 중앙 (하단바 제외한 영역 기준) */
   padding: 16px;
   background: rgba(0,0,0,.2);
   z-index: 9999;
   overscroll-behavior: none;
-  touch-action: none;             
+  touch-action: none;
 `;
 
 const PopupContainer = styled.div`
