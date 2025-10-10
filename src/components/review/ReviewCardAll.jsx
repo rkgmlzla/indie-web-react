@@ -40,6 +40,7 @@ const DeleteBtn = styled.button`
   background: #FAFAFA;
   color: #4B4B4B;
   font-size: 14px;
+  line-height: 1; 
   display: flex;
   align-items: center;
   justify-content: center;
@@ -121,6 +122,19 @@ const MetaTop = styled.div`
   align-items: center;
   gap: 6px;
   min-width: 0;
+`;
+
+const TopRow = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+`;
+
+const BottomRow = styled.div`
+  display: flex;
+  justify-content: space-between;  
+  align-items: center;
+  margin-top: 4px;
 `;
 
 const Avatar = styled.img`
@@ -383,61 +397,56 @@ export default function ReviewCard({
 
       {/* 3) 메타 (닉네임 옆에 공연장칩 → 날짜) */}
       <MetaBar>
-        <MetaTop>
-          <Avatar
-            src={user?.profile_url || defaultAvatar}
-            alt={`${user?.nickname || '사용자'} 프로필 이미지`}
-            onError={(e) => { e.currentTarget.src = defaultAvatar }}
-          />
-          <MetaName>{user?.nickname || '익명'}</MetaName>
-          {venue?.id && (
-            <>
-              <VenueInline
-                to={`/venue/${venue.id}`}
-                aria-label={`${venue.name} 상세로 이동`}
-                title={venue.name}
-              >
-                <VenueLogo
-                  src={venue.logo_url || '/logo192.png'}
-                  alt={`${venue.name || '공연장'} 로고`}
-                  onError={(e)=>{ e.currentTarget.src='/logo192.png'; }}
-                />
+        <TopRow>
+          <MetaDate dateTime={created ?? undefined}>{dateText}</MetaDate>
+        </TopRow>
+
+        <BottomRow>
+          <MetaLeft>
+            <Avatar
+              src={user?.profile_image ?? '/assets/default_profile.svg'}
+              alt="작성자 프로필"
+            />
+            <MetaName>{user?.nickname || '익명'}</MetaName>
+
+            {venue?.id && (
+              <VenueInline to={`/venue/${venue.id}`}>
+                <VenueLogo src={venue.logo_image} alt={venue.name} />
                 <VenueName>{venue.name}</VenueName>
               </VenueInline>
-            </>
-          )}
-        </MetaTop>
-        <MetaLeft>
-          <MetaDate dateTime={created ?? undefined}>{dateText}</MetaDate>
-        </MetaLeft>
-        {showLike && (
-          <LikeBtn
-            type="button"
-            onClick={handleToggleLike}
-            active={!!liked}
-            aria-pressed={!!liked}
-            aria-disabled={!isLoggedIn}
-            $disabled={!isLoggedIn}
-            disabled={!isLoggedIn}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill={liked ? 'currentColor' : 'none'}
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
+            )}
+          </MetaLeft>
+
+          {showLike && (
+            <LikeBtn
+              type="button"
+              onClick={handleToggleLike}
+              active={!!liked}
+              aria-pressed={!!liked}
+              aria-disabled={!isLoggedIn}
+              $disabled={!isLoggedIn}
+              disabled={!isLoggedIn}
             >
-              <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 22l7.8-8.6 1-1a5.5 5.5 0 0 0 0-7.8z"></path>
-            </svg>
-            <span>{count}</span>
-          </LikeBtn>
-        )}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                width="18"
+                height="18"
+                fill="currentColor"
+              >
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 
+                        2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 
+                        4.5 2.09C13.09 3.81 14.76 3 
+                        16.5 3 19.58 3 22 5.42 22 
+                        8.5c0 3.78-3.4 6.86-8.55 
+                        11.54L12 21.35z" />
+              </svg>
+              <span>{count}</span>
+            </LikeBtn>
+          )}
+        </BottomRow>
       </MetaBar>
+
 
       {/* 라이트박스 */}
       {viewerOpen && images?.length > 0 && (
