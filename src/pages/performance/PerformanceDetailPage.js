@@ -132,14 +132,28 @@ export default function PerformanceDetailPage() {
             </LabelRow>
             <LabelRow>
               <Label>상세 정보</Label>
-              <LinkValue>
-                {performance.detailLink ? (
-                  <a href={performance.detailLink} target="_blank" rel="noreferrer">
-                    공연 상세 페이지 바로가기
-                  </a>
-                ) : (
-                  <span>상세 정보 없음</span>
-                )}
+            
+<LinkValue>
+
+
+{performance.shortcode ? (
+     <a
+       href={`https://www.instagram.com/p/${performance.shortcode}/`}
+       target="_blank"
+       rel="noreferrer"
+     >
+       공연 상세 페이지 바로가기
+     </a>
+   ) : (
+     <span>상세 정보 없음</span>
+    )}
+
+
+         
+
+
+
+
               </LinkValue>
             </LabelRow>
             <LabelRow>
