@@ -335,15 +335,10 @@ const StampButton = styled.button`
 
 const StampBoard = styled.div`
   width: 100%;
-  position: absolute;
-  top: 78.5px;
-  bottom: 108px;
-  left: 16px;
-  right: 16px;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-  overflow: hidden;
+  position: relative;
+  padding: 78.5px 16px 108px 16px;
+  overflow-x: hiddne;
+  touch-action: pan-y;
 `;
 
 const StampPageContainer = styled.div`
@@ -356,21 +351,21 @@ const StampPageContainer = styled.div`
 
 const StampRow = styled.div`
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 24px;
-  padding: 0;
-  box-sizing: border-box;
-  gap: 12px;
-  width: 100%;
+  gap: 8px;
 `;
 
 const StampItemWrapper = styled.div`
   flex: 1;
+  max-width: calc(33.333% - 5.33px);
+  margin: 0 8px;
   display: flex;
   justify-content: center;
   flex-direction: column;
+  caret-color: transparent;
   min-width: 0;
+  flex-shrink: 0;
+  touch-action: pan-y;
+  user-select: none;
 `;
 
 const StampItem = styled.div`
