@@ -182,6 +182,7 @@ const Row = styled.div`
 const CardContainer = styled.div`
   flex: 1; /* width: 30% 대신 flex 사용 */
   max-width: calc(33.333% - 5.33px); /* gap 8px 분배 고려 */
+  margin: 0 8px;
   display: flex;
   justify-content: center;
   flex-direction: column;
