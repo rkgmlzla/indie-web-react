@@ -131,6 +131,23 @@ const Skeleton = styled.div`
     100% { background-position: -200% 0; }
   }
 `;
+
+const ScrollableList = styled.div`
+  padding-bottom: 109px;
+  flex-grow: 1;
+  overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    display: none; 
+  }
+
+  -ms-overflow-style: none; 
+  scrollbar-width: none;
+
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
+`;
+
 export default function AllReview({
   // prop으로 들어오면 우선 사용하고, 없으면 fetchUserInfo로 채움
   isLoggedIn: isLoggedInProp = undefined,
@@ -304,7 +321,7 @@ export default function AllReview({
       ) : items.length === 0 ? (
         <EmptyMessage>아직 작성된 리뷰가 없습니다.</EmptyMessage>
       ) : (
-        <>
+        <ScrollableList>
           <List>
             {items.map((rv) => (
               <ReviewCardAll
@@ -337,7 +354,7 @@ export default function AllReview({
               →
             </button>
           </Pager>
-        </>
+        </ScrollableList>
       )}
     </PageWrap>
   );
