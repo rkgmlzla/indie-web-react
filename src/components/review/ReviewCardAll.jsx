@@ -28,13 +28,16 @@ const Card = styled.article.withConfig({
 
 const DeleteBtn = styled.button`
   position: absolute;
-  top: 4px;
-  right: 4px;
-  width: 20px;
-  height: 20px;
+  top: 8px;
+  right: 8px;
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
+  min-height: 24px;
+  padding: 0;
   border-radius: 50%;
-  border: none;
-  background: #E4E4E4;
+  border: 1px solid #E4E4E4;
+  background: #FAFAFA;
   color: #4B4B4B;
   font-size: 14px;
   display: flex;
@@ -42,6 +45,7 @@ const DeleteBtn = styled.button`
   justify-content: center;
   cursor: pointer;
   transition: all 0.2s ease;
+  flex-shrink: 0;
 `;
 
 const ThumbRow = styled.div`
@@ -101,15 +105,22 @@ const BodyText = styled.p.withConfig({
 
 const MetaBar = styled.div`
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 8px;
 `;
 
 const MetaLeft = styled.div`
   display: flex;
   align-items: center;
   gap: 6px;
-  min-width: 0; /* ellipsis 안전 */
+  min-width: 0;
+`;
+
+const MetaTop = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
 `;
 
 const Avatar = styled.img`
@@ -372,29 +383,31 @@ export default function ReviewCard({
 
       {/* 3) 메타 (닉네임 옆에 공연장칩 → 날짜) */}
       <MetaBar>
-       <MetaLeft>
-        <Avatar
-          src={user?.profile_url || defaultAvatar}
-          alt={`${user?.nickname || '사용자'} 프로필 이미지`}
-          onError={(e) => { e.currentTarget.src = defaultAvatar }}
-        />
-        <MetaName>{user?.nickname || '익명'}</MetaName>
+        <MetaTop>
+          <Avatar
+            src={user?.profile_url || defaultAvatar}
+            alt={`${user?.nickname || '사용자'} 프로필 이미지`}
+            onError={(e) => { e.currentTarget.src = defaultAvatar }}
+          />
+          <MetaName>{user?.nickname || '익명'}</MetaName>
           {venue?.id && (
             <>
               <VenueInline
-              to={`/venue/${venue.id}`}
-              aria-label={`${venue.name} 상세로 이동`}
-              title={venue.name}
-            >
-              <VenueLogo
-                src={venue.logo_url || '/logo192.png'}
-                alt={`${venue.name || '공연장'} 로고`}
-                onError={(e)=>{ e.currentTarget.src='/logo192.png'; }}
-              />
-              <VenueName>{venue.name}</VenueName>
-            </VenueInline>
+                to={`/venue/${venue.id}`}
+                aria-label={`${venue.name} 상세로 이동`}
+                title={venue.name}
+              >
+                <VenueLogo
+                  src={venue.logo_url || '/logo192.png'}
+                  alt={`${venue.name || '공연장'} 로고`}
+                  onError={(e)=>{ e.currentTarget.src='/logo192.png'; }}
+                />
+                <VenueName>{venue.name}</VenueName>
+              </VenueInline>
             </>
           )}
+        </MetaTop>
+        <MetaLeft>
           <MetaDate dateTime={created ?? undefined}>{dateText}</MetaDate>
         </MetaLeft>
         {showLike && (
