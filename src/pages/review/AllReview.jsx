@@ -135,7 +135,7 @@ const Skeleton = styled.div`
 `;
 
 const ScrollableList = styled.div`
-  padding-bottom: 100px;
+  padding-bottom: 116px;
   flex-grow: 1;
   overflow-y: auto;
 
