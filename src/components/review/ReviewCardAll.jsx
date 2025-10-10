@@ -109,7 +109,6 @@ const BodyText = styled.p.withConfig({
 const MetaBar = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 8px;
 `;
 
 const MetaLeft = styled.div`
@@ -127,6 +126,8 @@ const MetaTop = styled.div`
 `;
 
 const TopRow = styled.div`
+  margin-top: 4px;
+  margin-bottom: 8px;
   display: flex;
   justify-content: flex-start;
   align-items: center;
@@ -184,15 +185,16 @@ const VenueName = styled.span`
 const MetaDate = styled.time`
   font-size: 12px;
   color: #B0B0B0;
-  margin-left: 6px;
 `;
 
 const LikeBtn = styled.button.withConfig({
   shouldForwardProp: (prop) => prop !== 'active' && prop !== '$disabled',
 })`
+  position: absolute;
   display: inline-flex;
   align-items: center;
   gap: 6px;
+  right: 8px;
   font-size: 12px;
   padding: 4px 8px;
   border-radius: 9999px;
