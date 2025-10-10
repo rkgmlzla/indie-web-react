@@ -123,7 +123,7 @@ const ScrollArea = styled.div`
   flex: 1;
   overflow-y: ${({ isEmpty }) => (isEmpty ? "hidden" : "auto")};
   overflow-x: hidden;
-  padding: 8px 16px 16px 16px;
+  padding: 8px 16px 0 16px;
   display: ${({ isEmpty }) => (isEmpty ? "flex" : "block")};
   justify-content: ${({ isEmpty }) => (isEmpty ? "center" : "initial")};
   align-items: ${({ isEmpty }) => (isEmpty ? "center" : "initial")};
