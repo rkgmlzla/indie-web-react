@@ -77,12 +77,12 @@ const ModalBackground = styled.div`
 
 const PopupContainer = styled.div`
   position: relative;
-  height: 80%;
-  max-height: 600px;
+  height: calc(93vh - 56px);
+  height: calc(93dvh - 56px); 
   width: 100%;
   max-width: ${({ theme }) => theme.layout.maxWidth};
-  margin: 0 auto;
-  background: ${({ theme }) => theme.colors.bgWhite};
+  margin: 56px auto 0;        
+  background: ${({ theme }) => theme.colors.bgWhite};       
   border-radius: 10px;
   box-sizing: border-box;
   display: flex;
