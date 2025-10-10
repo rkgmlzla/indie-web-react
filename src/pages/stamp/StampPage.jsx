@@ -7,7 +7,7 @@ import Header from "../../components/layout/Header";
 import StampLogin from "../../components/stamp/StampLogin";
 import { fetchUserInfo } from "../../api/userApi";
 import PeriodModal from "../../components/modals/PeriodModal";
-import StampButtonIcon from "../../assets/icons/icon_s_stamp.svg";
+import StampButtonIcon from "../../assets/icons/icon_stamp.svg";
 import FilterButtonNone from "../../components/common/FilterButtonNone";
 import StampPopup from "../../components/stamp/StampPopup";
 import StampPopupSmall from "../../components/stamp/StampPopupSmall";
@@ -174,9 +174,12 @@ export default function StampPage() {
         </ScrollArea>
       </StampBoard>
 
-      {/* ✅ 하단 버튼 */}
       <StampButton onClick={() => setIsStampPopupOpen(true)}>
-        <img src={StampButtonIcon} alt="스탬프 찍기" />
+        <img
+          src={StampButtonIcon}
+          alt="스탬프 찍기"
+          style={{ transform: 'rotate(20deg)', marginLeft: '2px', marginBottom: '4px' }}
+        />
       </StampButton>
 
       {/* ✅ 스탬프 팝업 */}
@@ -287,21 +290,31 @@ const PageWrapper = styled.div`
 `;
 
 const StampButton = styled.button`
-  position: fixed; 
-  background: none;
+  position: fixed;
+  right: 20px;
+  bottom: 100px;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
   border: none;
   cursor: pointer;
-  right: 0px;
-  bottom: 100px;
+  background-color: ${({ theme }) => theme.colors.primaryGreen || '#3C9C67'};
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 28px;
+  font-weight: bold;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 
-  img {
-    width: 72px;
-    height: 72px;
-    display: block;
+  &:active {
+    transform: scale(0.95);
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.3);
   }
 
   @media (min-width: ${({ theme }) => theme.layout.maxWidth}) {
-    right: calc((100vw - ${({ theme }) => theme.layout.maxWidth}) / 2);
+    right: calc((100vw - ${({ theme }) => theme.layout.maxWidth}) / 2 + 20px);
   }
 `;
 
