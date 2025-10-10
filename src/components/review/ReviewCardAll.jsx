@@ -167,7 +167,7 @@ const VenueName = styled.span`
 `;
 
 const MetaDate = styled.time` 
-  margin-top: -12px;
+  margin-top: -8px;
   margin-bottom: 8px;
   font-size: 12px;
   color: #B0B0B0;
