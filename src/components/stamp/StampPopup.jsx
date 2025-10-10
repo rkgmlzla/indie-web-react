@@ -70,8 +70,7 @@ const ModalBackground = styled.div`
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  padding-top: 16px;
-  padding-bottom: 100px;
+  padding: 16px;
   background: rgba(0,0,0,.2);
   z-index: 9999;
   overscroll-behavior: none;
