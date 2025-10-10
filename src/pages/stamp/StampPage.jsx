@@ -379,9 +379,13 @@ const ScrollArea = styled.div`
 
 const EmptyMessage = styled.div`
   width: 100%;
-  padding: 16px 0px;
-  align-items: center; 
+  padding: 16px 0;
+  display: flex;                /* ✅ 플렉스박스로 변경 */
+  justify-content: center;      /* ✅ 좌우 중앙 정렬 */
+  align-items: center;          /* ✅ 세로 중앙 정렬 */
+  text-align: center;           /* ✅ 여러 줄일 경우 중앙정렬 */
   font-size: ${({ theme }) => theme.fontSizes.sm};
   font-weight: ${({ theme }) => theme.fontWeights.medium};
   color: ${({ theme }) => theme.colors.darkGray};
 `;
+
