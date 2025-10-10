@@ -10,7 +10,7 @@ const Card = styled.article.withConfig({
   width: 100%;
   box-sizing: border-box;
   background: #fff;
-  border: 1px solid #eee;
+  border: 1px solid #E4E4E4;
   border-radius: 10px;
   padding: 12px;
   display: flex;
@@ -28,19 +28,23 @@ const Card = styled.article.withConfig({
 
 const DeleteBtn = styled.button`
   position: absolute;
-  right: 8px;
-  top: 6px;
-  font-size: 16px;
-  line-height: 1;
-  color: #9ca3af;
-  background: transparent;
-  border: 0;
+  right: 0;
+  top: 2px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: none;
+  background: #E4E4E4;
+  color: #4B4B4B;
+  font-size: 14px;
+  line-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
-
-  &:hover {
-    color: #ef4444;
-  }
+  transition: all 0.2s ease;
 `;
+
 
 const ThumbRow = styled.div`
   display: flex;
@@ -60,7 +64,7 @@ const ThumbItem = styled.img`
   border-radius: 8px;
   object-fit: cover;
   cursor: pointer;
-  border: 1px solid #eee;
+  border: 1px solid #E4E4E4;
   background: #f2f2f2;
 `;
 
@@ -69,7 +73,7 @@ const MoreBtn = styled.button`
   width: 140px;
   height: 100px;
   border-radius: 8px;
-  border: 1px solid #ddd;
+  border: 1px solid #E4E4E4;
   background: #f7f7f7;
   font-size: 14px;
   color: #555;
@@ -80,7 +84,7 @@ const BodyText = styled.p.withConfig({
   shouldForwardProp: (prop) => prop !== 'variant',
 })`
   font-size: 14px;
-  color: #444;
+  color: #2F2F2F;
   line-height: 1.4;
   white-space: pre-wrap;
   margin: 0;
@@ -115,7 +119,7 @@ const Avatar = styled.img`
   height: 20px;
   border-radius: 50%;
   object-fit: cover;
-  border: 1px solid #e5e7eb;
+  border: 1px solid #E4E4E4;
   flex-shrink: 0;
 `;
 
@@ -148,7 +152,7 @@ const Dot = styled.span`
    height: 18px;
    border-radius: 50%;   
    object-fit: cover;
-   border: 1px solid #eee;
+   border: 1px solid #E4E4E4;
    background: #f6f6f6;
    flex-shrink: 0;
 `;
@@ -162,7 +166,7 @@ const VenueName = styled.span`
 
 const MetaDate = styled.time`
   font-size: 12px;
-  color: #6b7280;
+  color: #B0B0B0;
   margin-left: 6px;
 `;
 
@@ -177,8 +181,8 @@ const LikeBtn = styled.button.withConfig({
   border-radius: 9999px;
   cursor: pointer;
   background: #fff;
-  border: 1px solid #e5e7eb;
-  color: #6b7280;
+  border: 1px solid #E4E4E4;
+  color: #B0B0B0;
 
   ${({ active }) =>
     active &&
@@ -378,36 +382,30 @@ export default function ReviewCard({
       {/* 3) 메타 (닉네임 옆에 공연장칩 → 날짜) */}
       <MetaBar>
        <MetaLeft>
-  <Avatar
-    src={user?.profile_url || defaultAvatar}
-    alt={`${user?.nickname || '사용자'} 프로필 이미지`}
-    onError={(e) => { e.currentTarget.src = defaultAvatar }}
-  />
-  <MetaName>{user?.nickname || '익명'}</MetaName>
-
-  {venue?.id && (
-    <>
-      <Dot />
-      <VenueInline
-       to={`/venue/${venue.id}`}
-       aria-label={`${venue.name} 상세로 이동`}
-       title={venue.name}
-     >
-       <VenueLogo
-         src={venue.logo_url || '/logo192.png'}
-         alt={`${venue.name || '공연장'} 로고`}
-         onError={(e)=>{ e.currentTarget.src='/logo192.png'; }}
-       />
-       <VenueName>{venue.name}</VenueName>
-     </VenueInline>
-    </>
-  )}
-
-  <Dot />
-  <MetaDate dateTime={created ?? undefined}>{dateText}</MetaDate>
-</MetaLeft>
-
-
+        <Avatar
+          src={user?.profile_url || defaultAvatar}
+          alt={`${user?.nickname || '사용자'} 프로필 이미지`}
+          onError={(e) => { e.currentTarget.src = defaultAvatar }}
+        />
+        <MetaName>{user?.nickname || '익명'}</MetaName>
+          {venue?.id && (
+            <>
+              <VenueInline
+              to={`/venue/${venue.id}`}
+              aria-label={`${venue.name} 상세로 이동`}
+              title={venue.name}
+            >
+              <VenueLogo
+                src={venue.logo_url || '/logo192.png'}
+                alt={`${venue.name || '공연장'} 로고`}
+                onError={(e)=>{ e.currentTarget.src='/logo192.png'; }}
+              />
+              <VenueName>{venue.name}</VenueName>
+            </VenueInline>
+            </>
+          )}
+          <MetaDate dateTime={created ?? undefined}>{dateText}</MetaDate>
+        </MetaLeft>
         {showLike && (
           <LikeBtn
             type="button"
