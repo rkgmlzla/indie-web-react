@@ -292,7 +292,7 @@ export default function AllReview({
   return (
     <PageWrapper>
        <Header title='공연장 리뷰' />
-       <div style={{ height: "16px" }} />
+       <div style={{ height: "32px" }} />
       {err && <ErrorBox role="alert">{err}</ErrorBox>}
 
       <SubBar>
