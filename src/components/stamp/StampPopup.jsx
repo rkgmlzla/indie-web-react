@@ -139,8 +139,8 @@ const ScrollArea = styled.div`
 const CardGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr); 
-  column-gap: 36px; 
-  row-gap: 16px;
+  column-gap: 20px; 
+  row-gap: 32px;
   padding: 0;
 `;
 
