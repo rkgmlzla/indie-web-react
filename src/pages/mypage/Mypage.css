@@ -188,11 +188,13 @@
 
 .logout {
   width: 100%;
-  bottom: 92px;
-  padding: 0 16px;
-  display: flex;
   position: fixed;
+  bottom: 92px;
+  left: 0; 
+  right: 0;
+  display: flex;
   justify-content: center;
+  padding: 0; 
 }
 
 .logout__button {
