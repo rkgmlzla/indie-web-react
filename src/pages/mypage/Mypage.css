@@ -188,9 +188,9 @@
 
 .logout {
   width: 100%;
+  bottom: 0;
   display: flex;
   justify-content: center;
-  margin-top: 60px;
 }
 
 .logout__button {
