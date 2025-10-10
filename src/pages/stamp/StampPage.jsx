@@ -365,7 +365,10 @@ const StampDate = styled.div`
 const ScrollArea = styled.div`
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
   margin-bottom: 16px;
+  width: 100%;
+  box-sizing: border-box;
 
   &::-webkit-scrollbar {
     display: none;
