@@ -173,7 +173,7 @@ const Container = styled.div`
 
 const Row = styled.div`
   display: flex;
-  gap: 5px;
+  gap: 6px;
   margin-top: 8px;
   touch-action: pan-y; 
   user-select: none;
