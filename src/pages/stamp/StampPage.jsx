@@ -380,6 +380,7 @@ const ScrollArea = styled.div`
 const EmptyMessage = styled.div`
   width: 100%;
   padding: 16px 0px;
+  align-items: center; 
   font-size: ${({ theme }) => theme.fontSizes.sm};
   font-weight: ${({ theme }) => theme.fontWeights.medium};
   color: ${({ theme }) => theme.colors.darkGray};
