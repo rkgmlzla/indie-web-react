@@ -16,9 +16,11 @@ const HeaderSpacer = styled.div`
   height: 28px;
 `;
 
-const PageWrap = styled.div`
-  max-width: 720px;
-  margin: 0 auto;
+const PageWrapper = styled.div`
+  height: 100vh;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
 `;
 
 const Heading = styled.h1`
@@ -292,7 +294,7 @@ export default function AllReview({
   }, [page, size, total]);
 
   return (
-    <PageWrap>
+    <PageWrapper>
        <Header title='공연장 리뷰' />
        <HeaderSpacer />
       {err && <ErrorBox role="alert">{err}</ErrorBox>}
@@ -356,6 +358,6 @@ export default function AllReview({
           </Pager>
         </ScrollableList>
       )}
-    </PageWrap>
+    </PageWrapper>
   );
 }
