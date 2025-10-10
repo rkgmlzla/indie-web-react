@@ -34,7 +34,7 @@ const DeleteBtn = styled.button`
   height: 24px;
   min-width: 24px;
   min-height: 24px;
-  padding: 0;
+  padding-bottom: 2px;
   border-radius: 50%;
   border: 1px solid #E4E4E4;
   background: #FAFAFA;
@@ -111,13 +111,6 @@ const MetaBar = styled.div`
   flex-direction: column;
 `;
 
-const MetaLeft = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  min-width: 0;
-`;
-
 const MetaTop = styled.div`
   display: flex;
   align-items: center;
@@ -126,18 +119,9 @@ const MetaTop = styled.div`
 `;
 
 const TopRow = styled.div`
-  margin-top: 4px;
-  margin-bottom: 8px;
   display: flex;
   justify-content: flex-start;
   align-items: center;
-`;
-
-const BottomRow = styled.div`
-  display: flex;
-  justify-content: space-between;  
-  align-items: center;
-  margin-top: 4px;
 `;
 
 const Avatar = styled.img`
@@ -183,6 +167,8 @@ const VenueName = styled.span`
 `;
 
 const MetaDate = styled.time`
+  margin-top: 4px;
+  margin-bottom: 8px;
   font-size: 12px;
   color: #B0B0B0;
 `;
