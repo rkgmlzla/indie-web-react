@@ -154,23 +154,38 @@ export default function StampPage() {
       <StampBoard>
         <ScrollArea>
           {collectedStamps.length > 0 ? (
-            <StampPageContainer>
-              {collectedStamps
-                .slice()
-                .sort((a, b) => new Date(b.date) - new Date(a.date))
-                .map((stamp) => (
-                  <StampItem
-                    key={stamp.id}
-                    onClick={() => setSelectedStampDetail(stamp)}
-                  >
-                    <StampImage src={stamp.venueImageUrl} alt={stamp.place} />
-                    <StampDate>{stamp.date}</StampDate>
-                  </StampItem>
-                ))}
-            </StampPageContainer>
-          ) : (
-            <EmptyMessage>받은 스탬프가 없습니다.</EmptyMessage>
-          )}
+  <StampPageContainer>
+    {(() => {
+      const rows = [];
+      const sorted = collectedStamps
+        .slice()
+        .sort((a, b) => new Date(b.date) - new Date(a.date));
+      
+      for (let i = 0; i < sorted.length; i += 3) {
+        const slice = sorted.slice(i, i + 3);
+        while (slice.length < 3) slice.push(null);
+        rows.push(slice);
+      }
+      
+      return rows.map((rowItems, rowIndex) => (
+        <StampRow key={rowIndex}>
+          {rowItems.map((stamp, colIndex) => (
+            <StampItemWrapper key={colIndex}>
+              {stamp && (
+                <StampItem onClick={() => setSelectedStampDetail(stamp)}>
+                  <StampImage src={stamp.venueImageUrl} alt={stamp.place} />
+                  <StampDate>{stamp.date}</StampDate>
+                </StampItem>
+              )}
+            </StampItemWrapper>
+          ))}
+        </StampRow>
+      ));
+    })()}
+  </StampPageContainer>
+) : (
+  <EmptyMessage>받은 스탬프가 없습니다.</EmptyMessage>
+)}
         </ScrollArea>
       </StampBoard>
 
@@ -220,7 +235,7 @@ export default function StampPage() {
              if (!pid) return;
              setSelectedStampDetail(null);         // 팝업 닫고
              navigate(`/performance/${pid}`);      // 상세로 이동
-   }}
+          }}
         />
       )}
 
@@ -332,12 +347,28 @@ const StampBoard = styled.div`
 `;
 
 const StampPageContainer = styled.div`
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  row-gap: 24px;
+  display: flex;
+  flex-direction: column;
   width: 100%;
   box-sizing: border-box;
-  justify-items: center; 
+`;
+
+const StampRow = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  padding: 0 16px;
+  box-sizing: border-box;
+  gap: 0;
+`;
+
+const StampItemWrapper = styled.div`
+  width: calc(33.333% - 16px);
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  min-width: 0;
+  flex-shrink: 0;
 `;
 
 const StampItem = styled.div`
@@ -393,12 +424,11 @@ const ScrollArea = styled.div`
 const EmptyMessage = styled.div`
   width: 100%;
   padding: 16px 0;
-  display: flex;                /* ✅ 플렉스박스로 변경 */
-  justify-content: center;      /* ✅ 좌우 중앙 정렬 */
-  align-items: center;          /* ✅ 세로 중앙 정렬 */
-  text-align: center;           /* ✅ 여러 줄일 경우 중앙정렬 */
+  display: flex;                
+  justify-content: center;      
+  align-items: center;          
+  text-align: center;          
   font-size: ${({ theme }) => theme.fontSizes.sm};
   font-weight: ${({ theme }) => theme.fontWeights.medium};
   color: ${({ theme }) => theme.colors.darkGray};
 `;
-
