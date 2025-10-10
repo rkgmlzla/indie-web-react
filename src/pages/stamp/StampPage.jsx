@@ -154,38 +154,38 @@ export default function StampPage() {
       <StampBoard>
         <ScrollArea>
           {collectedStamps.length > 0 ? (
-  <StampPageContainer>
-    {(() => {
-      const rows = [];
-      const sorted = collectedStamps
-        .slice()
-        .sort((a, b) => new Date(b.date) - new Date(a.date));
-      
-      for (let i = 0; i < sorted.length; i += 3) {
-        const slice = sorted.slice(i, i + 3);
-        while (slice.length < 3) slice.push(null);
-        rows.push(slice);
-      }
-      
-      return rows.map((rowItems, rowIndex) => (
-        <StampRow key={rowIndex}>
-          {rowItems.map((stamp, colIndex) => (
-            <StampItemWrapper key={colIndex}>
-              {stamp && (
-                <StampItem onClick={() => setSelectedStampDetail(stamp)}>
-                  <StampImage src={stamp.venueImageUrl} alt={stamp.place} />
-                  <StampDate>{stamp.date}</StampDate>
-                </StampItem>
-              )}
-            </StampItemWrapper>
-          ))}
-        </StampRow>
-      ));
-    })()}
-  </StampPageContainer>
-) : (
-  <EmptyMessage>받은 스탬프가 없습니다.</EmptyMessage>
-)}
+            <StampPageContainer>
+              {(() => {
+                const rows = [];
+                const sorted = collectedStamps
+                  .slice()
+                  .sort((a, b) => new Date(b.date) - new Date(a.date));
+                
+                for (let i = 0; i < sorted.length; i += 3) {
+                  const slice = sorted.slice(i, i + 3);
+                  while (slice.length < 3) slice.push(null);
+                  rows.push(slice);
+                }
+                
+                return rows.map((rowItems, rowIndex) => (
+                  <StampRow key={rowIndex}>
+                    {rowItems.map((stamp, colIndex) => (
+                      <StampItemWrapper key={colIndex}>
+                        {stamp && (
+                          <StampItem onClick={() => setSelectedStampDetail(stamp)}>
+                            <StampImage src={stamp.venueImageUrl} alt={stamp.place} />
+                            <StampDate>{stamp.date}</StampDate>
+                          </StampItem>
+                        )}
+                      </StampItemWrapper>
+                    ))}
+                  </StampRow>
+                ));
+              })()}
+            </StampPageContainer>
+          ) : (
+            <EmptyMessage>받은 스탬프가 없습니다.</EmptyMessage>
+          )}
         </ScrollArea>
       </StampBoard>
 
@@ -351,24 +351,26 @@ const StampPageContainer = styled.div`
   flex-direction: column;
   width: 100%;
   box-sizing: border-box;
+  padding: 0;
 `;
 
 const StampRow = styled.div`
   display: flex;
   justify-content: space-between;
+  align-items: flex-start;
   margin-bottom: 24px;
-  padding: 0 16px;
+  padding: 0;
   box-sizing: border-box;
-  gap: 0;
+  gap: 12px;
+  width: 100%;
 `;
 
 const StampItemWrapper = styled.div`
-  width: calc(33.333% - 16px);
+  flex: 1;
   display: flex;
   justify-content: center;
   flex-direction: column;
   min-width: 0;
-  flex-shrink: 0;
 `;
 
 const StampItem = styled.div`
