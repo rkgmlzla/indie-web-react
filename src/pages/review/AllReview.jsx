@@ -1,344 +1,480 @@
-import React, { useEffect, useMemo, useState, useCallback } from 'react';
-import styled from 'styled-components';
-import { useNavigate, useLocation } from 'react-router-dom';
-import Header from "../../components/layout/Header";
-import ReviewCardAll from '../../components/review/ReviewCardAll';
-import {
-  fetchAllReviews,          // GET  /venue/reviews?page=&size=&order=
-  // 아래 둘/셋은 프로젝트에 맞게 구현해두었으면 import만 바꿔 쓰면 돼요.
-  toggleReviewLike,             // DELETE /venue/review/:id/like
-  deleteReview            // DELETE /venue/review/:id
-} from '../../api/reviewApi'; // 경로는 프로젝트 구조에 맞게 조정
-import { fetchUserInfo } from '../../api/userApi';
+import React, { useMemo, useState, useEffect } from 'react';
+import styled, { css } from 'styled-components'
+import defaultAvatar from '../../assets/icons/icon_b_my.svg';
+import { Link } from 'react-router-dom'
 
-/* ===================== 스타일 ===================== */
-const HeaderSpacer = styled.div`
-  height: 28px;
-`;
-
-const PageWrap = styled.div`
-  max-width: 720px;
-  margin: 0 auto;
-`;
-
-const Heading = styled.h1`
-  font-size: 20px;
-  font-weight: 700;
-  margin: 10 0 12px 0;
-`;
-
-const SubBar = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  margin-bottom: 12px;
-  flex-wrap: wrap;
-`;
-
-const Stat = styled.span`
-  font-size: 14px;
-  font-weight: 600;
-  color: #3C9C68;  
-`;
-
-const AllText = styled.span`
-  color: #4B4B4B;       /* All은 검정색 */
-`;
-
-const CountText = styled.span`
-  color: #3C9C68;    /* 숫자는 초록색 */
-`;
-
-const Controls = styled.div`
-  display: flex;
-  gap: 8px;
-  align-items: center;
-
-  select, button {
-    border: 1px solid #e5e7eb;
-    background: #fff;
-    padding: 6px 10px;
-    border-radius: 8px;
-    font-size: 13px;
-    color: #374151;
-    cursor: pointer;
-  }
-`;
-
-const List = styled.div`
+/* ==================== 스타일 ==================== */
+const Card = styled.article.withConfig({
+  shouldForwardProp: (prop) => prop !== 'variant',
+})`
+  width: 100%;
+  box-sizing: border-box;
+  background: #fff;
+  border: 1px solid #E4E4E4;
+  border-radius: 10px;
+  padding: 12px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
+  position: relative;
+
+  ${({ variant }) =>
+    variant === 'compact' &&
+    css`
+      padding: 10px;
+      gap: 6px;
+    `}
 `;
 
-const Pager = styled.div`
+const DeleteBtn = styled.button`
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
+  min-height: 24px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid #E4E4E4;
+  background: #FAFAFA;
+  color: #4B4B4B;
+  font-size: 14px;
   display: flex;
   align-items: center;
-  gap: 8px;
   justify-content: center;
-  margin: 16px 0 8px;
-
-  button {
-    min-width: 36px;  
-    height: 32px;
-    border: 1px solid #3C9C68;
-    border-radius: 8px;
-    background: #3C9C68;
-    color: #fff;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-
-    &:disabled {
-      background: #e5e7eb;
-      border-color: #e5e7eb;
-      color: #9ca3af;
-      cursor: not-allowed;
-    }
-  }
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
 `;
 
-const EmptyMessage = styled.div`
-  margin-top: 16px;
-  padding: 16px 16px;
-  font-size: ${({ theme }) => theme.fontSizes.sm};
-  font-weight: ${({ theme }) => theme.fontWeights.medium};
-  color: ${({ theme }) => theme.colors.themePink};
+const ThumbRow = styled.div`
   display: flex;
-  justify-content: center; 
-  align-items: center;  
-`;
-
-const ErrorBox = styled.div`
-  padding: 12px 14px;
-  color: #991b1b;
-  background: #fef2f2;
-  border: 1px solid #fecaca;
-  border-radius: 10px;
-  margin-bottom: 12px;
-`;
-
-const Skeleton = styled.div`
-  height: 132px;
-  border-radius: 10px;
-  border: 1px solid #eee;
-  background: linear-gradient(90deg,#fafafa 0%,#f3f4f6 50%,#fafafa 100%);
-  background-size: 200% 100%;
-  animation: shimmer 1.2s infinite;
-  @keyframes shimmer {
-    0% { background-position: 0% 0; }
-    100% { background-position: -200% 0; }
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
   }
 `;
-export default function AllReview({
-  // prop으로 들어오면 우선 사용하고, 없으면 fetchUserInfo로 채움
-  isLoggedIn: isLoggedInProp = undefined,
-  currentUserId: currentUserIdProp = null,
+
+const ThumbItem = styled.img`
+  flex: 0 0 auto;
+  width: 140px;
+  height: 100px;
+  border-radius: 8px;
+  object-fit: cover;
+  cursor: pointer;
+  border: 1px solid #E4E4E4;
+  background: #f2f2f2;
+`;
+
+const MoreBtn = styled.button`
+  flex: 0 0 auto;
+  width: 140px;
+  height: 100px;
+  border-radius: 8px;
+  border: 1px solid #E4E4E4;
+  background: #f7f7f7;
+  font-size: 14px;
+  color: #555;
+  cursor: pointer;
+`;
+
+const BodyText = styled.p.withConfig({
+  shouldForwardProp: (prop) => prop !== 'variant',
+})`
+  font-size: 14px;
+  color: #2F2F2F;
+  line-height: 1.4;
+  white-space: pre-wrap;
+  margin: 0;
+
+  ${({ variant }) =>
+    variant === 'compact' &&
+    css`
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: normal;
+    `}
+`;
+
+const MetaBar = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+`;
+
+const MetaLeft = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+`;
+
+const MetaTop = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+`;
+
+const Avatar = styled.img`
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid #E4E4E4;
+  flex-shrink: 0;
+`;
+
+const MetaName = styled.span`
+  font-size: 12px;
+  font-weight: 500;
+  color: #2F2F2F;
+`;
+
+ const VenueInline = styled(Link)`
+   display: inline-flex;
+   align-items: center;
+   gap: 6px;
+   text-decoration: none;
+   color: inherit;
+   cursor: pointer;
+   &:hover { opacity: .9; }
+`;
+
+ const VenueLogo = styled.img`
+   width: 18px;
+   height: 18px;
+   border-radius: 50%;   
+   object-fit: cover;
+   border: 1px solid #E4E4E4;
+   background: #f6f6f6;
+   flex-shrink: 0;
+`;
+
+const VenueName = styled.span`
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
+
+const MetaDate = styled.time`
+  font-size: 12px;
+  color: #B0B0B0;
+  margin-left: 6px;
+`;
+
+const LikeBtn = styled.button.withConfig({
+  shouldForwardProp: (prop) => prop !== 'active' && prop !== '$disabled',
+})`
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 9999px;
+  cursor: pointer;
+  background: #fff;
+  border: 1px solid #E4E4E4;
+  color: #B0B0B0;
+
+  ${({ active }) =>
+    active &&
+    css`
+      background: #fff1f2;
+      border-color: #fda4af;
+      color: #e11d48;
+    `}
+
+  ${({ $disabled }) =>
+    $disabled &&
+    css`
+      opacity: 0.6;
+      pointer-events: none;
+      cursor: default;
+    `}
+`;
+
+/* 라이트박스 */
+const Lightbox = styled.div`
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const ViewerImg = styled.img`
+  max-width: 92vw;
+  max-height: 82vh;
+  object-fit: contain;
+  box-shadow: 0 4px 28px rgba(0, 0, 0, 0.4);
+  border-radius: 10px;
+`;
+
+const CloseBtn = styled.button`
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  width: 36px;
+  height: 36px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 34px;
+  text-align: center;
+`;
+
+const NavBtn = styled.button`
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  font-size: 20px;
+
+  ${({ $left }) =>
+    $left
+      ? css`
+          left: 16px;
+        `
+      : css`
+          right: 16px;
+        `}
+`;
+
+/* ==================== 컴포넌트 ==================== */
+export default function ReviewCard({
+  review,
+  variant = 'compact',
+  isLoggedIn = false,
+  isOwner = false,
+  onToggleLike,
+  onDelete,
 }) {
-  const navigate = useNavigate();            // ✅ 추가
-  const location = useLocation();            // ✅ 추가
+  // snake_case, camelCase 모두 지원 + venue 포함
+  const {
+    id,
+    user,
+    content,
+    created_at,
+    createdAt,
+    images = [],
+    like_count,
+    likeCount,
+    liked_by_me,
+    likedByMe,
+    venue, // { id, name, logo_url }가 있으면 표시
+  } = review || {};
 
-  // 로그인/내ID 상태 (prop이 오면 그걸 우선 사용)
-  const [isLoggedIn, setIsLoggedIn] = useState(!!isLoggedInProp);
-  const [currentUserId, setCurrentUserId] = useState(currentUserIdProp);
+  const created = created_at ?? createdAt ?? null;
+  const liked = (liked_by_me ?? likedByMe) ?? false;
+  const count = (like_count ?? likeCount) ?? 0;
 
-  // 목록/페이지 상태
-  const [items, setItems] = useState([]);
-  const [total, setTotal] = useState(0);
-  const [page, setPage] = useState(1);
-  const [size] = useState(20);
-  const [order, setOrder] = useState('desc');
-  const [loading, setLoading] = useState(true);
-  const [err, setErr] = useState('');
+  // 문자열/객체 형태 모두 대응
+  const getImgUrl = (im) => (typeof im === 'string' ? im : im?.image_url || '');
 
-  // 로그인 정보 로드 (prop 없을 때만)
+  const [viewerOpen, setViewerOpen] = useState(false);
+  const [viewerIdx, setViewerIdx] = useState(0);
+
+  const dateText = useMemo(() => {
+    if (!created) return '';
+    try {
+      const d = new Date(created);
+      const yyyy = d.getFullYear();
+      const mm = String(d.getMonth() + 1).padStart(2, '0');
+      const dd = String(d.getDate()).padStart(2, '0');
+      return `${yyyy}-${mm}-${dd}`;
+    } catch {
+      return created;
+    }
+  }, [created]);
+
+  const showMeta = variant === true;
+  const showLike = true;
+  const canDelete = isOwner && isLoggedIn;
+
+  const handleToggleLike = () => {
+    if (!isLoggedIn || !onToggleLike) return;
+    onToggleLike(id, !liked);
+  };
+
+  const handleDelete = () => {
+    if (!isLoggedIn || !canDelete || !onDelete) return;
+    onDelete(id);
+  };
+
+  // 라이트박스
+  const openViewer = (idx = 0) => {
+    setViewerIdx(idx);
+    setViewerOpen(true);
+  };
+  const closeViewer = () => setViewerOpen(false);
+  const next = () => setViewerIdx((i) => (i + 1) % images.length);
+  const prev = () => setViewerIdx((i) => (i - 1 + images.length) % images.length);
+
   useEffect(() => {
-    if (isLoggedInProp !== undefined) {
-      setIsLoggedIn(!!isLoggedInProp);
-      setCurrentUserId(currentUserIdProp ?? null);
-      return;
-    }
-    (async () => {
-      try {
-        const me = await fetchUserInfo();
-        if (me?.id) {
-          setIsLoggedIn(true);
-          setCurrentUserId(me.id);
-        } else {
-          setIsLoggedIn(false);
-          setCurrentUserId(null);
-        }
-      } catch {
-        setIsLoggedIn(false);
-        setCurrentUserId(null);
-      }
-    })();
-  }, [isLoggedInProp, currentUserIdProp]);
-
-  const totalPages = useMemo(
-    () => Math.max(1, Math.ceil((total || 0) / (size || 1))),
-    [total, size]
-  );
-
-  const load = useCallback(async () => {
-    setLoading(true);
-    setErr('');
-    try {
-      const safeOrder = order === 'asc' ? 'asc' : 'desc';
-      const res = await fetchAllReviews({ page, size, order: safeOrder });
-      setItems(res?.items ?? []);
-      setTotal(res?.total ?? 0);
-    } catch (e) {
-      console.error('[AllReview] list error:', e);
-      setErr('리뷰 목록을 불러오지 못했어요. 잠시 후 다시 시도해 주세요.');
-    } finally {
-      setLoading(false);
-    }
-  }, [page, size, order]);
-
-  useEffect(() => { load(); }, [load]);
-
-  // ✅ 좋아요 토글 (VenueReviewListPage와 동일한 흐름)
-  const handleToggleLike = useCallback(async (reviewId, nextLiked) => {
-    if (!isLoggedIn) {
-      // 전체 리뷰 페이지 경로로 redirect 유지
-      navigate(`/login?redirect=${encodeURIComponent(location.pathname)}`);
-      return;
-    }
-
-    // 1) 낙관적 업데이트
-    setItems(prev => prev.map(it => {
-      if (it.id !== reviewId) return it;
-      const base = it.like_count ?? 0;
-      return {
-        ...it,
-        like_count: Math.max(0, base + (nextLiked ? 1 : -1)),
-        liked_by_me: nextLiked,
-      };
-    }));
-
-    try {
-      // 2) 서버 토글 (백엔드 시그니처: (id, isCurrentlyLiked))
-      const data = await toggleReviewLike(reviewId, !nextLiked);
-
-      // 3) 서버 값으로 보정
-      setItems(prev => prev.map(it => {
-        if (it.id !== reviewId) return it;
-        return {
-          ...it,
-          like_count: typeof data?.like_count === 'number' ? data.like_count : it.like_count,
-          liked_by_me: typeof data?.liked_by_me === 'boolean' ? data.liked_by_me : it.liked_by_me,
-        };
-      }));
-    } catch (e) {
-      console.error('[AllReview] like toggle failed:', e);
-      // 4) 실패 롤백
-      setItems(prev => prev.map(it => {
-        if (it.id !== reviewId) return it;
-        const base = it.like_count ?? 0;
-        return {
-          ...it,
-          like_count: Math.max(0, base + (nextLiked ? -1 : 1)),
-          liked_by_me: !nextLiked,
-        };
-      }));
-      alert('좋아요 처리 중 오류가 발생했어요.');
-    }
-  }, [isLoggedIn, navigate, location.pathname]);
-
-  // 삭제 (기존 그대로)
-  const handleDelete = useCallback(async (id) => {
-    if (!isLoggedIn) return;
-    const ok = window.confirm('이 리뷰를 삭제할까요?');
-    if (!ok) return;
-
-    const prev = items;
-    setItems(prev.filter(it => it.id !== id));
-    setTotal(t => Math.max(0, t - 1));
-
-    try {
-      await deleteReview(id);
-    } catch (e) {
-      console.error('[AllReview] delete failed:', e);
-      alert('삭제 중 오류가 발생했어요.');
-      setItems(prev);
-      setTotal(t => t + 1);
-    }
-  }, [isLoggedIn, items]);
-
-  const rangeText = useMemo(() => {
-    if (!total) return '0';
-    const start = (page - 1) * size + 1;
-    const end = Math.min(total, page * size);
-    return `${start}–${end}`;
-  }, [page, size, total]);
+    if (!viewerOpen) return;
+    const onKey = (e) => {
+      if (e.key === 'Escape') closeViewer();
+      if (e.key === 'ArrowRight') next();
+      if (e.key === 'ArrowLeft') prev();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [viewerOpen, images.length]);
 
   return (
-    <PageWrap>
-       <Header title='공연장 리뷰' />
-       <HeaderSpacer />
-      {err && <ErrorBox role="alert">{err}</ErrorBox>}
-
-      <SubBar>
-        <Stat>
-          <AllText>All </AllText>
-          <CountText>{total}</CountText>
-      </Stat>
-        <Controls>
-          <select
-            aria-label="정렬"
-            value={order}
-            onChange={(e) => { setPage(1); setOrder(e.target.value === 'asc' ? 'asc' : 'desc'); }}
-          >
-            <option value="desc">최신순</option>
-            <option value="asc">오래된순</option>
-          </select>
-        </Controls>
-      </SubBar>
-
-      {loading ? (
-        <>
-          <Skeleton /><Skeleton /><Skeleton />
-        </>
-      ) : items.length === 0 ? (
-        <EmptyMessage>아직 작성된 리뷰가 없습니다.</EmptyMessage>
-      ) : (
-        <>
-          <List>
-            {items.map((rv) => (
-              <ReviewCardAll
-                key={rv.id}
-                review={rv}
-                isLoggedIn={isLoggedIn}                                 
-                isOwner={!!currentUserId && rv?.user?.id === currentUserId}
-                onToggleLike={handleToggleLike}
-                onDelete={handleDelete}
-              />
-            ))}
-          </List>
-
-          <Pager>
-            <button
-              type="button"
-              onClick={() => setPage((p) => Math.max(1, p - 1))}
-              disabled={page <= 1 || loading}
-            >
-              ← 
-            </button>
-            <span style={{ fontSize: 13, color: '#6b7280' }}>
-              {page} / {totalPages}
-            </span>
-            <button
-              type="button"
-              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-              disabled={page >= totalPages || loading}
-            >
-              →
-            </button>
-          </Pager>
-        </>
+    <Card variant={variant} aria-label="venue-review-card">
+      {canDelete && (
+        <DeleteBtn
+          type="button"
+          aria-label="리뷰 삭제"
+          title="리뷰 삭제"
+          onClick={handleDelete}
+        >
+          x
+        </DeleteBtn>
       )}
-    </PageWrap>
+
+      {/* 1) 이미지(가로) */}
+      {images?.length > 0 && (
+        <ThumbRow>
+          {images.slice(0, 3).map((img, idx) => {
+            const url = getImgUrl(img);
+            return (
+              <ThumbItem
+                key={idx}
+                loading="lazy"
+                src={url}
+                alt={`리뷰 이미지 ${idx + 1}`}
+                onClick={() => openViewer(idx)}
+                onError={(e) => {
+                  e.currentTarget.style.visibility = 'hidden';
+                }}
+              />
+            );
+          })}
+          {images.length > 3 && (
+            <MoreBtn onClick={() => openViewer(3)}>+{images.length - 3} 더보기</MoreBtn>
+          )}
+        </ThumbRow>
+      )}
+
+      {/* 2) 본문 */}
+      <BodyText variant={variant}>{content}</BodyText>
+
+      {/* 3) 메타 (닉네임 옆에 공연장칩 → 날짜) */}
+      <MetaBar>
+        <MetaTop>
+          <Avatar
+            src={user?.profile_url || defaultAvatar}
+            alt={`${user?.nickname || '사용자'} 프로필 이미지`}
+            onError={(e) => { e.currentTarget.src = defaultAvatar }}
+          />
+          <MetaName>{user?.nickname || '익명'}</MetaName>
+          {venue?.id && (
+            <>
+              <VenueInline
+                to={`/venue/${venue.id}`}
+                aria-label={`${venue.name} 상세로 이동`}
+                title={venue.name}
+              >
+                <VenueLogo
+                  src={venue.logo_url || '/logo192.png'}
+                  alt={`${venue.name || '공연장'} 로고`}
+                  onError={(e)=>{ e.currentTarget.src='/logo192.png'; }}
+                />
+                <VenueName>{venue.name}</VenueName>
+              </VenueInline>
+            </>
+          )}
+        </MetaTop>
+        <MetaLeft>
+          <MetaDate dateTime={created ?? undefined}>{dateText}</MetaDate>
+        </MetaLeft>
+        {showLike && (
+          <LikeBtn
+            type="button"
+            onClick={handleToggleLike}
+            active={!!liked}
+            aria-pressed={!!liked}
+            aria-disabled={!isLoggedIn}
+            $disabled={!isLoggedIn}
+            disabled={!isLoggedIn}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill={liked ? 'currentColor' : 'none'}
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 22l7.8-8.6 1-1a5.5 5.5 0 0 0 0-7.8z"></path>
+            </svg>
+            <span>{count}</span>
+          </LikeBtn>
+        )}
+      </MetaBar>
+
+      {/* 라이트박스 */}
+      {viewerOpen && images?.length > 0 && (
+        <Lightbox onClick={closeViewer}>
+          <ViewerImg
+            src={getImgUrl(images[viewerIdx])}
+            alt={`리뷰 이미지 ${viewerIdx + 1}/${images.length}`}
+            onClick={(e) => e.stopPropagation()}
+          />
+          <CloseBtn onClick={closeViewer} aria-label="닫기">
+            ×
+          </CloseBtn>
+          {images.length > 1 && (
+            <>
+              <NavBtn
+                $left
+                onClick={(e) => {
+                  e.stopPropagation();
+                  prev();
+                }}
+                aria-label="이전"
+              >
+                ‹
+              </NavBtn>
+              <NavBtn
+                onClick={(e) => {
+                  e.stopPropagation();
+                  next();
+                }}
+                aria-label="다음"
+              >
+                ›
+              </NavBtn>
+            </>
+          )}
+        </Lightbox>
+      )}
+    </Card>
   );
 }
