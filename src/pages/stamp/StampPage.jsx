@@ -306,6 +306,7 @@ const StampButton = styled.button`
 `;
 
 const StampBoard = styled.div`
+  width: 100%;
   position: absolute;
   top: 78.5px;
   bottom: 108px;
@@ -313,6 +314,8 @@ const StampBoard = styled.div`
   right: 16px;
   display: flex;
   flex-direction: column;
+  box-sizing: border-box;
+  overflow: hidden;
 `;
 
 const StampPageContainer = styled.div`
