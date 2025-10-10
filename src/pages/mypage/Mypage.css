@@ -188,8 +188,9 @@
 
 .logout {
   width: 100%;
-  bottom: 16px;
+  bottom: 92px;
   display: flex;
+  position: fixed;
   justify-content: center;
 }
 
