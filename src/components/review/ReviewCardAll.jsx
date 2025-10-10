@@ -426,34 +426,34 @@ export default function ReviewCard({
               </VenueInline>
             </>
           )}
-        </MetaTop>
-        {showLike && (
-          <LikeBtn
-            type="button"
-            onClick={handleToggleLike}
-            active={!!liked}
-            aria-pressed={!!liked}
-            aria-disabled={!isLoggedIn}
-            $disabled={!isLoggedIn}
-            disabled={!isLoggedIn}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill={liked ? 'currentColor' : 'none'}
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
+          {showLike && (
+            <LikeBtn
+              type="button"
+              onClick={handleToggleLike}
+              active={!!liked}
+              aria-pressed={!!liked}
+              aria-disabled={!isLoggedIn}
+              $disabled={!isLoggedIn}
+              disabled={!isLoggedIn}
             >
-              <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 22l7.8-8.6 1-1a5.5 5.5 0 0 0 0-7.8z"></path>
-            </svg>
-            <span>{count}</span>
-          </LikeBtn>
-        )}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill={liked ? 'currentColor' : 'none'}
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 22l7.8-8.6 1-1a5.5 5.5 0 0 0 0-7.8z"></path>
+              </svg>
+              <span>{count}</span>
+            </LikeBtn>
+          )}
+        </MetaTop>
       </MetaBar>
 
       {/* 라이트박스 */}
