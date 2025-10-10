@@ -12,10 +12,6 @@ import {
 import { fetchUserInfo } from '../../api/userApi';
 
 /* ===================== 스타일 ===================== */
-const HeaderSpacer = styled.div`
-  height: 28px;
-`;
-
 const PageWrapper = styled.div`
   height: 100vh;
   height: 100dvh;
@@ -296,7 +292,7 @@ export default function AllReview({
   return (
     <PageWrapper>
        <Header title='공연장 리뷰' />
-       <HeaderSpacer />
+       <div style={{ height: "16px" }} />
       {err && <ErrorBox role="alert">{err}</ErrorBox>}
 
       <SubBar>
