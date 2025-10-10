@@ -336,10 +336,11 @@ const StampButton = styled.button`
 const StampBoard = styled.div`
   width: 100%;
   position: relative;
-  padding: 78.5px 16px 108px 16px;
   overflow-x: hidden;
   touch-action: pan-y;
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
 `;
 
 const StampPageContainer = styled.div`
@@ -347,7 +348,7 @@ const StampPageContainer = styled.div`
   flex-direction: column;
   width: 100%;
   box-sizing: border-box;
-  padding: 0;
+  padding: 0 16px;
 `;
 
 const StampRow = styled.div`
@@ -401,9 +402,10 @@ const ScrollArea = styled.div`
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  margin-bottom: 16px;
   width: 100%;
   box-sizing: border-box;
+  padding-top: 78.5px;
+  padding-bottom: 108px;
 
   &::-webkit-scrollbar {
     display: none;
