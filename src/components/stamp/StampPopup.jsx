@@ -69,20 +69,20 @@ const ModalBackground = styled.div`
   inset: 0;
   display: flex;
   justify-content: center;
-  align-items: flex-start;
-  padding-top: 16px;
-  padding-bottom: 100px;
+  align-items: center;
+  padding: 16px;
   background: rgba(0,0,0,.2);
-  z-index: 9999;             
+  z-index: 9999;
 `;
 
 const PopupContainer = styled.div`
   position: relative;
-  height: 93%;
+  height: 80%;
+  max-height: 600px;
   width: 100%;
   max-width: ${({ theme }) => theme.layout.maxWidth};
-  margin: 56px auto 0;        
-  background: ${({ theme }) => theme.colors.bgWhite};       
+  margin: 0 auto;
+  background: ${({ theme }) => theme.colors.bgWhite};
   border-radius: 10px;
   box-sizing: border-box;
   display: flex;
