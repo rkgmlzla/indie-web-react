@@ -135,12 +135,12 @@
 
       .heart {
         cursor: pointer;
-        color: #9a1f24;
+        color: red;
         stroke-width: 2;
         transition: fill 0.2s;
 
         &.on {
-          fill: #9a1f24;
+          fill: red;
         }
       }
     }
