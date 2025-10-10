@@ -104,7 +104,7 @@ const EmptyMessage = styled.div`
   padding: 16px 16px;
   font-size: ${({ theme }) => theme.fontSizes.sm};
   font-weight: ${({ theme }) => theme.fontWeights.medium};
-  color: ${({ theme }) => theme.colors.darkGray};
+  color: ${({ theme }) => theme.colors.themePink};
   display: flex;
   justify-content: center; 
   align-items: center;  
@@ -147,7 +147,7 @@ export default function AllReview({
   const [items, setItems] = useState([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
-  const [size, setSize] = useState(10);
+  const [size] = useState(20);
   const [order, setOrder] = useState('desc');
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState('');
@@ -293,16 +293,6 @@ export default function AllReview({
           >
             <option value="desc">최신순</option>
             <option value="asc">오래된순</option>
-          </select>
-
-          <select
-            aria-label="페이지 크기"
-            value={size}
-            onChange={(e) => { setPage(1); setSize(Number(e.target.value)); }}
-          >
-            <option value={10}>10개</option>
-            <option value={20}>20개</option>
-            <option value={30}>30개</option>
           </select>
         </Controls>
       </SubBar>
