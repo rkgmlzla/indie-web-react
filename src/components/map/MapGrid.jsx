@@ -165,7 +165,7 @@ export default MapGrid;
 const Container = styled.div`
   width: 100%;
   position: relative;
-  padding-bottom: 112px;
+  padding-bottom: 109px;
   z-index: 1;
   overflow-x: hidden;
   touch-action: pan-y;
