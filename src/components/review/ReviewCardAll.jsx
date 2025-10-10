@@ -166,7 +166,9 @@ const VenueName = styled.span`
   text-overflow: ellipsis;
 `;
 
-const MetaDate = styled.time`
+const MetaDate = styled.time` 
+  margin-top: -12px;
+  margin-bottom: 8px;
   font-size: 12px;
   color: #B0B0B0;
 `;
