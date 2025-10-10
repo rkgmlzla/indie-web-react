@@ -189,6 +189,7 @@
 .logout {
   width: 100%;
   bottom: 92px;
+  padding: 0 16px;
   display: flex;
   position: fixed;
   justify-content: center;
