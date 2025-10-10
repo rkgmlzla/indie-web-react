@@ -114,6 +114,7 @@ const MapGrid = ({
                       style={{
                         overflow: 'hidden',
                         width: '100%',
+                        padding: '0 4px',
                         marginTop: '12px',
                         boxSizing: 'border-box',
                       }}>
