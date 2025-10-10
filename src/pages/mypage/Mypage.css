@@ -208,3 +208,12 @@
   border-radius: 4px;
   text-decoration: underline;
 }
+
+.withdraw {
+  color: #e53935;
+  text-align: center;
+  font-size: 15px;
+  font-weight: 500;
+  margin-top: 28px;   /* 로그아웃과의 간격 */
+  margin-bottom: 80px; /* 하단 네비게이션과의 여백 */
+}

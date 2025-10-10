@@ -227,6 +227,10 @@ function MyPage() {
               로그아웃
             </button>
           </div>
+
+<div className="withdraw">탈퇴하기</div>
+
+
         </>
       )}
     </div>
