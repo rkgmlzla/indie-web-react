@@ -337,8 +337,9 @@ const StampBoard = styled.div`
   width: 100%;
   position: relative;
   padding: 78.5px 16px 108px 16px;
-  overflow-x: hiddne;
+  overflow-x: hidden;
   touch-action: pan-y;
+  box-sizing: border-box;
 `;
 
 const StampPageContainer = styled.div`
@@ -352,18 +353,20 @@ const StampPageContainer = styled.div`
 const StampRow = styled.div`
   display: flex;
   gap: 8px;
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 8px;
+  justify-content: center;
 `;
 
 const StampItemWrapper = styled.div`
   flex: 1;
-  max-width: calc(33.333% - 5.33px);
-  margin: 0 8px;
   display: flex;
   justify-content: center;
   flex-direction: column;
+  align-items: center;
   caret-color: transparent;
   min-width: 0;
-  flex-shrink: 0;
   touch-action: pan-y;
   user-select: none;
 `;
@@ -373,16 +376,7 @@ const StampItem = styled.div`
   flex-direction: column;
   align-items: center;
   cursor: pointer;
-
-  &:nth-child(3n + 1) {
-    justify-self: start;
-  }
-  &:nth-child(3n + 2) {
-    justify-self: center;
-  }
-  &:nth-child(3n + 3) {
-    justify-self: end;
-  }
+  width: 100%;
 `;
 
 const StampImage = styled.img`
