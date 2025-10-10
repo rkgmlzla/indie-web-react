@@ -111,7 +111,7 @@
 
 /* 퀵메뉴 */
 .quick__grid {
-  margin-top: 52px;
+  margin-top: 24px;
   margin-bottom: 32px;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
