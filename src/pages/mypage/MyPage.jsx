@@ -110,7 +110,7 @@ function MyPage() {
   }
 
   return (
-    <PageWrapper>
+    <div className="page">
       <Header title="마이페이지" />
       <div style={{ height: "16px" }} />
 
@@ -122,7 +122,7 @@ function MyPage() {
           <p className="guest__message">로그인 후 이용 가능합니다.</p>
         </div>
       ) : (
-        <ScrollableList>
+        <>
           {/* 상단 프로필 */}
           <div className="profile">
             <div className="profile__container">
@@ -229,9 +229,9 @@ function MyPage() {
             </button>
             <div className="withdraw">탈퇴하기</div>
           </div>
-        </ScrollableList>
+        </>
       )}
-    </PageWrapper>
+    </div>
   );
 }
 
