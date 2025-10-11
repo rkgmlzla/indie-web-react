@@ -110,7 +110,7 @@ function MyPage() {
   }
 
   return (
-    <div className="page">
+    <PageWrapper>
       <Header title="마이페이지" />
       <div style={{ height: "16px" }} />
 
@@ -122,7 +122,7 @@ function MyPage() {
           <p className="guest__message">로그인 후 이용 가능합니다.</p>
         </div>
       ) : (
-        <>
+        <ScrollableList>
           {/* 상단 프로필 */}
           <div className="profile">
             <div className="profile__container">
@@ -221,7 +221,7 @@ function MyPage() {
               <ChevronRight className="chev" />
             </button>
           </div>
-          
+
           {/* ✅ 하단 고정된 로그아웃/탈퇴하기 영역 */}
           <div className="footer-actions">
             <button className="logout__button" onClick={handleLogout}>
@@ -229,10 +229,33 @@ function MyPage() {
             </button>
             <div className="withdraw">탈퇴하기</div>
           </div>
-        </>
+        </ScrollableList>
       )}
-    </div>
+    </PageWrapper>
   );
 }
 
 export default MyPage;
+
+const PageWrapper = styled.div`
+  height: 100vh;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+`;
+
+const ScrollableList = styled.div`
+  padding-bottom: 109px;
+  flex-grow: 1;
+  overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    display: none; 
+  }
+
+  -ms-overflow-style: none; 
+  scrollbar-width: none;
+
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
+`;
