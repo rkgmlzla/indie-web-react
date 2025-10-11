@@ -187,11 +187,11 @@
 }
 .footer-actions {
   position: fixed;
-  bottom: 80px;    
+  bottom: 80px;     /* 하단 네비게이션 바로 위 */
   left: 0;
   width: 100%;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
 }
 
@@ -202,12 +202,12 @@
   font-size: 14px;
   text-decoration: underline;
   cursor: pointer;
-  margin-bottom: 24px;
+  margin-bottom: 24px;  /* 탈퇴하기와 간격 */
 }
 
-/* 탈퇴하기 */
+/* 빨간 탈퇴하기 (가장 아래) */
 .withdraw {
-  color: #B0B0B0;
+  color: #e53935;
   font-size: 14px;
   font-weight: 500;
 }
