@@ -34,7 +34,7 @@ const NavItem = styled(NavLink)`
   font-weight: ${({ theme }) => theme.fontWeights.medium};
 
   &.active {
-    color: ${({ theme }) => theme.colors.themeGreen};
+    color: ${({ theme }) => theme.colors.themePink};
   }
 
   svg {
