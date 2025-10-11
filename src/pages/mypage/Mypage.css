@@ -187,9 +187,8 @@
 }
 .footer-actions {
   position: fixed;
-  bottom: 80px;     /* 하단 네비게이션 바로 위 */
-  left: 0;
   width: 100%;
+  margin-top: 0px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -207,7 +206,8 @@
 
 /* 빨간 탈퇴하기 (가장 아래) */
 .withdraw {
-  color: #e53935;
-  font-size: 15px;
-  font-weight: 500;
+  color: #B0B0B0;
+  font-size: 14px;
+  text-decoration: underline;
+  cursor: pointer;
 }
