@@ -152,7 +152,7 @@ export default function StampPage() {
 
       {/* ✅ 메인 스탬프판 */}
       <StampBoard>
-        <ScrollArea>
+        <ScrollableList>
           {collectedStamps.length > 0 ? (
             <StampPageContainer>
               {(() => {
@@ -186,7 +186,7 @@ export default function StampPage() {
           ) : (
             <EmptyMessage>받은 스탬프가 없습니다.</EmptyMessage>
           )}
-        </ScrollArea>
+        </ScrollableList>
       </StampBoard>
 
       <StampButton onClick={() => setIsStampPopupOpen(true)}>
@@ -293,15 +293,10 @@ const FilterGroup = styled.div`
 `;
 
 const PageWrapper = styled.div`
-  width: 100%;
-  max-width: ${({ theme }) => theme.layout.maxWidth};
-  margin: 0 auto;
-  height: 100dvh; 
-  position: fixed;
+  height: 100vh;
+  height: 100dvh;
   display: flex;
-  flex-direction: column;
-  background: ${({ theme }) => theme.colors.bgWhite};
-  overflow: hidden;   
+  flex-direction: column; 
 `;
 
 const StampButton = styled.button`
@@ -336,11 +331,10 @@ const StampButton = styled.button`
 const StampBoard = styled.div`
   width: 100%;
   position: relative;
+  padding: 78.5px 16px 108px 16px;
   overflow-x: hidden;
   touch-action: pan-y;
   box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
 `;
 
 const StampPageContainer = styled.div`
@@ -348,7 +342,7 @@ const StampPageContainer = styled.div`
   flex-direction: column;
   width: 100%;
   box-sizing: border-box;
-  padding: 0 16px;
+  padding: 0;
 `;
 
 const StampRow = styled.div`
@@ -398,20 +392,20 @@ const StampDate = styled.div`
   color: ${({ theme }) => theme.colors.stampGray};
 `;
 
-const ScrollArea = styled.div`
-  flex: 1;
+const ScrollableList = styled.div`
+  padding-bottom: 109px;
+  flex-grow: 1;
   overflow-y: auto;
-  overflow-x: hidden;
-  width: 100%;
-  box-sizing: border-box;
-  padding-top: 78.5px;
-  padding-bottom: 108px;
 
   &::-webkit-scrollbar {
-    display: none;
+    display: none; 
   }
-  -ms-overflow-style: none;
+
+  -ms-overflow-style: none; 
   scrollbar-width: none;
+
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
 `;
 
 const EmptyMessage = styled.div`
