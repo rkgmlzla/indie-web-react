@@ -185,15 +185,13 @@
   height: 18px; 
   color: #B0B0B0; 
 }
+
 .footer-actions {
-  position: fixed;
-  left: 0;
-  width: 100%;
-  margin-top: 100px;
   display: flex;
-  flex-direction: row;
+  justify-content: center;
   align-items: center;
   gap: 24px;
+  margin: 40px 0; /* 위아래 여백 */
 }
 
 /* 회색 로그아웃 (위쪽) */
