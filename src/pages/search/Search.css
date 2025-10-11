@@ -7,7 +7,7 @@
 
   h4 {
     margin-bottom: 8px;
-    font-weight: bold;
+    font-weight: 500;
   }
 
   .recent-list {
@@ -26,20 +26,11 @@
       .close-btn {
         background: none;
         border: none;
-        color: #999;
+        color: #B0B0B0;
         font-size: 16px;
         cursor: pointer;
         padding: 0;
         margin-left: 8px;
-      }
-
-      &:hover {
-        background-color: #777;
-        color: white;
-
-        .close-btn {
-          color: white;
-        }
       }
     }
   }
@@ -61,7 +52,7 @@
 
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 16px;
       margin: 8px 0;
 
       img {
