@@ -233,29 +233,4 @@ function MyPage() {
       )}
     </div>
   );
-}
 
-export default MyPage;
-
-const PageWrapper = styled.div`
-  height: 100vh;
-  height: 100dvh;
-  display: flex;
-  flex-direction: column;
-`;
-
-const ScrollableList = styled.div`
-  padding-bottom: 109px;
-  flex-grow: 1;
-  overflow-y: auto;
-
-  &::-webkit-scrollbar {
-    display: none; 
-  }
-
-  -ms-overflow-style: none; 
-  scrollbar-width: none;
-
-  overscroll-behavior: none;
-  -webkit-overflow-scrolling: touch;
-`;
