@@ -335,6 +335,10 @@ const StampBoard = styled.div`
   overflow-x: hidden;
   touch-action: pan-y;
   box-sizing: border-box;
+  
+  & > * {
+    box-sizing: border-box;
+  }
 `;
 
 const StampPageContainer = styled.div`
@@ -393,9 +397,9 @@ const StampDate = styled.div`
 `;
 
 const ScrollableList = styled.div`
-  padding-bottom: 109px;
   flex-grow: 1;
   overflow-y: auto;
+  box-sizing: border-box;  
 
   &::-webkit-scrollbar {
     display: none; 
