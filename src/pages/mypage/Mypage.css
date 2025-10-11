@@ -187,14 +187,6 @@
 }
 
 .footer-actions {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 24px;
-  margin: 40px 0; /* 위아래 여백 */
-}
-
-.footer-actions {
   width: 100%;
   margin-top: 100px;
   display: flex;
@@ -202,7 +194,6 @@
   align-items: center;
   gap: 24px;
 }
-
 
 /* 회색 로그아웃 (위쪽) */
 .logout__button {
